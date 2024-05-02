@@ -5,6 +5,6 @@ import javafx.geometry.Point2D;
 
 public interface Collidable {
     boolean collision(Point2D point2D);
-    boolean checkCollision(Entity entity);
+    boolean checkIntersect(Entity entity);
 
 }

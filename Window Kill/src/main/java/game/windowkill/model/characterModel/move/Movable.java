@@ -1,4 +1,4 @@
-package game.windowkill.model.characterModel.collision;
+package game.windowkill.model.characterModel.move;
 
 import javafx.geometry.Point2D;
 
