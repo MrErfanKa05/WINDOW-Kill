@@ -37,8 +37,8 @@ public class WindowKill {
         stage.initStyle(StageStyle.UTILITY);
         stage.setMaximized(false);
 
-        new Update();
         MotionSceneView.getInstance().init();
+        new Update();
 
         stage.show();
     }

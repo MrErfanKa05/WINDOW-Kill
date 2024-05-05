@@ -1,12 +1,14 @@
 package game.windowkill.controller;
 
+import javafx.scene.paint.Color;
+
 import java.awt.*;
 
 public class Constant {
     public static final int UPS = 100;
     public static final int FPS = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDisplayMode().getRefreshRate();;
-    public static final double FRAME_UPDATE_TIME = (double) 1L / FPS;
-    public static final double MODEL_UPDATE_TIME = (double) 1L / UPS;
+    public static final double FRAME_UPDATE_TIME = ((double) 1) / FPS;
+    public static final double MODEL_UPDATE_TIME = ((double) 1) / UPS;
     public static final double EPSILON_RADIUS = 12.5;
     public static final double ACCELERATION = 10;
     public static final double ACCELERATION_DECREASE = 10;
@@ -21,5 +23,11 @@ public class Constant {
     public static final double MIN_WIDTH = 200;
     public static final double SCREEN_WIDTH = GLASS_FRAME_DIMENSION.getWidth();
     public static final double SCREEN_HEIGHT = GLASS_FRAME_DIMENSION.getHeight();
+    public static final double ACCELERATION_TIME = 1;
 
+    public static final int BULLET_RADIUS = 3;
+    public static final int SCENE_CHANGE_ACCELERATION = 1;
+    public static final int SCENE_DECREASE_ACCELERATION = 10;
+    public static final javafx.scene.paint.Color OUTSIDE_EPSILON_COLOR = Color.BLACK;
+    public static final Color INSIDE_EPSILON_COLOR = Color.WHITE;
 }

@@ -20,7 +20,9 @@ public class InputManager{
                     false, false, false, false, false, false, null);
             this.mousePosition = mousePosition;
         }
-
+        public void setPosition(Point2D position){
+            this.mousePosition = position;
+        }
         public Point2D getMousePosition() {
             return mousePosition;
         }
@@ -47,6 +49,7 @@ public class InputManager{
 
     public InputManager(Scene scene){
         this.scene = scene;
+        update();
     }
     public void update(){
         scene.setOnMouseClicked(mouseEvent -> mouseClicked(mouseEvent));
@@ -92,14 +95,18 @@ public class InputManager{
 
     private void mouseMoved(MouseEvent mouseEvent){
         mousePosition = new Point2D(mouseEvent.getX(), mouseEvent.getY());
+        this.mouseEvent.setPosition(mousePosition);
+//        System.out.println(mousePosition);
     }
     public void setOnLeftClick(EventHandler<? super NewMouseEvent> var1){
         this.var = var1;
     }
     private void mousePressed(MouseEvent mouseEvent){
+        mouseClicked(mouseEvent);
         //maybe noting
     }
     private void mouseClicked(MouseEvent mouseEventIn){
+//        System.out.println("click");
         if(mouseEventIn.getButton().equals(MouseButton.PRIMARY))
             var.handle(mouseEvent);
 

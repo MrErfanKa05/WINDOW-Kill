@@ -1,4 +1,75 @@
 package game.windowkill.controller.builder;
 
+import game.windowkill.model.characterModel.SquareModel;
+import game.windowkill.model.characterModel.TriangleModel;
+
+import java.util.Random;
+
+import static game.windowkill.controller.Constant.MAX_WIDTH;
+import static game.windowkill.controller.DataHolder.difficulty;
+
 public class EnemyBuilder {
+    private int wave1Triangle, wave1Square, wave2Triangle, wave2Square, wave3Triangle, wave3Square;
+    private Random random = new Random();
+    public int wave = 1;
+    public boolean waveFinish = true;
+    public EnemyBuilder(){
+        this((int) (2 + difficulty/100 * 3), (int) (3 + difficulty/100 * 3), (int) (4 + difficulty/100 * 4), (int) (4 + difficulty/100 * 4), (int) (5 + difficulty/100 * 5), (int) (5+ difficulty/100 * 5));
+    }
+    public EnemyBuilder(int wave1Triangle, int wave1Square, int wave2Triangle, int wave2Square, int wave3Triangle, int wave3Square) {
+        this.wave1Triangle = wave1Triangle;
+        this.wave1Square = wave1Square;
+        this.wave2Triangle = wave2Triangle;
+        this.wave2Square = wave2Square;
+        this.wave3Triangle = wave3Triangle;
+        this.wave3Square = wave3Square;
+    }
+    public void playWave1(){
+        waveFinish = false;
+        for(int i = 0; i < wave1Square; i++) {
+            int x, y;
+            x = random.nextInt((int) MAX_WIDTH);
+            y = random.nextInt((int) MAX_WIDTH);
+            new SquareModel(x, y);
+        }
+        for(int i= 0; i < wave1Triangle; i++){
+            int x, y;
+            x = random.nextInt((int) MAX_WIDTH);
+            y = random.nextInt((int) MAX_WIDTH);
+            new TriangleModel(x, y);
+        }
+        wave++;
+    }
+    public void playWave2(){
+        waveFinish = false;
+        for(int i = 0; i < wave2Square; i++) {
+            int x, y;
+            x = random.nextInt((int) MAX_WIDTH);
+            y = random.nextInt((int) MAX_WIDTH);
+            new SquareModel(x, y);
+        }
+        for(int i= 0; i < wave2Triangle; i++){
+            int x, y;
+            x = random.nextInt((int) MAX_WIDTH);
+            y = random.nextInt((int) MAX_WIDTH);
+            new TriangleModel(x, y);
+        }
+        wave++;
+    }
+    public void playWave3(){
+        waveFinish = false;
+        for(int i = 0; i < wave3Square; i++) {
+            int x, y;
+            x = random.nextInt((int) MAX_WIDTH);
+            y = random.nextInt((int) MAX_WIDTH);
+            new SquareModel(x, y);
+        }
+        for(int i= 0; i < wave3Triangle; i++){
+            int x, y;
+            x = random.nextInt((int) MAX_WIDTH);
+            y = random.nextInt((int) MAX_WIDTH);
+            new TriangleModel(x, y);
+        }
+        wave++;
+    }
 }

@@ -49,7 +49,7 @@ public class TriangleModel extends Entity {
     }
 
     @Override
-    public void setMoves(Point2D point2D) {
+    public void setDirection(Point2D point2D) {
 
     }
 }

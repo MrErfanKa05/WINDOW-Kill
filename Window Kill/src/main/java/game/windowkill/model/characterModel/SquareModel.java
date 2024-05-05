@@ -39,7 +39,7 @@ public class SquareModel extends Entity {
     }
 
     @Override
-    public void setMoves(Point2D point2D) {
+    public void setDirection(Point2D point2D) {
 
     }
 }

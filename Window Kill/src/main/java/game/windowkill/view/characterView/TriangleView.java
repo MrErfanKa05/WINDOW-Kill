@@ -1,5 +1,6 @@
 package game.windowkill.view.characterView;
 
+import game.windowkill.controller.DataHolder;
 import game.windowkill.model.characterModel.move.Direction;
 import javafx.geometry.Point2D;
 
@@ -30,7 +31,7 @@ public class TriangleView {
     }
 
     public void setPosition(Point2D position) {
-        this.position = position;
+        this.position = new Point2D(position.getX() + DataHolder.stage.getX(), position.getY() + DataHolder.stage.getY());
     }
 
     public Direction getDirection() {

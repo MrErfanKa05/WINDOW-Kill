@@ -1,5 +1,7 @@
 package game.windowkill.model.characterModel;
 
+import game.windowkill.controller.Utils;
+import game.windowkill.model.characterModel.move.Direction;
 import javafx.geometry.Point2D;
 
 import static game.windowkill.controller.Constant.EPSILON_RADIUS;
@@ -7,13 +9,15 @@ import static game.windowkill.controller.Constant.MAX_WIDTH;
 import static game.windowkill.controller.Constant.MAX_HEIGHT;
 
 public class EpsilonModel extends Entity{
-    public static EpsilonModel epsilonModel;
+    private static EpsilonModel epsilonModel;
     public static EpsilonModel getInstance(){
         if(epsilonModel == null)epsilonModel = new EpsilonModel();
         return epsilonModel;
     }
 
     private double radius;
+    private int XP = 0;
+    SkillState skillState = SkillState.Neutral;
     private EpsilonModel() {
         super(MAX_WIDTH /2 , MAX_HEIGHT /2);
         radius = EPSILON_RADIUS;
@@ -61,16 +65,21 @@ public class EpsilonModel extends Entity{
 
     @Override
     public void move(Point2D point2D) {
-
+        move(point2D, speed);
     }
 
     @Override
     public void move(Point2D point2D, double speed) {
-
+        Point2D movement = Utils.multiplyVector(point2D, speed);
+        position = Utils.addVector(position, movement);
     }
 
     @Override
-    public void setMoves(Point2D point2D) {
+    public void setDirection(Point2D point2D) {
+        direction = new Direction(point2D);
+    }
 
+    public enum SkillState {
+        Neutral, WritOfAres, WritOfAceso, WritOfProteus
     }
 }
