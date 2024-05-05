@@ -3,6 +3,7 @@ package game.windowkill.model;
 import game.windowkill.model.characterModel.Entity;
 import game.windowkill.model.characterModel.collision.Collidable;
 import game.windowkill.view.BulletView;
+import game.windowkill.view.characterView.SquareView;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
@@ -23,6 +24,13 @@ public class BulletModel implements Collidable {
         bulletModels.add(this);
         id = UUID.randomUUID().toString();
         new BulletView(id, position);
+    }
+
+    public void remove(){
+        bulletModels.remove(this);
+        for(BulletView bulletView : BulletView.bulletViews)
+            if(bulletView.getId().equals(getId()))
+                BulletView.bulletViews.remove(bulletView);
     }
 
     public String getId() {

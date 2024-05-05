@@ -12,7 +12,18 @@ public class SquareModel extends Entity {
         super(x, y);
         squareModels.add(this);
         new SquareView(id, position, direction);
+        hp = 10;
+        attackHp = 6;
+        collectables = 1;
     }
+
+    public void remove(){
+        squareModels.remove(this);
+        for(SquareView squareView : SquareView.squareViews)
+            if(squareView.getId().equals(getId()))
+                SquareView.squareViews.remove(squareView);
+    }
+
     @Override
     public void update() {
 

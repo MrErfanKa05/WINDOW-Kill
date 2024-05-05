@@ -3,8 +3,15 @@ package game.windowkill.controller;
 import game.windowkill.controller.builder.EnemyBuilder;
 import game.windowkill.model.BulletModel;
 import game.windowkill.model.MotionSceneModel;
+import game.windowkill.model.characterModel.EpsilonModel;
+import game.windowkill.model.characterModel.SquareModel;
+import game.windowkill.model.characterModel.TriangleModel;
+import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.view.BulletView;
 import game.windowkill.view.MotionSceneView;
+import game.windowkill.view.characterView.EpsilonView;
+import game.windowkill.view.characterView.SquareView;
+import game.windowkill.view.characterView.TriangleView;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -21,12 +28,31 @@ public class Update {
     Timeline updateView = new Timeline(new KeyFrame(Duration.millis(FRAME_UPDATE_TIME * 1000), actionEvent -> {
         MotionSceneModel model = MotionSceneModel.getInstance();
         MotionSceneView.getInstance().set(model.getTop(), model.getDown(), model.getRight(), model.getLeft());
+
+        EpsilonView.getInstance().setPosition(EpsilonModel.getInstance().getPosition());
+
         for(BulletView bulletView : BulletView.bulletViews){
             for(BulletModel bulletModel : BulletModel.bulletModels) {
-                System.out.println(bulletModel.getId() + " / " + bulletView.getId());
+//                System.out.println(bulletModel.getId() + " / " + bulletView.getId());
                 if (bulletModel.getId().equals(bulletView.getId())) {
                     bulletView.setPosition(bulletModel.getPosition());
-                    System.out.println("do");
+//                    System.out.println("do");
+                }
+            }
+        }
+
+        for(SquareView squareView : SquareView.squareViews){
+            for (SquareModel squareModel : SquareModel.squareModels){
+                if(squareModel.getId().equals(squareView.getId())){
+                    squareView.setPosition(squareModel.getPosition());
+                }
+            }
+        }
+
+        for(TriangleView triangleView : TriangleView.triangleViews){
+            for (TriangleModel triangleModel : TriangleModel.triangleModels){
+                if(triangleModel.getId().equals(triangleView.getId())){
+                    triangleView.setPosition(triangleModel.getPosition());
                 }
             }
         }
@@ -40,8 +66,20 @@ public class Update {
 //            case 2 : enemyBuilder.playWave2(); break;
 //            case 1 : enemyBuilder.playWave1(); break;
 //        }
+        if(inputManager.isUp())
+            EpsilonModel.getInstance().move(new Direction(270));
+        if(inputManager.isDown())
+            EpsilonModel.getInstance().move(new Direction(90));
+        if(inputManager.isLeft())
+            EpsilonModel.getInstance().move(new Direction(180));
+        if(inputManager.isRight())
+            EpsilonModel.getInstance().move(new Direction(0));
         if(Math.random()*100 < 0.5)
             MotionSceneModel.getInstance().change(1, 0);
+        if(Math.random()*100 < 1)
+            new SquareModel(100, 70);
+        if(Math.random()*100 < 1)
+            new TriangleModel(20, 70);
         MotionSceneView.getInstance().paint();
 
     }));
@@ -71,16 +109,18 @@ public class Update {
         updateModel.setCycleCount(Animation.INDEFINITE);
         updateView.setCycleCount(Animation.INDEFINITE);
 
+        MotionSceneView.getInstance().init();
+        MotionSceneView.getInstance().inputManager.setOnLeftClick(newMouseEvent -> shoot(newMouseEvent.getMousePosition()));
+        inputManager = MotionSceneView.getInstance().getInputManager();
+        enemyBuilder = new EnemyBuilder();
+
         updateModel.play();
         updateView.play();
-
-        MotionSceneView.getInstance().inputManager.setOnLeftClick(newMouseEvent -> shoot(newMouseEvent.getMousePosition()));
-        enemyBuilder = new EnemyBuilder();
     }
     public void shoot(Point2D point2D){
-        if(System.currentTimeMillis() - dalay > 200) {
+        if(System.currentTimeMillis() - dalay > 500) {
             new BulletModel(point2D.getX(), point2D.getY());
-            System.out.println(point2D.getX() + " " + point2D.getY());
+//            System.out.println(point2D.getX() + " " + point2D.getY());
             dalay = System.currentTimeMillis();
         }
     }

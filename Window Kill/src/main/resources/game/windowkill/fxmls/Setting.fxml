@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="700.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game.windowkill.controller.fxmlController.SettingController">
+   <children>
+      <ImageView fitHeight="700.0" fitWidth="700.0">
+         <image>
+            <Image url="@../resources/setting.jpg" />
+         </image>
+      </ImageView>
+      <Slider fx:id="sensitive" layoutX="280.0" layoutY="307.0" />
+      <Slider fx:id="sound" layoutX="280.0" layoutY="398.0" />
+      <Slider fx:id="difficulty" layoutX="280.0" layoutY="491.0" />
+      <Button fx:id="back" layoutX="32.0" layoutY="29.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="74.0" style="-fx-background-color: #f11231; -fx-background-radius: 15;" text="Back">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

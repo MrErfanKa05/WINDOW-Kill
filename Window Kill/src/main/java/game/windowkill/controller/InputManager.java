@@ -1,5 +1,6 @@
 package game.windowkill.controller;
 
+import game.windowkill.view.MotionSceneView;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
@@ -10,6 +11,12 @@ import javafx.scene.input.MouseEvent;
 
 public class InputManager{
 
+//    private static InputManager inputManager;
+//
+//    public static InputManager getInstance() {
+//        if(inputManager == null) inputManager = new InputManager(MotionSceneView.getInstance());
+//        return inputManager;
+//    }
     private EventHandler<? super NewMouseEvent> var;
 
     public static class NewMouseEvent extends MouseEvent{
@@ -30,12 +37,36 @@ public class InputManager{
 
     private Scene scene;
 
-    private boolean up;
-    private boolean down;
-    private boolean left;
-    private boolean right;
-    private boolean shop;
-    private boolean ability;
+    private boolean up = false;
+    private boolean down = false;
+    private boolean left = false;
+    private boolean right = false;
+    private boolean shop = false;
+    private boolean ability = false;
+
+    public boolean isUp() {
+        return up;
+    }
+
+    public boolean isDown() {
+        return down;
+    }
+
+    public boolean isLeft() {
+        return left;
+    }
+
+    public boolean isRight() {
+        return right;
+    }
+
+    public boolean isShop() {
+        return shop;
+    }
+
+    public boolean isAbility() {
+        return ability;
+    }
 
     private String upString = "w";
     private String downString = "s";

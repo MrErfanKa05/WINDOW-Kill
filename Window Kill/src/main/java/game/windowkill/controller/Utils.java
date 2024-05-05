@@ -6,7 +6,7 @@ import static game.windowkill.controller.Constant.SPEED;
 
 public class Utils {
     public static double getSpeed(){
-        return SPEED/3 + 2*SPEED/3 * DataHolder.difficulty / 100;
+        return SPEED/5 + 4*SPEED/5 * DataHolder.sensitivity / 100;
     }
     public static Point2D addVector(Point2D point2D1, Point2D point2D2){
         return new Point2D(point2D2.getX() + point2D1.getX(), point2D2.getY() + point2D1.getY());

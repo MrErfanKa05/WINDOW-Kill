@@ -36,6 +36,7 @@ public class MotionSceneModel implements Collidable {
     }
 
     private double changeTime = 0.5;
+    private double changeFrame = 0.5;
 
     private Timeline move = new Timeline(new KeyFrame(Duration.millis(MODEL_UPDATE_TIME * 1400), actionEvent -> {
 //        System.out.println(MODEL_UPDATE_TIME + " ");
@@ -50,21 +51,21 @@ public class MotionSceneModel implements Collidable {
 //        topAcceleration = min(0, topAcceleration - changeTime);
 
         if(right - left <= 202){
-            right++;
-            left--;
+            right += changeFrame;
+            left -= changeFrame;
 //            rightAcceleration = 0;
 //            leftAcceleration = 0;
         }
         if(down - top <= 202){
-            top--;
-            down++;
+            top -= changeFrame;
+            down += changeFrame;
 //            topAcceleration = 0;
 //            downAcceleration = 0;
         }
-        down--;
-        top++;
-        right--;
-        left++;
+        down -= changeFrame;
+        top += changeFrame;
+        right -= changeFrame;
+        left += changeFrame;
 
         top = max(0, top);
         left = max(0, left);
@@ -182,3 +183,4 @@ public class MotionSceneModel implements Collidable {
                 entity.collision(new Point2D(right, entity.getPosition().getY()));
     }
 }
+//TODO : Check intersect with board

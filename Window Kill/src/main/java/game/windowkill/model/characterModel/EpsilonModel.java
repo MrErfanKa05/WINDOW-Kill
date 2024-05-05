@@ -17,10 +17,33 @@ public class EpsilonModel extends Entity{
 
     private double radius;
     private int XP = 0;
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    public int getXP() {
+        return XP;
+    }
+
+    public void setXP(int XP) {
+        this.XP = XP;
+    }
+
+    public SkillState getSkillState() {
+        return skillState;
+    }
+
+    public void setSkillState(SkillState skillState) {
+        this.skillState = skillState;
+    }
+
     SkillState skillState = SkillState.Neutral;
     private EpsilonModel() {
         super(MAX_WIDTH /2 , MAX_HEIGHT /2);
         radius = EPSILON_RADIUS;
+        hp = 100;
+        attackHp = 5;
     }
 
     public double getRadius() {

@@ -26,6 +26,8 @@ public abstract class Entity implements Collidable, Movable {
     double acceleration = 0;
     double speed = Utils.getSpeed();
     ArrayList<Point2D> vertices = new ArrayList<>();
+    double hp, attackHp;
+    int collectables;
 
     private Timeline accelerationMove = new Timeline(new KeyFrame(Duration.millis(ACCELERATION_TIME / ACCELERATION), actionEvent -> {
         move(Utils.addVector(direction.getDirectionVector(), Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration)));

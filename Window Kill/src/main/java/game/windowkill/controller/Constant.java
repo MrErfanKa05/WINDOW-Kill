@@ -28,6 +28,6 @@ public class Constant {
     public static final int BULLET_RADIUS = 3;
     public static final int SCENE_CHANGE_ACCELERATION = 1;
     public static final int SCENE_DECREASE_ACCELERATION = 10;
-    public static final javafx.scene.paint.Color OUTSIDE_EPSILON_COLOR = Color.BLACK;
-    public static final Color INSIDE_EPSILON_COLOR = Color.WHITE;
+    public static final javafx.scene.paint.Color OUTSIDE_EPSILON_COLOR = Color.WHITE;
+    public static final Color INSIDE_EPSILON_COLOR = Color.BLACK;
 }

@@ -13,8 +13,8 @@ public class SquareView {
     private Direction direction;
     public SquareView(String id, Point2D position, Direction direction){
         this.id = id;
-        this.position = position;
-        this.direction = direction;
+        setPosition(position);
+        setDirection(direction);
         squareViews.add(this);
     }
 

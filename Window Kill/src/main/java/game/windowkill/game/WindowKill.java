@@ -2,6 +2,7 @@ package game.windowkill.game;
 
 import game.windowkill.controller.DataHolder;
 import game.windowkill.controller.Update;
+import game.windowkill.controller.loader.SceneLoader;
 import game.windowkill.view.MotionSceneView;
 //import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
@@ -34,12 +35,13 @@ public class WindowKill {
 
         stage.setResizable(false);
         stage.setIconified(false);
-        stage.initStyle(StageStyle.UTILITY);
+        stage.initStyle(StageStyle.TRANSPARENT);
         stage.setMaximized(false);
 
-        MotionSceneView.getInstance().init();
-        new Update();
+//        MotionSceneView.getInstance().init();
+//        new Update();
 
+        stage.setScene(SceneLoader.getMenu());
         stage.show();
     }
 }

@@ -1,6 +1,7 @@
 package game.windowkill.model.characterModel;
 
 import game.windowkill.controller.Utils;
+import game.windowkill.view.characterView.SquareView;
 import game.windowkill.view.characterView.TriangleView;
 import javafx.geometry.Point2D;
 
@@ -12,6 +13,16 @@ public class TriangleModel extends Entity {
         super(x, y);
         triangleModels.add(this);
         new TriangleView(id, position, direction);
+        hp = 15;
+        attackHp = 10;
+        collectables = 2;
+    }
+
+    public void remove(){
+        triangleModels.remove(this);
+        for(TriangleView triangleView : TriangleView.triangleViews)
+            if(triangleView.getId().equals(getId()))
+                TriangleView.triangleViews.remove(triangleView);
     }
 
     @Override
