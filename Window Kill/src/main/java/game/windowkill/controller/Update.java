@@ -2,12 +2,14 @@ package game.windowkill.controller;
 
 import game.windowkill.controller.builder.EnemyBuilder;
 import game.windowkill.model.BulletModel;
+import game.windowkill.model.CollectableItemModel;
 import game.windowkill.model.MotionSceneModel;
 import game.windowkill.model.characterModel.EpsilonModel;
 import game.windowkill.model.characterModel.SquareModel;
 import game.windowkill.model.characterModel.TriangleModel;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.view.BulletView;
+import game.windowkill.view.CollectableItemView;
 import game.windowkill.view.MotionSceneView;
 import game.windowkill.view.characterView.EpsilonView;
 import game.windowkill.view.characterView.SquareView;
@@ -22,17 +24,23 @@ import java.util.ArrayList;
 
 import static game.windowkill.controller.Constant.*;
 import static game.windowkill.controller.DataHolder.stage;
+import static java.lang.Math.max;
 
 public class Update {
     private InputManager inputManager;
     private EnemyBuilder enemyBuilder;
     private double dalay = 0;
     Timeline updateView = new Timeline(new KeyFrame(Duration.millis(FRAME_UPDATE_TIME * 1000), actionEvent -> {
+        MotionSceneModel model = MotionSceneModel.getInstance();
+//        MotionSceneView.getInstance().set(model.getTop(), model.getDown(), model.getRight(), model.getLeft());
+//        MotionSceneView.getInstance().paint();
+//        MotionSceneView.getInstance().pane.getChildren().clear();
+
         EpsilonView.getInstance().setPosition(EpsilonModel.getInstance().getPosition());
 
         for(BulletView bulletView : BulletView.bulletViews){
             for(BulletModel bulletModel : BulletModel.bulletModels) {
-                System.out.println(bulletModel.getId() + " / " + bulletView.getPosition());
+//                System.out.println(bulletModel.getId() + " / " + bulletView.getPosition());
                 if (bulletModel.getId().equals(bulletView.getId())) {
                     bulletView.setPosition(bulletModel.getPosition());
 //                    System.out.println("do");
@@ -56,7 +64,14 @@ public class Update {
             }
         }
 
-        MotionSceneModel model = MotionSceneModel.getInstance();
+        for(CollectableItemView collectableItemView : CollectableItemView.collectableItemViews){
+            for(CollectableItemModel collectableItemModel : CollectableItemModel.collectableItemModels){
+                if(collectableItemModel.getId().equals(collectableItemView.getId()))
+                    collectableItemView.setPosition(collectableItemModel.getPosition());
+            }
+        }
+
+        model = MotionSceneModel.getInstance();
         MotionSceneView.getInstance().set(model.getTop(), model.getDown(), model.getRight(), model.getLeft());
         MotionSceneView.getInstance().paint();
 
@@ -79,7 +94,8 @@ public class Update {
                     break;
             }
         }
-        EpsilonView.getInstance().setPosition(EpsilonModel.getInstance().getPosition());
+        MotionSceneView.getInstance().setPage();
+//        EpsilonView.getInstance().setPosition(EpsilonModel.getInstance().getPosition());
         update();
 
         ArrayList<BulletModel> Bullets = new ArrayList<>();
@@ -102,12 +118,14 @@ public class Update {
                 if(triangleModel.collision(bulletModel.getPosition())){
                     Bullets.add(bulletModel);
                     impact(bulletModel.getPosition());
+                    triangleModel.decreaseHearth(5);
                 }
             }
             for(SquareModel squareModel : SquareModel.squareModels){
                 if(squareModel.collision(bulletModel.getPosition())){
                     Bullets.add(bulletModel);
                     impact(bulletModel.getPosition());
+                    squareModel.decreaseHearth(5);
                 }
             }
         }
@@ -140,27 +158,68 @@ public class Update {
 
         ArrayList<TriangleModel> triangleModels = new ArrayList<>();
         for(TriangleModel triangleModel : TriangleModel.triangleModels)
-            if(triangleModel.getHp() <= 0)
+            if(triangleModel.getHp() <= 0) {
                 triangleModels.add(triangleModel);
+                new CollectableItemModel(triangleModel.getPosition(), 5, triangleModel);
+                new CollectableItemModel(Utils.addVector(triangleModel.getPosition(), new Point2D(5, 2)), 5, triangleModel);
+            }
         for(TriangleModel triangleModel : triangleModels)
             triangleModel.remove();
 
         ArrayList<SquareModel> squareModels = new ArrayList<>();
         for(SquareModel squareModel : SquareModel.squareModels)
-            if(squareModel.getHp() <= 0)
+            if(squareModel.getHp() <= 0) {
                 squareModels.add(squareModel);
+                new CollectableItemModel(squareModel.getPosition(), 5, squareModel);
+            }
         for(SquareModel squareModel : squareModels)
             squareModel.remove();
+
+        ArrayList<CollectableItemModel> collectableItemModels = new ArrayList<>();
+        for(CollectableItemModel collectableItemModel : CollectableItemModel.collectableItemModels){
+//            System.out.println(EpsilonModel.getInstance().getPosition() + " " + collectableItemModel.getPosition());
+            double x = collectableItemModel.getPosition().getX() - 12.5;
+            double y = collectableItemModel.getPosition().getY() - 12.5;
+            double dis = (EpsilonModel.getInstance().getX() - x) * (EpsilonModel.getInstance().getX() - x) +
+                    (EpsilonModel.getInstance().getY() - y) * (EpsilonModel.getInstance().getY() - y);
+            if(dis <= EpsilonModel.getInstance().getRadius() * EpsilonModel.getInstance().getRadius()) {
+                collectableItemModels.add(collectableItemModel);
+                EpsilonModel.getInstance().setXP(EpsilonModel.getInstance().getXP() + 5);
+//                System.out.println("now");
+            }
+            if(System.currentTimeMillis() - collectableItemModel.getTime() >= 10000)
+                collectableItemModels.add(collectableItemModel);
+        }
+        for(CollectableItemModel collectableItemModel : collectableItemModels)
+            collectableItemModel.remove();
+
 //        TODO : like bullet for others;
 
         if(MotionSceneModel.getInstance().checkIntersect(EpsilonModel.getInstance())){
             impact(MotionSceneModel.getInstance().getIntersect(EpsilonModel.getInstance()));
         }
 
-        for(SquareModel squareModel : SquareModel.squareModels)
-            squareModel.move(new Direction(Utils.relativeLocation(EpsilonModel.getInstance().getPosition(), squareModel.getPosition())));
-        for(TriangleModel triangleModel : TriangleModel.triangleModels)
-            triangleModel.move(new Direction(Utils.relativeLocation(EpsilonModel.getInstance().getPosition(), triangleModel.getPosition())));
+        for(SquareModel squareModel : SquareModel.squareModels) {
+            Direction direction = new Direction(Utils.relativeLocation(EpsilonModel.getInstance().getPosition(), squareModel.getPosition()));
+            if(Math.random() * 100 < 0.1 && squareModel.getAcceleration() == 0){
+                double C = 0.0003;
+                double acc = ACCELERATION;
+                double dis = squareModel.getDistance(EpsilonModel.getInstance().getPosition(), squareModel.getPosition());
+//                Direction direction1 = new Direction();
+//                Direction direction1 = new Direction(Utils.relativeLocation(EpsilonModel.getInstance().getPosition(), squareModel.getDirection().getDirectionVector()));
+                if(dis <= 1)acc /= C;
+                else acc /= (dis * C);
+                squareModel.setAcceleration(acc);
+                squareModel.setImpactDirection(direction);
+            }
+            squareModel.move(direction);
+        }
+        for(TriangleModel triangleModel : TriangleModel.triangleModels) {
+            Direction direction = new Direction(Utils.relativeLocation(EpsilonModel.getInstance().getPosition(), triangleModel.getPosition()));
+            direction = new Direction(Utils.multiplyVector(direction.getDirectionVector(),
+                    (triangleModel.getDistance(triangleModel.getPosition(), EpsilonModel.getInstance().getPosition())) > 100 ? 1.5 : 1));
+            triangleModel.move(direction);
+        }
 
         if(inputManager.isUp())
             EpsilonModel.getInstance().move(new Direction(270));
@@ -177,9 +236,9 @@ public class Update {
 //        if(Math.random()*100 < 1)
 //            new TriangleModel(stage.getX() + 20, stage.getY() + 70);
 
-        MotionSceneModel model = MotionSceneModel.getInstance();
-        MotionSceneView.getInstance().set(model.getTop(), model.getDown(), model.getRight(), model.getLeft());
-        MotionSceneView.getInstance().paint();
+//        MotionSceneModel model = MotionSceneModel.getInstance();
+//        MotionSceneView.getInstance().set(model.getTop(), model.getDown(), model.getRight(), model.getLeft());
+//        MotionSceneView.getInstance().paint();
     }));
     Timeline finishTimeLine = new Timeline(new KeyFrame(Duration.millis(UPS), actionEvent -> {
 
@@ -192,36 +251,45 @@ public class Update {
             triangleModel.update();
         for(BulletModel bulletModel : BulletModel.bulletModels)
             bulletModel.update();
+
+        MotionSceneModel.getInstance().update();
+//        MotionSceneView.getInstance().paint();
     }
     private void impact(Point2D point2D){
+        double C = 0.0003;
         for(SquareModel squareModel : SquareModel.squareModels){
             double dis = squareModel.getDistance(squareModel.getPosition(), point2D);
-            if(dis <= 1)squareModel.playAcceleration(point2D, ACCELERATION);
-            else squareModel.playAcceleration(point2D, ACCELERATION / (dis * dis));
+            if(dis <= 1)squareModel.playAcceleration(point2D, ACCELERATION / C);
+            else squareModel.playAcceleration(point2D, ACCELERATION / (dis * C));
         }
         for(TriangleModel triangleModel : TriangleModel.triangleModels){
             double dis = triangleModel.getDistance(triangleModel.getPosition(), point2D);
-            if(dis <= 1)triangleModel.playAcceleration(point2D, ACCELERATION);
-            else triangleModel.playAcceleration(point2D, ACCELERATION / (dis * dis));
+            if(dis <= 1)triangleModel.playAcceleration(point2D, ACCELERATION / C);
+            else triangleModel.playAcceleration(point2D, ACCELERATION / (dis * C));
         }
         EpsilonModel model = EpsilonModel.getInstance();
         double dis = model.getDistance(model.getPosition(), point2D);
-        if(dis <= 1)model.playAcceleration(point2D, ACCELERATION);
-        else model.playAcceleration(point2D, ACCELERATION / (dis));
+        if(dis <= 5)model.playAcceleration(point2D, ACCELERATION / C);
+        else model.playAcceleration(point2D, ACCELERATION / (dis * C));
     }
     private void death(){
-        updateModel.stop();
-        updateView.stop();
-        //TODO : complete this
+        finish();
+
     }
-    private void exit(){
+    private void finish(){
         updateModel.stop();
         updateView.stop();
         finishTimeLine.stop();
+        enemyBuilder.stop();
+
+        stage.setX(SCREEN_WIDTH/2 - MAX_WIDTH/2);
+        stage.setY(SCREEN_HEIGHT/2 - MAX_HEIGHT/2);
+        stage.setWidth(MAX_WIDTH);
+        stage.setHeight(MAX_HEIGHT);
 
     }
-    public void finish(){
-//        stage.setX(SC);
+    public void exit(){
+
 //        updateModel.stop();
 //        finishTimeLine.setCycleCount(Animation.INDEFINITE);
 //        finishTimeLine.play();
@@ -243,6 +311,12 @@ public class Update {
 
         updateModel.play();
         updateView.play();
+
+        EpsilonModel.getInstance().init();
+        TriangleModel.triangleModels.clear();
+        SquareModel.squareModels.clear();
+        BulletModel.bulletModels.clear();
+        CollectableItemModel.collectableItemModels.clear();
     }
     public void shoot(Point2D point2D){
         if(System.currentTimeMillis() - dalay > BULLET_DELAY) {

@@ -36,7 +36,7 @@ public class MotionSceneView {
     private static MotionSceneView model;
     private Stage stage;
     private Scene scene;
-    private Pane pane;
+    public Pane pane;
     public InputManager inputManager;
     private Label Wave, ElapsedTime, XP, HP;
     private int elapsedTimeInt = 0;
@@ -71,7 +71,7 @@ public class MotionSceneView {
         Wave.setTextFill(Color.WHITE);
 
         ElapsedTime = new Label("time:0");
-        ElapsedTime.setTranslateX(55);
+        ElapsedTime.setTranslateX(40);
         ElapsedTime.setTranslateY(5);
         ElapsedTime.setFont(new Font("Bold", 15));
         ElapsedTime.setTextFill(Color.FIREBRICK);
@@ -93,7 +93,12 @@ public class MotionSceneView {
         timer.setCycleCount(Animation.INDEFINITE);
         timer.play();
     }
-//    public void setScene(){
+
+    public int getElapsedTimeInt() {
+        return elapsedTimeInt;
+    }
+
+    //    public void setScene(){
 //        System.out.println("dasdadsa");
 //    }
     private double top, down, left, right;
@@ -122,7 +127,7 @@ public class MotionSceneView {
         this.down = down;
     }
     public void addBars(){
-        Wave.setText("wave:" + String.valueOf(EnemyBuilder.wave));
+        Wave.setText("⚡:" + String.valueOf(EnemyBuilder.wave));
         pane.getChildren().add(Wave);
 
         HP.setText("❤:" + String.valueOf((int)(EpsilonModel.getInstance().getHp())));
@@ -133,13 +138,15 @@ public class MotionSceneView {
 
         pane.getChildren().add(ElapsedTime);
     }
-    public void paint(){
-        pane.getChildren().clear();
-
+    public void setPage(){
         stage.setX(left);
         stage.setY(top);
         stage.setWidth(right - left);
         stage.setHeight(down - top);
+    }
+    public void paint(){
+        pane.getChildren().clear();
+        setPage();
 
         addBars();
 
@@ -209,6 +216,17 @@ public class MotionSceneView {
 
             pane.getChildren().add(rectangleOut);
             pane.getChildren().add(rectangleIn);
+        }
+
+        for(CollectableItemView collectableItemView : CollectableItemView.collectableItemViews){
+            Circle circle = new Circle();
+            circle.setRadius(collectableItemView.getRadius());
+//            circle.setRadius(20);
+            circle.setTranslateX(collectableItemView.getPosition().getX());
+            circle.setTranslateY(collectableItemView.getPosition().getY());
+            circle.setFill(collectableItemView.getColor());
+
+            pane.getChildren().add(circle);
         }
 
         for(TriangleView triangleView : TriangleView.triangleViews){

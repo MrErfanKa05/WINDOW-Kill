@@ -13,15 +13,31 @@ public class CollectableItemModel implements Collidable {
     private double radius;
     private Entity type;
     private String id;
+    private double time;
     public static ArrayList<CollectableItemModel> collectableItemModels = new ArrayList<>();
 
     public CollectableItemModel(Point2D position, double radius, Entity type) {
+        time = System.currentTimeMillis();
         this.position = position;
         this.radius = radius;
         this.type = type;
         this.id = UUID.randomUUID().toString();
         collectableItemModels.add(this);
         new CollectableItemView(id, position, radius, type);
+    }
+    public void remove(){
+        collectableItemModels.remove(this);
+        for(CollectableItemView collectableItemView : CollectableItemView.collectableItemViews)
+            if(collectableItemView.getId().equals(getId()))
+                CollectableItemView.collectableItemViews.remove(collectableItemView);
+    }
+
+    public double getTime() {
+        return time;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public Point2D getPosition() {

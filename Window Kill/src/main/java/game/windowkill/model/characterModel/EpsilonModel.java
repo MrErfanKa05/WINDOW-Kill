@@ -40,6 +40,9 @@ public class EpsilonModel extends Entity{
     SkillState skillState = SkillState.Neutral;
     private EpsilonModel() {
         super(SCREEN_WIDTH /2 , SCREEN_HEIGHT /2);
+        init();
+    }
+    public void init(){
         speed = Utils.getEpsilonSpeed();
         radius = EPSILON_RADIUS;
         hp = 100;
@@ -163,6 +166,7 @@ public class EpsilonModel extends Entity{
     public void update() {
         Point2D changePosition = Utils.multiplyVector(direction.getDirectionVector(), speed);
         position = Utils.addVector(position, changePosition);
+        impact();
     }
 
     @Override

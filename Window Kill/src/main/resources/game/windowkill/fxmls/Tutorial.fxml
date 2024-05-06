@@ -1,14 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="game.windowkill.controller.fxmlController.TutorialController"
-            prefHeight="700.0" prefWidth="700.0">
-
+<AnchorPane prefHeight="700.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game.windowkill.controller.fxmlController.TutorialController">
+   <children>
+      <ImageView fitHeight="700.0" fitWidth="700.0">
+         <image>
+            <Image url="@../resources/tutorial.jpg" />
+         </image>
+      </ImageView>
+      <Button fx:id="back" layoutX="52.0" layoutY="49.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="74.0" style="-fx-background-color: #f11231; -fx-background-radius: 15;" text="Back">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Button>
+      <Label layoutX="229.0" layoutY="486.0" prefHeight="94.0" prefWidth="242.0" text="use WSAD for move" textFill="#ff7099">
+         <font>
+            <Font name="System Bold" size="23.0" />
+         </font>
+      </Label>
+      <Button fx:id="back" layoutX="52.0" layoutY="49.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="74.0" style="-fx-background-color: #f11231; -fx-background-radius: 15;" text="Back">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Button>
+      <Label layoutX="259.0" layoutY="365.0" prefHeight="94.0" prefWidth="242.0" text="use C for shop" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="23.0" />
+         </font>
+      </Label>
+      <Label layoutX="253.0" layoutY="424.0" prefHeight="94.0" prefWidth="242.0" text="use E for ability" textFill="#59ff90">
+         <font>
+            <Font name="System Bold" size="23.0" />
+         </font>
+      </Label>
+   </children>
 </AnchorPane>

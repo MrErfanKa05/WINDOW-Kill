@@ -24,4 +24,7 @@ public abstract class Controller {
     public void setSkillTree(){
         setScene(SceneLoader.getSkillTree());
     }
+    public void getGameOver(){
+        setScene(SceneLoader.getGameOver());
+    }
 }

@@ -32,6 +32,7 @@ public class TriangleModel extends Entity {
     public void update() {
         Point2D changePosition = Utils.multiplyVector(direction.getDirectionVector(), speed);
         position = Utils.addVector(position, changePosition);
+        impact();
         //TODO : update here in Update class
         getVertices().clear();
 

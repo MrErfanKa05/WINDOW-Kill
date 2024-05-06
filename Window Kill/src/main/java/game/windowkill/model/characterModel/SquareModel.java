@@ -32,6 +32,7 @@ public class SquareModel extends Entity {
     public void update() {
         Point2D changePosition = Utils.multiplyVector(direction.getDirectionVector(), speed);
         position = Utils.addVector(position, changePosition);
+        impact();
         //TODO
         getVertices().clear();
         Point2D dLeft = Utils.addVector(new Point2D(0, 20), getPosition());

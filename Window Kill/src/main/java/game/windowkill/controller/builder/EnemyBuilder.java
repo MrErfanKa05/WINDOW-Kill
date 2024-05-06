@@ -46,6 +46,9 @@ public class EnemyBuilder {
         new TriangleModel(Math.random() * SCREEN_WIDTH, Math.random() * SCREEN_HEIGHT);
         nowT--;
     }
+    public void stop(){
+        startWave.stop();
+    }
     private int nowT, nowS, time = 0;
     Timeline startWave = new Timeline(new KeyFrame(Duration.seconds(6), actionEvent -> {
         if(10 - time > nowT){

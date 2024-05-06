@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import static game.windowkill.controller.Constant.ACCELERATION;
 import static game.windowkill.controller.Constant.ACCELERATION_TIME;
+import static java.lang.Math.max;
 
 public abstract class Entity implements Collidable, Movable {
     int piece = 0;
@@ -28,8 +29,9 @@ public abstract class Entity implements Collidable, Movable {
     int collectables;
 
     private Timeline accelerationMove = new Timeline(new KeyFrame(Duration.millis(ACCELERATION_TIME / ACCELERATION), actionEvent -> {
-        move(Utils.addVector(direction.getDirectionVector(), Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration)));
+//        move(Utils.addVector(direction.getDirectionVector(), Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration)));
         acceleration -= ACCELERATION_TIME/ACCELERATION;
+        impactDirection = new Direction(Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration));
     }));
     public Entity(double x, double y){
         id = UUID.randomUUID().toString();
@@ -37,14 +39,39 @@ public abstract class Entity implements Collidable, Movable {
         update();
     }
     public void playAcceleration(Point2D point2D, double acc){
-        playAcceleration(new Direction(point2D), acc);
+        playAcceleration(new Direction(Utils.relativeLocation(position, point2D)), acc);
     }
     public void playAcceleration(Direction direction, double acc){
         acceleration = acc;
-        impactDirection = new Direction(Utils.addVector(direction.getDirectionVector(), impactDirection.getDirectionVector()));
-        accelerationMove.stop();
-        accelerationMove.setCycleCount((int) (ACCELERATION/ACCELERATION_TIME));
-        accelerationMove.play();
+//        impactDirection = new Direction(Utils.addVector(direction.getDirectionVector(), impactDirection.getDirectionVector()));
+        impactDirection = new Direction(direction.getDirectionVector());
+//        accelerationMove.stop();
+//        accelerationMove.setCycleCount((int) (ACCELERATION/ACCELERATION_TIME));
+//        accelerationMove.play();
+    }
+
+    public Direction getImpactDirection() {
+        return impactDirection;
+    }
+
+    public void setImpactDirection(Direction impactDirection) {
+        this.impactDirection = impactDirection;
+    }
+
+    public void setAcceleration(double acceleration) {
+        this.acceleration = acceleration;
+    }
+
+    public void decreaseHearth(double num){
+        hp -= num;
+        hp = max(hp, 0);
+    }
+    public void impact(){
+//        move(Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration));
+        impactDirection = new Direction(Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration));
+        acceleration = acceleration -= 3;
+        acceleration = max(acceleration, 0);
+        move(impactDirection);
     }
 
     public String getId() {
@@ -80,6 +107,10 @@ public abstract class Entity implements Collidable, Movable {
     @Override
     public void move(Point2D point2D) {
         move(point2D, speed);
+    }
+
+    public double getAcceleration() {
+        return acceleration;
     }
 
     @Override

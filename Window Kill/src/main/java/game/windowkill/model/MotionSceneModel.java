@@ -38,7 +38,7 @@ public class MotionSceneModel implements Collidable {
     private double changeTime = 0.5;
     private double changeFrame = 0.5;
 
-    private Timeline move = new Timeline(new KeyFrame(Duration.millis(MODEL_UPDATE_TIME * 1400), actionEvent -> {
+    private Timeline move = new Timeline(new KeyFrame(Duration.millis(150), actionEvent -> {
 //        System.out.println(MODEL_UPDATE_TIME + " ");
 //        setDown(downAcceleration);
 //        setLeft(leftAcceleration);
@@ -72,20 +72,31 @@ public class MotionSceneModel implements Collidable {
         down = min(SCREEN_HEIGHT, down);
         right = min(SCREEN_WIDTH, right);
     }));
-    private Timeline moveAfterIntersect = new Timeline(new KeyFrame(Duration.millis(MODEL_UPDATE_TIME * 1000 * 2), actionEvent -> {
-//        System.out.println(rightAcceleration + "sad");
-//        if(right - left <= 202){
-////            right++;
-////            left--;
+    public void update(){
+        if(right - left <= 202){
+            right += changeFrame;
+            left -= changeFrame;
 //            rightAcceleration = 0;
 //            leftAcceleration = 0;
-//        }
-//        if(down - top <= 202){
-////            top--;
-////            down++;
+        }
+        if(down - top <= 202){
+            top -= changeFrame;
+            down += changeFrame;
 //            topAcceleration = 0;
 //            downAcceleration = 0;
-//        }
+        }
+        down -= changeFrame;
+        top += changeFrame;
+        right -= changeFrame;
+        left += changeFrame;
+
+        top = max(0, top);
+        left = max(0, left);
+        down = min(SCREEN_HEIGHT, down);
+        right = min(SCREEN_WIDTH, right);
+
+
+
         if(right + rightAcceleration - left + leftAcceleration<= 202){
 //            right++;
 //            left--;
@@ -117,6 +128,58 @@ public class MotionSceneModel implements Collidable {
         left = max(0, left);
         down = min(SCREEN_HEIGHT, down);
         right = min(SCREEN_WIDTH, right);
+
+    }
+    private Timeline moveAfterIntersect = new Timeline(new KeyFrame(Duration.millis(MODEL_UPDATE_TIME * 1000 * 2), actionEvent -> {
+//        System.out.println(rightAcceleration + "sad");
+//        if(right - left <= 202){
+////            right++;
+////            left--;
+//            rightAcceleration = 0;
+//            leftAcceleration = 0;
+//        }
+//        if(down - top <= 202){
+////            top--;
+////            down++;
+//            topAcceleration = 0;
+//            downAcceleration = 0;
+//        }
+
+
+
+        /*
+        if(right + rightAcceleration - left + leftAcceleration<= 202){
+//            right++;
+//            left--;
+            rightAcceleration = 0;
+            leftAcceleration = 0;
+        }
+        if(down + downAcceleration - top + topAcceleration <= 202){
+//            top--;
+//            down++;
+            topAcceleration = 0;
+            downAcceleration = 0;
+        }
+
+        if(downAcceleration > 0)
+            setDown(downAcceleration);
+        if(leftAcceleration > 0)
+            setLeft(leftAcceleration);
+        if(rightAcceleration > 0)
+            setRight(rightAcceleration);
+        if(topAcceleration > 0)
+            setUp(topAcceleration);
+
+        downAcceleration = max(0, downAcceleration - changeTime);
+        leftAcceleration = max(0, leftAcceleration - changeTime);
+        rightAcceleration = max(0, rightAcceleration - changeTime);
+        topAcceleration = max(0, topAcceleration - changeTime);
+
+        top = max(0, top);
+        left = max(0, left);
+        down = min(SCREEN_HEIGHT, down);
+        right = min(SCREEN_WIDTH, right);
+        */
 
     }));
     private void setUp(double acceleration){
