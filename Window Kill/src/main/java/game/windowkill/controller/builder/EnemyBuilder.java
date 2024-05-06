@@ -9,14 +9,14 @@ import javafx.util.Duration;
 import javax.imageio.plugins.tiff.TIFFDirectory;
 import java.util.Random;
 
-import static game.windowkill.controller.Constant.MAX_WIDTH;
+import static game.windowkill.controller.Constant.*;
 import static game.windowkill.controller.DataHolder.difficulty;
 
 public class EnemyBuilder {
     private int wave1Triangle, wave1Square, wave2Triangle, wave2Square, wave3Triangle, wave3Square;
     private int CWave1Triangle, CWave1Square, CWave2Triangle, CWave2Square, CWave3Triangle, CWave3Square;
     private Random random = new Random();
-    public int wave = 1;
+    public static int wave = 1;
     public boolean waveFinish = true;
     public EnemyBuilder(){
         this((int) (2 + difficulty/100 * 3), (int) (3 + difficulty/100 * 3), (int) (4 + difficulty/100 * 4), (int) (4 + difficulty/100 * 4), (int) (5 + difficulty/100 * 5), (int) (5+ difficulty/100 * 5));
@@ -34,63 +34,63 @@ public class EnemyBuilder {
         this.CWave2Square = wave2Square;
         this.CWave3Triangle = wave3Triangle;
         this.CWave3Square = wave3Square;
+        startWave.setCycleCount(10);
+        past.setCycleCount(1);
+        wave = 1;
     }
-    private int nowT, nowS;
-    Timeline startWave = new Timeline(new KeyFrame(Duration.seconds(2), actionEvent -> {
-
+    public void createSquare(){
+        new SquareModel(Math.random() * SCREEN_WIDTH, Math.random() * SCREEN_HEIGHT);
+        nowS--;
+    }
+    public void createTriangle(){
+        new TriangleModel(Math.random() * SCREEN_WIDTH, Math.random() * SCREEN_HEIGHT);
+        nowT--;
+    }
+    private int nowT, nowS, time = 0;
+    Timeline startWave = new Timeline(new KeyFrame(Duration.seconds(6), actionEvent -> {
+        if(10 - time > nowT){
+            if(Math.random() * 100 < 50)
+                createTriangle();
+        }
+        else{
+            createTriangle();
+        }
+        if(10 - time > nowS){
+            if(Math.random() * 100 < 50)
+                createSquare();
+        }
+        else{
+            createSquare();
+        }
+        time++;
+        if(time == 10){
+            time = 0;
+            waveFinish = true;
+            wave++;
+        }
+    }));
+    Timeline past = new Timeline(new KeyFrame(Duration.seconds(4), actionEvent -> {
+        startWave.play();
     }));
     public void playWave1(){
         nowS = wave1Square;
         nowT = wave1Triangle;
         waveFinish = false;
-        for(int i = 0; i < wave1Square; i++) {
-            int x, y;
-            x = random.nextInt((int) MAX_WIDTH);
-            y = random.nextInt((int) MAX_WIDTH);
-            new SquareModel(x, y);
-        }
-        for(int i= 0; i < wave1Triangle; i++){
-            int x, y;
-            x = random.nextInt((int) MAX_WIDTH);
-            y = random.nextInt((int) MAX_WIDTH);
-            new TriangleModel(x, y);
-        }
-        wave++;
+
+        past.play();
     }
     public void playWave2(){
         nowS = wave2Square;
         nowT = wave2Triangle;
         waveFinish = false;
-        for(int i = 0; i < wave2Square; i++) {
-            int x, y;
-            x = random.nextInt((int) MAX_WIDTH);
-            y = random.nextInt((int) MAX_WIDTH);
-            new SquareModel(x, y);
-        }
-        for(int i= 0; i < wave2Triangle; i++){
-            int x, y;
-            x = random.nextInt((int) MAX_WIDTH);
-            y = random.nextInt((int) MAX_WIDTH);
-            new TriangleModel(x, y);
-        }
-        wave++;
+
+        past.play();
     }
     public void playWave3(){
         nowS = wave3Square;
         nowT = wave3Triangle;
         waveFinish = false;
-        for(int i = 0; i < wave3Square; i++) {
-            int x, y;
-            x = random.nextInt((int) MAX_WIDTH);
-            y = random.nextInt((int) MAX_WIDTH);
-            new SquareModel(x, y);
-        }
-        for(int i= 0; i < wave3Triangle; i++){
-            int x, y;
-            x = random.nextInt((int) MAX_WIDTH);
-            y = random.nextInt((int) MAX_WIDTH);
-            new TriangleModel(x, y);
-        }
-        wave++;
+
+        past.play();
     }
 }

@@ -3,6 +3,8 @@ package game.windowkill.view;
 import game.windowkill.controller.Constant;
 import game.windowkill.controller.DataHolder;
 import game.windowkill.controller.InputManager;
+import game.windowkill.controller.builder.EnemyBuilder;
+import game.windowkill.model.characterModel.EpsilonModel;
 import game.windowkill.view.characterView.EpsilonView;
 import game.windowkill.view.characterView.SquareView;
 import game.windowkill.view.characterView.TriangleView;
@@ -12,6 +14,7 @@ import javafx.animation.Timeline;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -24,6 +27,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.awt.*;
+import java.io.File;
+import java.net.MalformedURLException;
 
 import static game.windowkill.controller.Constant.*;
 
@@ -37,7 +42,7 @@ public class MotionSceneView {
     private int elapsedTimeInt = 0;
     Timeline timer = new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
         elapsedTimeInt++;
-        ElapsedTime.setText(String.valueOf(elapsedTimeInt));
+        ElapsedTime.setText("time:" + String.valueOf(elapsedTimeInt));
     }));
 
     public InputManager getInputManager() {
@@ -59,20 +64,20 @@ public class MotionSceneView {
         stage.setScene(scene);
         pane.setBackground(Background.fill(Color.BLACK));
 
-        Wave = new Label("0");
+        Wave = new Label("wave:0");
         Wave.setTranslateX(5);
         Wave.setTranslateY(5);
         Wave.setFont(new Font("Bold", 15));
         Wave.setTextFill(Color.WHITE);
 
-        ElapsedTime = new Label("0");
-        ElapsedTime.setTranslateX(30);
+        ElapsedTime = new Label("time:0");
+        ElapsedTime.setTranslateX(55);
         ElapsedTime.setTranslateY(5);
         ElapsedTime.setFont(new Font("Bold", 15));
         ElapsedTime.setTextFill(Color.FIREBRICK);
 
         XP = new Label("0");
-        XP.setTranslateX(140);
+        XP.setTranslateX(150);
         XP.setTranslateY(5);
         XP.setFont(new Font("Bold", 15));
         XP.setTextFill(Color.YELLOW);
@@ -82,6 +87,8 @@ public class MotionSceneView {
         HP.setTranslateY(5);
         HP.setFont(new Font("Bold", 15));
         HP.setTextFill(Color.RED);
+
+        addBars();
 
         timer.setCycleCount(Animation.INDEFINITE);
         timer.play();
@@ -115,38 +122,57 @@ public class MotionSceneView {
         this.down = down;
     }
     public void addBars(){
+        Wave.setText("wave:" + String.valueOf(EnemyBuilder.wave));
         pane.getChildren().add(Wave);
+
+        HP.setText("❤:" + String.valueOf((int)(EpsilonModel.getInstance().getHp())));
         pane.getChildren().add(HP);
+
+        XP.setText("⚔:" + String.valueOf((int) EpsilonModel.getInstance().getXP()));
         pane.getChildren().add(XP);
+
         pane.getChildren().add(ElapsedTime);
     }
     public void paint(){
         pane.getChildren().clear();
 
         stage.setX(left);
-        stage.setWidth(right - left);
         stage.setY(top);
+        stage.setWidth(right - left);
         stage.setHeight(down - top);
 
         addBars();
 
+        File file = new File("src/main/resources/game/windowkill/resources/circle.png");
+        ImageView imageView = null;
+        try {
+            imageView = new ImageView(String.valueOf(file.toURI().toURL()));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        imageView.setFitWidth(25);
+        imageView.setFitHeight(25);
+        imageView.setTranslateX(EpsilonView.getInstance().getX());
+        imageView.setTranslateY(EpsilonView.getInstance().getY());
+
+        pane.getChildren().add(imageView);
 //        System.out.println(EpsilonView.getInstance().getPosition());
 
-        Circle circleOut = new Circle();
-        circleOut.setRadius(EpsilonView.getInstance().getRadius());
-        circleOut.setTranslateX(EpsilonView.getInstance().getX());
-        circleOut.setTranslateY(EpsilonView.getInstance().getY());
-        circleOut.setFill(OUTSIDE_EPSILON_COLOR);
+//        Circle circleOut = new Circle();
+//        circleOut.setRadius(EpsilonView.getInstance().getRadius());
+//        circleOut.setTranslateX(EpsilonView.getInstance().getX());
+//        circleOut.setTranslateY(EpsilonView.getInstance().getY());
+//        circleOut.setFill(OUTSIDE_EPSILON_COLOR);
+//
+//        Circle inCircle = new Circle();
+//        inCircle.setRadius(EpsilonView.getInstance().getRadius() - 4);
+//        inCircle.setTranslateX(EpsilonView.getInstance().getX() + 0);
+//        inCircle.setTranslateY(EpsilonView.getInstance().getY() + 0);
+//        inCircle.setFill(INSIDE_EPSILON_COLOR);
 
-        Circle inCircle = new Circle();
-        inCircle.setRadius(EpsilonView.getInstance().getRadius() - 4);
-        inCircle.setTranslateX(EpsilonView.getInstance().getX() + 0);
-        inCircle.setTranslateY(EpsilonView.getInstance().getY() + 0);
-        inCircle.setFill(INSIDE_EPSILON_COLOR);
 
-
-        pane.getChildren().add(circleOut);
-        pane.getChildren().add(inCircle);
+//        pane.getChildren().add(circleOut);
+//        pane.getChildren().add(inCircle);
 
         for(BulletView bullet : BulletView.bulletViews){
 //            if(b)
@@ -176,10 +202,10 @@ public class MotionSceneView {
 
             Rectangle rectangleIn = new Rectangle();
             rectangleIn.setFill(Color.BLACK);
-            rectangleIn.setHeight(16);
-            rectangleIn.setWidth(16);
-            rectangleIn.setX(squareView.getPosition().getX() + 2);
-            rectangleIn.setY(squareView.getPosition().getY() + 2);
+            rectangleIn.setHeight(12);
+            rectangleIn.setWidth(12);
+            rectangleIn.setX(squareView.getPosition().getX() + 4);
+            rectangleIn.setY(squareView.getPosition().getY() + 4);
 
             pane.getChildren().add(rectangleOut);
             pane.getChildren().add(rectangleIn);
@@ -192,37 +218,50 @@ public class MotionSceneView {
                     triangleView.getPosition().getY() + stage.getY() > down)
                 continue;
             //TODO : make it correct;
-            Point2D left = new Point2D(triangleView.getPosition().getX(), triangleView.getPosition().getY() + 20);
-            Point2D right = new Point2D(triangleView.getPosition().getX() + 20, triangleView.getPosition().getY() + 20);
-            Point2D up = new Point2D(triangleView.getPosition().getX() + 10, triangleView.getPosition().getY());
+            file = new File("src/main/resources/game/windowkill/resources/triangle.png");
+            ImageView triangleImage = null;
+            try {
+                triangleImage = new ImageView(String.valueOf(file.toURI().toURL()));
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+            triangleImage.setTranslateX(triangleView.getPosition().getX());
+            triangleImage.setTranslateY(triangleView.getPosition().getY());
+            triangleImage.setFitHeight(20);
+            triangleImage.setFitWidth(20);
 
-            Line leftLine = new Line();
-            leftLine.setFill(Color.YELLOW);
-            leftLine.setStartX(left.getX());
-            leftLine.setStartY(left.getY());
-            leftLine.setEndX(up.getX());
-            leftLine.setEndY(up.getY());
-
-            Line rightLine = new Line();
-            rightLine.setFill(Color.YELLOW);
-            rightLine.setStartX(right.getX());
-            rightLine.setStartY(right.getY());
-            rightLine.setEndX(up.getX());
-            rightLine.setEndY(up.getY());
-
-            Line downLine = new Line();
-//            downLine.setTranslateX(right.getX());
-//            downLine.setTranslateY(right.getY());
-            downLine.setFill(Paint.valueOf("0xffff00ff"));
-            downLine.setStartX(right.getX());
-            downLine.setStartY(right.getY());
-            downLine.setEndX(left.getX());
-            downLine.setEndY(left.getY());
-            System.out.println(downLine.getTranslateX() + " " + downLine.getTranslateY());
-
-            pane.getChildren().add(downLine);
-            pane.getChildren().add(leftLine);
-            pane.getChildren().add(rightLine);
+            pane.getChildren().add(triangleImage);
+//            Point2D left = new Point2D(triangleView.getPosition().getX(), triangleView.getPosition().getY() + 20);
+//            Point2D right = new Point2D(triangleView.getPosition().getX() + 20, triangleView.getPosition().getY() + 20);
+//            Point2D up = new Point2D(triangleView.getPosition().getX() + 10, triangleView.getPosition().getY());
+//
+//            Line leftLine = new Line();
+//            leftLine.setFill(Color.YELLOW);
+//            leftLine.setStartX(left.getX());
+//            leftLine.setStartY(left.getY());
+//            leftLine.setEndX(up.getX());
+//            leftLine.setEndY(up.getY());
+//
+//            Line rightLine = new Line();
+//            rightLine.setFill(Color.YELLOW);
+//            rightLine.setStartX(right.getX());
+//            rightLine.setStartY(right.getY());
+//            rightLine.setEndX(up.getX());
+//            rightLine.setEndY(up.getY());
+//
+//            Line downLine = new Line();
+////            downLine.setTranslateX(right.getX());
+////            downLine.setTranslateY(right.getY());
+//            downLine.setFill(Paint.valueOf("0xffff00ff"));
+//            downLine.setStartX(right.getX());
+//            downLine.setStartY(right.getY());
+//            downLine.setEndX(left.getX());
+//            downLine.setEndY(left.getY());
+//            System.out.println(downLine.getTranslateX() + " " + downLine.getTranslateY());
+//
+//            pane.getChildren().add(downLine);
+//            pane.getChildren().add(leftLine);
+//            pane.getChildren().add(rightLine);
         }
     }
 }

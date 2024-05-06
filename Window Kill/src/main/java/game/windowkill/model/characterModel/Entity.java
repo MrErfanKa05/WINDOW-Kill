@@ -36,11 +36,11 @@ public abstract class Entity implements Collidable, Movable {
         position = new Point2D(x, y);
         update();
     }
-    public void playAcceleration(Point2D point2D){
-        playAcceleration(new Direction(point2D));
+    public void playAcceleration(Point2D point2D, double acc){
+        playAcceleration(new Direction(point2D), acc);
     }
-    public void playAcceleration(Direction direction){
-        acceleration = ACCELERATION;
+    public void playAcceleration(Direction direction, double acc){
+        acceleration = acc;
         impactDirection = new Direction(Utils.addVector(direction.getDirectionVector(), impactDirection.getDirectionVector()));
         accelerationMove.stop();
         accelerationMove.setCycleCount((int) (ACCELERATION/ACCELERATION_TIME));
@@ -87,7 +87,31 @@ public abstract class Entity implements Collidable, Movable {
         Point2D movement = Utils.multiplyVector(point2D, speed);
         Point2D changePosition = Utils.multiplyVector(direction.getDirectionVector(), speed);
         movement = Utils.addVector(movement, changePosition);
+//        movement = Utils.addVector(movement, Utils.multiplyVector(impactDirection.getDirectionVector(), accelerationMove))
         position = Utils.addVector(position, movement);
     }
 
+    public double getHp() {
+        return hp;
+    }
+
+    public void setHp(double hp) {
+        this.hp = hp;
+    }
+
+    public double getAttackHp() {
+        return attackHp;
+    }
+
+    public void setAttackHp(double attackHp) {
+        this.attackHp = attackHp;
+    }
+
+    public int getCollectables() {
+        return collectables;
+    }
+
+    public void setCollectables(int collectables) {
+        this.collectables = collectables;
+    }
 }

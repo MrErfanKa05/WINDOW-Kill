@@ -60,6 +60,11 @@ public class BulletModel implements Collidable , Movable {
         return false;
     }
 
+    @Override
+    public Point2D getIntersect(Entity entity) {
+        return null;
+    }
+
     public double getRadius() {
         return radius;
     }

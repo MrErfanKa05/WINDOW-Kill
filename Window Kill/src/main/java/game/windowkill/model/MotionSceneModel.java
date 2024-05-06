@@ -186,5 +186,23 @@ public class MotionSceneModel implements Collidable {
                 entity.collision(new Point2D(left, entity.getPosition().getY())) ||
                 entity.collision(new Point2D(right, entity.getPosition().getY()));
     }
+
+    @Override
+    public Point2D getIntersect(Entity entity) {
+        Point2D p1 = new Point2D(entity.getPosition().getX(), top);
+        Point2D p2 = new Point2D(entity.getPosition().getX(), down);
+        Point2D p3 = new Point2D(right, entity.getPosition().getY());
+        Point2D p4 = new Point2D(left, entity.getPosition().getY());
+        if(entity.collision(p1))
+            return p1;
+        if(entity.collision(p2))
+            return p2;
+        if(entity.collision(p3))
+            return p3;
+        if(entity.collision(p4))
+            return p4;
+
+        return null;
+    }
 }
 //TODO : Check intersect with board

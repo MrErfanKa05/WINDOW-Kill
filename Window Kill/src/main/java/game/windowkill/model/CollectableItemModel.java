@@ -59,4 +59,9 @@ public class CollectableItemModel implements Collidable {
     public boolean checkIntersect(Entity entity) {
         return entity.collision(position);
     }
+
+    @Override
+    public Point2D getIntersect(Entity entity) {
+        return null;
+    }
 }
