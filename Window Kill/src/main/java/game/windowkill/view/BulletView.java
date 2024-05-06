@@ -1,5 +1,6 @@
 package game.windowkill.view;
 
+import game.windowkill.controller.DataHolder;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
@@ -24,7 +25,10 @@ public class BulletView {
     }
 
     public Point2D getPosition() {
-        return position;
+        double paneX = position.getX() - DataHolder.stage.getX();
+        double paneY = position.getY() - DataHolder.stage.getY();
+//        System.out.println(position.getX() + " " + paneX);
+        return new Point2D(paneX, paneY);
     }
 
     public void setPosition(Point2D position) {

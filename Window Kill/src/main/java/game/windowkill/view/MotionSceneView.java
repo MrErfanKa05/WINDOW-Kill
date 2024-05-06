@@ -90,16 +90,29 @@ public class MotionSceneView {
 //        System.out.println("dasdadsa");
 //    }
     private double top, down, left, right;
+
+    public double getTop() {
+        return top;
+    }
+
+    public double getDown() {
+        return down;
+    }
+
+    public double getLeft() {
+        return left;
+    }
+
+    public double getRight() {
+        return right;
+    }
+
     public void set(double top, double down, double right, double left){
 //        top -= 10;
         this.top = top;
         this.left = left;
         this.right = right;
         this.down = down;
-        stage.setX(left);
-        stage.setWidth(right - left);
-        stage.setY(top);
-        stage.setHeight(down - top);
     }
     public void addBars(){
         pane.getChildren().add(Wave);
@@ -109,7 +122,15 @@ public class MotionSceneView {
     }
     public void paint(){
         pane.getChildren().clear();
+
+        stage.setX(left);
+        stage.setWidth(right - left);
+        stage.setY(top);
+        stage.setHeight(down - top);
+
         addBars();
+
+//        System.out.println(EpsilonView.getInstance().getPosition());
 
         Circle circleOut = new Circle();
         circleOut.setRadius(EpsilonView.getInstance().getRadius());
@@ -140,10 +161,11 @@ public class MotionSceneView {
         }
 
         for(SquareView squareView : SquareView.squareViews){
-            if(squareView.getPosition().getX() + 20 < left ||
-                squareView.getPosition().getX() > right ||
-                squareView.getPosition().getY() + 20 < top ||
-                squareView.getPosition().getY() > down)
+//            System.out.println(squareView.getPosition() + " " + left + " " + right);
+            if(squareView.getPosition().getX() + 20 + stage.getX() < left ||
+                squareView.getPosition().getX() + stage.getX() > right ||
+                squareView.getPosition().getY() + 20 + stage.getY() < top ||
+                squareView.getPosition().getY() + stage.getY() > down)
                 continue;
             Rectangle rectangleOut = new Rectangle();
             rectangleOut.setFill(Color.GREEN);
@@ -164,10 +186,10 @@ public class MotionSceneView {
         }
 
         for(TriangleView triangleView : TriangleView.triangleViews){
-            if(triangleView.getPosition().getX() + 20 < left ||
-                    triangleView.getPosition().getX() > right ||
-                    triangleView.getPosition().getY() + 20 < top ||
-                    triangleView.getPosition().getY() > down)
+            if(triangleView.getPosition().getX() + 20 + stage.getX() < left ||
+                    triangleView.getPosition().getX() + stage.getX() > right ||
+                    triangleView.getPosition().getY() + 20 + stage.getY() < top ||
+                    triangleView.getPosition().getY() + stage.getY() > down)
                 continue;
             //TODO : make it correct;
             Point2D left = new Point2D(triangleView.getPosition().getX(), triangleView.getPosition().getY() + 20);

@@ -12,8 +12,9 @@ public class Constant {
     public static final double EPSILON_RADIUS = 12.5;
     public static final double ACCELERATION = 10;
     public static final double ACCELERATION_DECREASE = 10;
-    public static final double SPEED = 20;
-    public static final double BULLET_SPEED = 50;
+    public static final double EPSILON_SPEED = 6;
+    public static final double SPEED = 3;
+    public static final double BULLET_SPEED = 8;
     public static final double TRIANGLE_DISTRICT = 25;
     public static final double SQUARE_DISTRICT = 25;
     public static final Dimension GLASS_FRAME_DIMENSION = Toolkit.getDefaultToolkit().getScreenSize();
@@ -30,4 +31,5 @@ public class Constant {
     public static final int SCENE_DECREASE_ACCELERATION = 10;
     public static final javafx.scene.paint.Color OUTSIDE_EPSILON_COLOR = Color.WHITE;
     public static final Color INSIDE_EPSILON_COLOR = Color.BLACK;
+    public static final int BULLET_DELAY = 250;
 }

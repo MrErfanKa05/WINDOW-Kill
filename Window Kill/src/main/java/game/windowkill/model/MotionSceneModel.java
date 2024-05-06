@@ -92,7 +92,7 @@ public class MotionSceneModel implements Collidable {
             rightAcceleration = 0;
             leftAcceleration = 0;
         }
-        if(down +downAcceleration - top +topAcceleration <= 202){
+        if(down + downAcceleration - top + topAcceleration <= 202){
 //            top--;
 //            down++;
             topAcceleration = 0;
@@ -113,7 +113,7 @@ public class MotionSceneModel implements Collidable {
         rightAcceleration = max(0, rightAcceleration - changeTime);
         topAcceleration = max(0, topAcceleration - changeTime);
 
-        top = max(10, top);
+        top = max(0, top);
         left = max(0, left);
         down = min(SCREEN_HEIGHT, down);
         right = min(SCREEN_WIDTH, right);
@@ -170,8 +170,12 @@ public class MotionSceneModel implements Collidable {
                 ((BulletModel) o).collision(new Point2D(((BulletModel) o).getPosition().getX(), down));
     }
     @Override
-    @Deprecated
     public boolean collision(Point2D point2D) {
+        if(point2D.getY() - top <= 1 ||
+                down - point2D.getY() <= 1 ||
+                point2D.getX() - left <= 1 ||
+                right - point2D.getX() <= 1)
+            return true;
         return false;
     }
 

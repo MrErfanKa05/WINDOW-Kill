@@ -3,6 +3,7 @@ package game.windowkill.view.characterView;
 import game.windowkill.controller.DataHolder;
 import game.windowkill.model.characterModel.EpsilonModel;
 import game.windowkill.model.characterModel.move.Direction;
+import game.windowkill.view.MotionSceneView;
 import javafx.geometry.Point2D;
 
 public class EpsilonView {
@@ -32,7 +33,9 @@ public class EpsilonView {
     }
 
     public void setPosition(Point2D position){
-        this.position = new Point2D(position.getX() + DataHolder.stage.getX(), position.getY() + DataHolder.stage.getY());
+//        this.position = new Point2D(position.getX() + MotionSceneView.getInstance().getLeft(),
+//                position.getY() + MotionSceneView.getInstance().getTop());
+        this.position = position;
     }
     private void setDirection(Direction direction){
         this.direction = direction;
@@ -41,6 +44,7 @@ public class EpsilonView {
     public Point2D getPosition() {
         double paneX = position.getX() - DataHolder.stage.getX();
         double paneY = position.getY() - DataHolder.stage.getY();
+//        System.out.println(position.getX() + " " + paneX);
         return new Point2D(paneX, paneY);
     }
 

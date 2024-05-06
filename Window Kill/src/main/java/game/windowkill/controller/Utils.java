@@ -2,11 +2,15 @@ package game.windowkill.controller;
 
 import javafx.geometry.Point2D;
 
+import static game.windowkill.controller.Constant.EPSILON_SPEED;
 import static game.windowkill.controller.Constant.SPEED;
 
 public class Utils {
+    public static double getEpsilonSpeed(){
+        return EPSILON_SPEED/10 + 9*EPSILON_SPEED/10 * DataHolder.sensitivity / 100;
+    }
     public static double getSpeed(){
-        return SPEED/5 + 4*SPEED/5 * DataHolder.sensitivity / 100;
+        return SPEED/10 + 9*SPEED/10 * DataHolder.sensitivity / 100;
     }
     public static Point2D addVector(Point2D point2D1, Point2D point2D2){
         return new Point2D(point2D2.getX() + point2D1.getX(), point2D2.getY() + point2D1.getY());

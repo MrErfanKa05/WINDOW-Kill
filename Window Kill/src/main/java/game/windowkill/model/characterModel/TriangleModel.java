@@ -20,13 +20,17 @@ public class TriangleModel extends Entity {
 
     public void remove(){
         triangleModels.remove(this);
+        TriangleView nowTriangleView= null;
         for(TriangleView triangleView : TriangleView.triangleViews)
             if(triangleView.getId().equals(getId()))
-                TriangleView.triangleViews.remove(triangleView);
+                nowTriangleView = triangleView;
+        TriangleView.triangleViews.remove(nowTriangleView);
     }
 
     @Override
     public void update() {
+        Point2D changePosition = Utils.multiplyVector(direction.getDirectionVector(), speed);
+        position = Utils.addVector(position, changePosition);
         //TODO : update here in Update class
         getVertices().clear();
         //TODO : make new vector for vertices;
@@ -47,16 +51,6 @@ public class TriangleModel extends Entity {
 
         }
         return false;
-    }
-
-    @Override
-    public void move(Point2D point2D) {
-        this.position = point2D;
-    }
-
-    @Override
-    public void move(Point2D point2D, double speed) {
-
     }
 
     @Override

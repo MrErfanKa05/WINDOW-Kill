@@ -1,5 +1,6 @@
 package game.windowkill.model.characterModel;
 
+import game.windowkill.controller.Utils;
 import game.windowkill.view.characterView.SquareView;
 import game.windowkill.view.characterView.TriangleView;
 import javafx.geometry.Point2D;
@@ -19,13 +20,18 @@ public class SquareModel extends Entity {
 
     public void remove(){
         squareModels.remove(this);
+        SquareView nowSquareView = null;
         for(SquareView squareView : SquareView.squareViews)
             if(squareView.getId().equals(getId()))
-                SquareView.squareViews.remove(squareView);
+                nowSquareView = squareView;
+        SquareView.squareViews.remove(nowSquareView);
     }
 
     @Override
     public void update() {
+        Point2D changePosition = Utils.multiplyVector(direction.getDirectionVector(), speed);
+        position = Utils.addVector(position, changePosition);
+        //TODO
 
     }
 
@@ -37,16 +43,6 @@ public class SquareModel extends Entity {
     @Override
     public boolean checkIntersect(Entity entity) {
         return false;
-    }
-
-    @Override
-    public void move(Point2D point2D) {
-
-    }
-
-    @Override
-    public void move(Point2D point2D, double speed) {
-
     }
 
     @Override

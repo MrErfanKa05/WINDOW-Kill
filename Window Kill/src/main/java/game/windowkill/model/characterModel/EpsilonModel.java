@@ -4,9 +4,7 @@ import game.windowkill.controller.Utils;
 import game.windowkill.model.characterModel.move.Direction;
 import javafx.geometry.Point2D;
 
-import static game.windowkill.controller.Constant.EPSILON_RADIUS;
-import static game.windowkill.controller.Constant.MAX_WIDTH;
-import static game.windowkill.controller.Constant.MAX_HEIGHT;
+import static game.windowkill.controller.Constant.*;
 
 public class EpsilonModel extends Entity{
     private static EpsilonModel epsilonModel;
@@ -40,7 +38,8 @@ public class EpsilonModel extends Entity{
 
     SkillState skillState = SkillState.Neutral;
     private EpsilonModel() {
-        super(MAX_WIDTH /2 , MAX_HEIGHT /2);
+        super(SCREEN_WIDTH /2 , SCREEN_HEIGHT /2);
+        speed = Utils.getEpsilonSpeed();
         radius = EPSILON_RADIUS;
         hp = 100;
         attackHp = 5;
@@ -83,18 +82,8 @@ public class EpsilonModel extends Entity{
 
     @Override
     public void update() {
-        return;
-    }
-
-    @Override
-    public void move(Point2D point2D) {
-        move(point2D, speed);
-    }
-
-    @Override
-    public void move(Point2D point2D, double speed) {
-        Point2D movement = Utils.multiplyVector(point2D, speed);
-        position = Utils.addVector(position, movement);
+        Point2D changePosition = Utils.multiplyVector(direction.getDirectionVector(), speed);
+        position = Utils.addVector(position, changePosition);
     }
 
     @Override

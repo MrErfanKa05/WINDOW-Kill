@@ -1,11 +1,9 @@
 package game.windowkill.model.characterModel;
 
-import game.windowkill.controller.Constant;
 import game.windowkill.controller.Utils;
 import game.windowkill.model.characterModel.collision.Collidable;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.model.characterModel.move.Movable;
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Point2D;
@@ -79,5 +77,17 @@ public abstract class Entity implements Collidable, Movable {
         return Math.sqrt(point2.getX() * point1.getX() + point2.getY() * point1.getY());
     }
     public abstract void update();
+    @Override
+    public void move(Point2D point2D) {
+        move(point2D, speed);
+    }
+
+    @Override
+    public void move(Point2D point2D, double speed) {
+        Point2D movement = Utils.multiplyVector(point2D, speed);
+        Point2D changePosition = Utils.multiplyVector(direction.getDirectionVector(), speed);
+        movement = Utils.addVector(movement, changePosition);
+        position = Utils.addVector(position, movement);
+    }
 
 }

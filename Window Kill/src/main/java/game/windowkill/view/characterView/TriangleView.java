@@ -33,7 +33,8 @@ public class TriangleView {
     }
 
     public void setPosition(Point2D position) {
-        this.position = new Point2D(position.getX() + DataHolder.stage.getX(), position.getY() + DataHolder.stage.getY());
+//        this.position = new Point2D(position.getX() + DataHolder.stage.getX(), position.getY() + DataHolder.stage.getY());
+        this.position = position;
     }
 
     public Direction getDirection() {

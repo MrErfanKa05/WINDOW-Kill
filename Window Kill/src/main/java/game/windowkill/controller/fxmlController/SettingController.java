@@ -22,6 +22,9 @@ public class SettingController extends Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         back.setOnAction(actionEvent -> Exit());
+        sensitive.setValue(DataHolder.sensitivity);
+        difficulty.setValue(DataHolder.difficulty);
+        sound.setValue(DataHolder.soundVolume);
     }
     public void Exit(){
         DataHolder.difficulty = difficulty.getValue();
