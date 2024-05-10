@@ -46,6 +46,37 @@ public class TriangleModel extends Entity {
 //        Point2D point2D = Utils.multiplyVector()
 //        getVertices().add()
     }
+    private boolean doSegmentsIntersect(Point2D p1, Point2D q1, Point2D p2, Point2D q2) {
+        int o1 = orientation(p1, q1, p2);
+        int o2 = orientation(p1, q1, q2);
+        int o3 = orientation(p2, q2, p1);
+        int o4 = orientation(p2, q2, q1);
+
+        if (o1 != o2 && o3 != o4)
+            return true;
+
+        if (o1 == 0 && isOnSegment(p1, p2, q1))
+            return true;
+        if (o2 == 0 && isOnSegment(p1, q2, q1))
+            return true;
+        if (o3 == 0 && isOnSegment(p2, p1, q2))
+            return true;
+        if (o4 == 0 && isOnSegment(p2, q1, q2))
+            return true;
+
+        return false;
+    }
+
+    private int orientation(Point2D p, Point2D q, Point2D r) {
+        double val = (q.getY() - p.getY()) * (r.getX() - q.getX()) - (q.getX() - p.getX()) * (r.getY() - q.getY());
+        if (val == 0) return 0; // Collinear
+        return (val > 0) ? 1 : 2; // Clockwise or counterclockwise
+    }
+
+    private boolean isOnSegment(Point2D p, Point2D q, Point2D r) {
+        return q.getX() <= Math.max(p.getX(), r.getX()) && q.getX() >= Math.min(p.getX(), r.getX()) &&
+                q.getY() <= Math.max(p.getY(), r.getY()) && q.getY() >= Math.min(p.getY(), r.getY());
+    }
 
     private double sign(double p1x, double p1y, double p2x, double p2y, double p3x, double p3y) {
         return (p1x - p3x) * (p2y - p3y) - (p2x - p3x) * (p1y - p3y);
@@ -78,6 +109,12 @@ public class TriangleModel extends Entity {
         if(entity instanceof SquareModel){
             return entity.checkIntersect(this);
         }
+        if(entity instanceof TriangleModel){
+            Point2D p1 = entity.getVertices().get(0);
+            Point2D p2 = entity.getVertices().get(1);
+            Point2D p3 = entity.getVertices().get(2);
+            return collision(p1) || collision(p2) || collision(p3);
+        }
         return false;
     }
 
@@ -87,6 +124,17 @@ public class TriangleModel extends Entity {
             return entity.getIntersect(this);
         if(entity instanceof SquareModel)
             return entity.getIntersect(this);
+        if(entity instanceof TriangleModel){
+            Point2D p1 = entity.getVertices().get(0);
+            Point2D p2 = entity.getVertices().get(1);
+            Point2D p3 = entity.getVertices().get(2);
+            if(collision(p1))
+                return p1;
+            if(collision(p2))
+                return p2;
+            if(collision(p3))
+                return p3;
+        }
         return null;
     }
 

@@ -6,6 +6,7 @@ import game.windowkill.model.characterModel.move.Direction;
 import javafx.geometry.Point2D;
 
 import static game.windowkill.controller.Constant.*;
+import static java.lang.Math.abs;
 
 public class EpsilonModel extends Entity{
     private static EpsilonModel epsilonModel;
@@ -35,6 +36,13 @@ public class EpsilonModel extends Entity{
 
     public void setSkillState(SkillState skillState) {
         this.skillState = skillState;
+    }
+
+    @Override
+    public Point2D getPosition() {
+        double x = getX();
+        double y = getY();
+        return new Point2D(x, y);
     }
 
     SkillState skillState = SkillState.Neutral;
@@ -72,13 +80,13 @@ public class EpsilonModel extends Entity{
     }
     public boolean checkPointInsideCircle(double x1, double y1, double x2, double y2){
         Point2D point = pointInsideCircle(x1, y1, x2, y2);
-        return getDistance(point, new Point2D(getX(), getY())) <= radius;
+        return getDistance(point, new Point2D(getX() + 10, getY() + 10)) <= radius;
     }
     public Point2D pointInsideCircle(double x1, double y1, double x2, double y2){
         double lineLengthX = x2 - x1;
         double lineLengthY = y2 - y1;
 
-        double t = ((getX() - x1) * lineLengthX + (getY() - y1) * lineLengthY) /
+        double t = ((getX() + 10 - x1) * lineLengthX + (getY() + 10 - y1) * lineLengthY) /
                 (lineLengthX * lineLengthX + lineLengthY * lineLengthY);
         t = Math.max(0, Math.min(t, 1));
 
@@ -89,6 +97,48 @@ public class EpsilonModel extends Entity{
     }
 
     @Override
+    public void move(Direction direction) {
+        change(direction.getDirectionVector(), speed);
+    }
+
+    public void change(Direction direction){
+        change(direction.getDirectionVector(), speed);
+//        move(direction.getDirectionVector(), speed);
+    }
+    public void change(Point2D point2D, double speed){
+        Point2D movement = Utils.multiplyVector(point2D, speed);
+        Point2D changePosition = Utils.multiplyVector(direction.getDirectionVector(), speed);
+        movement = Utils.addVector(movement, changePosition);
+        Point2D point = Utils.addVector(position, movement);
+
+        double left = MotionSceneModel.getInstance().getLeft();
+        double right = MotionSceneModel.getInstance().getRight();
+        double top = MotionSceneModel.getInstance().getTop();
+        double down = MotionSceneModel.getInstance().getDown();
+
+//        System.out.println(left + " " + point.getX());
+
+        if(abs(point.getX() - left) <= 3){
+            position = new Point2D(getX() + 1, getY());
+            return;
+        }
+        if(abs(right - point.getX() - 20) <= 3){
+            position = new Point2D(getX() - 1, getY());
+            return;
+        }
+        if(abs(point.getY() - top) <= 3){
+            position = new Point2D(getX(), getY() + 1);
+            return;
+        }
+        if(abs(down - point.getY() - 20) <= 3){
+            position = new Point2D(getX(), getY() - 1);
+            return;
+        }
+        position = Utils.addVector(position, movement);
+
+    }
+
+    @Override
     public void move(Point2D point2D, double speed){
         Point2D movement = Utils.multiplyVector(point2D, speed);
         Point2D changePosition = Utils.multiplyVector(direction.getDirectionVector(), speed);
@@ -96,6 +146,16 @@ public class EpsilonModel extends Entity{
         if(MotionSceneModel.getInstance().collision(Utils.addVector(position, movement)))
             return;
         position = Utils.addVector(position, movement);
+//        if(MotionSceneModel.getInstance().collision(Utils.addVector(position, new Point2D(movement.getX() + 22, movement.getY() + 22)))) {
+//            return;
+//        }
+//        if(MotionSceneModel.getInstance().collision(Utils.addVector(position, new Point2D(movement.getX() + 22, movement.getY())))) {
+//            return;
+//        }
+//        if(MotionSceneModel.getInstance().collision(Utils.addVector(position, new Point2D(movement.getX(), movement.getY() + 22)))) {
+//            return;
+//        }
+
     }
 
     @Override
@@ -104,21 +164,25 @@ public class EpsilonModel extends Entity{
             Point2D p1 = entity.vertices.get(0);
             Point2D p2 = entity.vertices.get(1);
             Point2D p3 = entity.vertices.get(2);
-            return checkPointInsideCircle(p1.getX(), p1.getY(), p2.getX(), p2.getY()) &&
+            boolean c = checkPointInsideCircle(p1.getX(), p1.getY(), p2.getX(), p2.getY()) &&
                     checkPointInsideCircle(p1.getX(), p1.getY(), p3.getX(), p3.getY()) &&
                     checkPointInsideCircle(p2.getX(), p2.getY(), p3.getX(), p3.getY());
+            if(c)hp -= 10;
+            return c;
         }
         else if(entity instanceof SquareModel squareModel){
-            return checkIntersectionSquare(squareModel.getPosition().getX(), squareModel.getPosition().getY(),
+            boolean c = checkIntersectionSquare(squareModel.getPosition().getX(), squareModel.getPosition().getY(),
                     20 + squareModel.getPosition().getX(), 20 + squareModel.getPosition().getY(),
-                    getPosition().getX(), getPosition().getY(), getRadius());
+                    getPosition().getX() + 10, getPosition().getY() + 10, getRadius());
+            if(c)hp -= 6;
+            return c;
         }
         return false;
     }
 
     public double pointLineDistance(double x1, double y1, double x2, double y2, double px, double py) {
         double norm = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-        return Math.abs((px - x1) * (y2 - y1) - (py - y1) * (x2 - x1)) / norm;
+        return abs((px - x1) * (y2 - y1) - (py - y1) * (x2 - x1)) / norm;
     }
     @Override
     public Point2D getIntersect(Entity entity) {
@@ -130,9 +194,9 @@ public class EpsilonModel extends Entity{
             Point2D f1 = pointInsideCircle(p1.getX(), p1.getY(), p2.getX(), p2.getY());
             Point2D f2 = pointInsideCircle(p3.getX(), p3.getY(), p2.getX(), p2.getY());
             Point2D f3 = pointInsideCircle(p1.getX(), p1.getY(), p3.getX(), p3.getY());
-            double dis1 = pointLineDistance(p1.getX(), p1.getY(), p2.getX(), p2.getY(), getPosition().getX(), getPosition().getY());
-            double dis2 = pointLineDistance(p3.getX(), p3.getY(), p2.getX(), p2.getY(), getPosition().getX(), getPosition().getY());
-            double dis3 = pointLineDistance(p1.getX(), p1.getY(), p3.getX(), p3.getY(), getPosition().getX(), getPosition().getY());
+            double dis1 = pointLineDistance(p1.getX(), p1.getY(), p2.getX(), p2.getY(), getPosition().getX() + 10, getPosition().getY() + 10);
+            double dis2 = pointLineDistance(p3.getX(), p3.getY(), p2.getX(), p2.getY(), getPosition().getX() + 10, getPosition().getY() + 10);
+            double dis3 = pointLineDistance(p1.getX(), p1.getY(), p3.getX(), p3.getY(), getPosition().getX() + 10, getPosition().getY() + 10);
             if(dis3 <= radius)ans = f3;
             if(dis2 <= radius)ans = f2;
             if(dis1 <= radius)ans = f1;
@@ -149,10 +213,10 @@ public class EpsilonModel extends Entity{
             Point2D f2 = pointInsideCircle(p3.getX(), p3.getY(), p2.getX(), p2.getY());
             Point2D f3 = pointInsideCircle(p1.getX(), p1.getY(), p4.getX(), p4.getY());
             Point2D f4 = pointInsideCircle(p4.getX(), p4.getY(), p3.getX(), p3.getY());
-            double dis1 = pointLineDistance(p1.getX(), p1.getY(), p2.getX(), p2.getY(), getPosition().getX(), getPosition().getY());
-            double dis2 = pointLineDistance(p3.getX(), p3.getY(), p2.getX(), p2.getY(), getPosition().getX(), getPosition().getY());
-            double dis3 = pointLineDistance(p1.getX(), p1.getY(), p4.getX(), p4.getY(), getPosition().getX(), getPosition().getY());
-            double dis4 = pointLineDistance(p4.getX(), p4.getY(), p3.getX(), p3.getY(), getPosition().getX(), getPosition().getY());
+            double dis1 = pointLineDistance(p1.getX(), p1.getY(), p2.getX(), p2.getY(), getPosition().getX() + 10, getPosition().getY() + 10);
+            double dis2 = pointLineDistance(p3.getX(), p3.getY(), p2.getX(), p2.getY(), getPosition().getX() + 10, getPosition().getY() + 10);
+            double dis3 = pointLineDistance(p1.getX(), p1.getY(), p4.getX(), p4.getY(), getPosition().getX() + 10, getPosition().getY() + 10);
+            double dis4 = pointLineDistance(p4.getX(), p4.getY(), p3.getX(), p3.getY(), getPosition().getX() + 10, getPosition().getY() + 10);
             if(dis3 <= radius) ans = f3;
             if(dis2 <= radius) ans = f2;
             if(dis1 <= radius) ans = f1;

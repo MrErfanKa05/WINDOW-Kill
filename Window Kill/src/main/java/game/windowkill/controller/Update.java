@@ -1,6 +1,7 @@
 package game.windowkill.controller;
 
 import game.windowkill.controller.builder.EnemyBuilder;
+import game.windowkill.controller.loader.SceneLoader;
 import game.windowkill.model.BulletModel;
 import game.windowkill.model.CollectableItemModel;
 import game.windowkill.model.MotionSceneModel;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 
 import static game.windowkill.controller.Constant.*;
 import static game.windowkill.controller.DataHolder.stage;
+import static java.lang.Math.E;
 import static java.lang.Math.max;
 
 public class Update {
@@ -82,7 +84,7 @@ public class Update {
         if(enemyBuilder.waveFinish){
             switch (enemyBuilder.wave) {
                 case 4:
-                    finish();
+                    win();
                 case 3:
                     enemyBuilder.playWave3();
                     break;
@@ -135,11 +137,21 @@ public class Update {
 
         for(TriangleModel triangleModel : TriangleModel.triangleModels){
             for(SquareModel squareModel : SquareModel.squareModels){
-                if(squareModel.getDistance(squareModel.getPosition(), triangleModel.getPosition()) > 100)
-                    continue;
+//                if(squareModel.getDistance(squareModel.getPosition(), triangleModel.getPosition()) > 100)
+//                    continue;
                 if(triangleModel.checkIntersect(squareModel))
                     impact(triangleModel.getIntersect(squareModel));
+                if(EpsilonModel.getInstance().checkIntersect(squareModel))
+                    impact(EpsilonModel.getInstance().getIntersect(squareModel));
+                System.out.println(triangleModel.checkIntersect(squareModel));
+                System.out.println(EpsilonModel.getInstance().checkIntersect(squareModel));
+                System.out.println();
             }
+            if(EpsilonModel.getInstance().checkIntersect(triangleModel))
+                impact(EpsilonModel.getInstance().getIntersect(triangleModel));
+            System.out.println(EpsilonModel.getInstance().checkIntersect(triangleModel));
+
+
         }
 
         for(SquareModel squareModel : SquareModel.squareModels){
@@ -222,13 +234,17 @@ public class Update {
         }
 
         if(inputManager.isUp())
-            EpsilonModel.getInstance().move(new Direction(270));
+            EpsilonModel.getInstance().change(new Direction(270));
         if(inputManager.isDown())
-            EpsilonModel.getInstance().move(new Direction(90));
+            EpsilonModel.getInstance().change(new Direction(90));
         if(inputManager.isLeft())
-            EpsilonModel.getInstance().move(new Direction(180));
+            EpsilonModel.getInstance().change(new Direction(180));
         if(inputManager.isRight())
-            EpsilonModel.getInstance().move(new Direction(0));
+            EpsilonModel.getInstance().change(new Direction(0));
+
+
+
+        if(EpsilonModel.getInstance().getHp() <= 0)death();
 //        if(Math.random()*100 < 0.5)
 //            MotionSceneModel.getInstance().change(1, 0);
 //        if(Math.random()*100 < 1)
@@ -259,12 +275,12 @@ public class Update {
         double C = 0.0003;
         for(SquareModel squareModel : SquareModel.squareModels){
             double dis = squareModel.getDistance(squareModel.getPosition(), point2D);
-            if(dis <= 1)squareModel.playAcceleration(point2D, ACCELERATION / C);
+            if(dis <= 5)squareModel.playAcceleration(point2D, ACCELERATION / C);
             else squareModel.playAcceleration(point2D, ACCELERATION / (dis * C));
         }
         for(TriangleModel triangleModel : TriangleModel.triangleModels){
             double dis = triangleModel.getDistance(triangleModel.getPosition(), point2D);
-            if(dis <= 1)triangleModel.playAcceleration(point2D, ACCELERATION / C);
+            if(dis <= 5)triangleModel.playAcceleration(point2D, ACCELERATION / C);
             else triangleModel.playAcceleration(point2D, ACCELERATION / (dis * C));
         }
         EpsilonModel model = EpsilonModel.getInstance();
@@ -274,7 +290,11 @@ public class Update {
     }
     private void death(){
         finish();
-
+        stage.setScene(SceneLoader.getGameOver());
+    }
+    private void win(){
+        finish();
+        stage.setScene(SceneLoader.getMenu());
     }
     private void finish(){
         updateModel.stop();

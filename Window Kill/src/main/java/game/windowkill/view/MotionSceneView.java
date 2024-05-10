@@ -71,7 +71,7 @@ public class MotionSceneView {
         Wave.setTextFill(Color.WHITE);
 
         ElapsedTime = new Label("time:0");
-        ElapsedTime.setTranslateX(40);
+        ElapsedTime.setTranslateX(30);
         ElapsedTime.setTranslateY(5);
         ElapsedTime.setFont(new Font("Bold", 15));
         ElapsedTime.setTextFill(Color.FIREBRICK);
