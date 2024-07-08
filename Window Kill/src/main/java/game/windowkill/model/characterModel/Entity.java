@@ -2,6 +2,7 @@ package game.windowkill.model.characterModel;
 
 import game.windowkill.controller.Utils;
 import game.windowkill.model.characterModel.collision.Collidable;
+import game.windowkill.model.characterModel.collision.normalShape.*;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.model.characterModel.move.Movable;
 import javafx.animation.KeyFrame;
@@ -28,11 +29,6 @@ public abstract class Entity implements Collidable, Movable {
     double hp, attackHp;
     int collectables;
 
-    private Timeline accelerationMove = new Timeline(new KeyFrame(Duration.millis(ACCELERATION_TIME / ACCELERATION), actionEvent -> {
-//        move(Utils.addVector(direction.getDirectionVector(), Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration)));
-        acceleration -= ACCELERATION_TIME/ACCELERATION;
-        impactDirection = new Direction(Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration));
-    }));
     public Entity(double x, double y){
         id = UUID.randomUUID().toString();
         position = new Point2D(x, y);
@@ -43,11 +39,7 @@ public abstract class Entity implements Collidable, Movable {
     }
     public void playAcceleration(Direction direction, double acc){
         acceleration = acc;
-//        impactDirection = new Direction(Utils.addVector(direction.getDirectionVector(), impactDirection.getDirectionVector()));
         impactDirection = new Direction(direction.getDirectionVector());
-//        accelerationMove.stop();
-//        accelerationMove.setCycleCount((int) (ACCELERATION/ACCELERATION_TIME));
-//        accelerationMove.play();
     }
 
     public Direction getImpactDirection() {
@@ -67,9 +59,8 @@ public abstract class Entity implements Collidable, Movable {
         hp = max(hp, 0);
     }
     public void impact(){
-//        move(Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration));
         impactDirection = new Direction(Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration));
-        acceleration = acceleration -= 3;
+        acceleration = acceleration -= 5;
         acceleration = max(acceleration, 0);
         move(impactDirection);
     }
@@ -100,9 +91,7 @@ public abstract class Entity implements Collidable, Movable {
     public double getY(){
         return position.getY();
     }
-    public double getDistance(Point2D point1, Point2D point2){
-        return Math.sqrt(point2.getX() * point1.getX() + point2.getY() * point1.getY());
-    }
+
     public abstract void update();
     @Override
     public void move(Point2D point2D) {

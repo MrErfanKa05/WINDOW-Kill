@@ -2,13 +2,15 @@ package game.windowkill.model.characterModel;
 
 import game.windowkill.controller.Utils;
 import game.windowkill.model.MotionSceneModel;
+import game.windowkill.model.characterModel.collision.normalShape.CollisionSquareCircle;
+import game.windowkill.model.characterModel.collision.normalShape.CollisionTriangleCircle;
 import game.windowkill.model.characterModel.move.Direction;
 import javafx.geometry.Point2D;
 
 import static game.windowkill.controller.Constant.*;
 import static java.lang.Math.abs;
 
-public class EpsilonModel extends Entity{
+public class EpsilonModel extends Entity implements CollisionSquareCircle, CollisionTriangleCircle {
     private static EpsilonModel epsilonModel;
     public static EpsilonModel getInstance(){
         if(epsilonModel == null)epsilonModel = new EpsilonModel();
@@ -55,6 +57,8 @@ public class EpsilonModel extends Entity{
         radius = EPSILON_RADIUS;
         hp = 100;
         attackHp = 5;
+        position = new Point2D(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+        update();
     }
 
     public double getRadius() {
@@ -66,34 +70,6 @@ public class EpsilonModel extends Entity{
         if(getDistance(position, point2D) <= EPSILON_RADIUS)
             return true;
         return false;
-    }
-    public boolean checkIntersectionSquare(double squareTopLeftX, double squareTopLeftY,
-                                           double squareBottomRightX, double squareBottomRightY,
-                                           double circleCenterX, double circleCenterY, double radius) {
-        double nearestX = Math.max(squareTopLeftX, Math.min(circleCenterX, squareBottomRightX));
-        double nearestY = Math.max(squareTopLeftY, Math.min(circleCenterY, squareBottomRightY));
-
-        double deltaX = nearestX - circleCenterX;
-        double deltaY = nearestY - circleCenterY;
-
-        return (deltaX * deltaX + deltaY * deltaY) < (radius * radius);
-    }
-    public boolean checkPointInsideCircle(double x1, double y1, double x2, double y2){
-        Point2D point = pointInsideCircle(x1, y1, x2, y2);
-        return getDistance(point, new Point2D(getX() + 10, getY() + 10)) <= radius;
-    }
-    public Point2D pointInsideCircle(double x1, double y1, double x2, double y2){
-        double lineLengthX = x2 - x1;
-        double lineLengthY = y2 - y1;
-
-        double t = ((getX() + 10 - x1) * lineLengthX + (getY() + 10 - y1) * lineLengthY) /
-                (lineLengthX * lineLengthX + lineLengthY * lineLengthY);
-        t = Math.max(0, Math.min(t, 1));
-
-        double nearestX = x1 + t * lineLengthX;
-        double nearestY = y1 + t * lineLengthY;
-
-        return new Point2D(nearestX, nearestY);
     }
 
     @Override
@@ -146,15 +122,6 @@ public class EpsilonModel extends Entity{
         if(MotionSceneModel.getInstance().collision(Utils.addVector(position, movement)))
             return;
         position = Utils.addVector(position, movement);
-//        if(MotionSceneModel.getInstance().collision(Utils.addVector(position, new Point2D(movement.getX() + 22, movement.getY() + 22)))) {
-//            return;
-//        }
-//        if(MotionSceneModel.getInstance().collision(Utils.addVector(position, new Point2D(movement.getX() + 22, movement.getY())))) {
-//            return;
-//        }
-//        if(MotionSceneModel.getInstance().collision(Utils.addVector(position, new Point2D(movement.getX(), movement.getY() + 22)))) {
-//            return;
-//        }
 
     }
 
@@ -164,43 +131,30 @@ public class EpsilonModel extends Entity{
             Point2D p1 = entity.vertices.get(0);
             Point2D p2 = entity.vertices.get(1);
             Point2D p3 = entity.vertices.get(2);
-            boolean c = checkPointInsideCircle(p1.getX(), p1.getY(), p2.getX(), p2.getY()) &&
-                    checkPointInsideCircle(p1.getX(), p1.getY(), p3.getX(), p3.getY()) &&
-                    checkPointInsideCircle(p2.getX(), p2.getY(), p3.getX(), p3.getY());
+            boolean c = checkTriangleCircle(p1, p2, p3, getX(), getY(), getRadius());
             if(c)hp -= 10;
             return c;
         }
         else if(entity instanceof SquareModel squareModel){
-            boolean c = checkIntersectionSquare(squareModel.getPosition().getX(), squareModel.getPosition().getY(),
-                    20 + squareModel.getPosition().getX(), 20 + squareModel.getPosition().getY(),
-                    getPosition().getX() + 10, getPosition().getY() + 10, getRadius());
+            Point2D p1 = squareModel.getVertices().get(0);
+            Point2D p2 = squareModel.getVertices().get(1);
+            Point2D p3 = squareModel.getVertices().get(2);
+            Point2D p4 = squareModel.getVertices().get(3);
+            boolean c = checkSquareCircle(p1, p2, p3, p4,
+                    getPosition().getX() + radius, getPosition().getY() + radius, getRadius());
             if(c)hp -= 6;
             return c;
         }
         return false;
     }
 
-    public double pointLineDistance(double x1, double y1, double x2, double y2, double px, double py) {
-        double norm = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-        return abs((px - x1) * (y2 - y1) - (py - y1) * (x2 - x1)) / norm;
-    }
     @Override
     public Point2D getIntersect(Entity entity) {
         if(entity instanceof TriangleModel) {
             Point2D p1 = entity.vertices.get(0);
             Point2D p2 = entity.vertices.get(1);
             Point2D p3 = entity.vertices.get(2);
-            Point2D ans = null;
-            Point2D f1 = pointInsideCircle(p1.getX(), p1.getY(), p2.getX(), p2.getY());
-            Point2D f2 = pointInsideCircle(p3.getX(), p3.getY(), p2.getX(), p2.getY());
-            Point2D f3 = pointInsideCircle(p1.getX(), p1.getY(), p3.getX(), p3.getY());
-            double dis1 = pointLineDistance(p1.getX(), p1.getY(), p2.getX(), p2.getY(), getPosition().getX() + 10, getPosition().getY() + 10);
-            double dis2 = pointLineDistance(p3.getX(), p3.getY(), p2.getX(), p2.getY(), getPosition().getX() + 10, getPosition().getY() + 10);
-            double dis3 = pointLineDistance(p1.getX(), p1.getY(), p3.getX(), p3.getY(), getPosition().getX() + 10, getPosition().getY() + 10);
-            if(dis3 <= radius)ans = f3;
-            if(dis2 <= radius)ans = f2;
-            if(dis1 <= radius)ans = f1;
-            return ans;
+            return getTriangleCircle(p1, p2, p3, getX(), getY(), getRadius());
 
         }
         if(entity instanceof SquareModel){
@@ -208,20 +162,7 @@ public class EpsilonModel extends Entity{
             Point2D p2 = entity.vertices.get(1);
             Point2D p3 = entity.vertices.get(2);
             Point2D p4 = entity.vertices.get(3);
-            Point2D ans = null;
-            Point2D f1 = pointInsideCircle(p1.getX(), p1.getY(), p2.getX(), p2.getY());
-            Point2D f2 = pointInsideCircle(p3.getX(), p3.getY(), p2.getX(), p2.getY());
-            Point2D f3 = pointInsideCircle(p1.getX(), p1.getY(), p4.getX(), p4.getY());
-            Point2D f4 = pointInsideCircle(p4.getX(), p4.getY(), p3.getX(), p3.getY());
-            double dis1 = pointLineDistance(p1.getX(), p1.getY(), p2.getX(), p2.getY(), getPosition().getX() + 10, getPosition().getY() + 10);
-            double dis2 = pointLineDistance(p3.getX(), p3.getY(), p2.getX(), p2.getY(), getPosition().getX() + 10, getPosition().getY() + 10);
-            double dis3 = pointLineDistance(p1.getX(), p1.getY(), p4.getX(), p4.getY(), getPosition().getX() + 10, getPosition().getY() + 10);
-            double dis4 = pointLineDistance(p4.getX(), p4.getY(), p3.getX(), p3.getY(), getPosition().getX() + 10, getPosition().getY() + 10);
-            if(dis3 <= radius) ans = f3;
-            if(dis2 <= radius) ans = f2;
-            if(dis1 <= radius) ans = f1;
-            if(dis4 <= radius) ans = f4;
-            return ans;
+            return getSquareCircle(p1, p2, p3, p4, getX(), getY(), getRadius());
         }
         return null;
     }
@@ -236,9 +177,5 @@ public class EpsilonModel extends Entity{
     @Override
     public void setDirection(Point2D point2D) {
         direction = new Direction(point2D);
-    }
-
-    public enum SkillState {
-        Neutral, WritOfAres, WritOfAceso, WritOfProteus
     }
 }

@@ -1,6 +1,7 @@
 package game.windowkill.controller.fxmlController;
 
 import game.windowkill.model.characterModel.EpsilonModel;
+import game.windowkill.model.characterModel.SkillState;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -40,7 +41,7 @@ public class SkillTreeController extends Controller implements Initializable {
         if(radioButton.equals(aceso)){
 //            System.out.println("1");
             if(EpsilonModel.getInstance().getXP() >= 500)
-                EpsilonModel.getInstance().setSkillState(EpsilonModel.SkillState.WritOfAceso);
+                EpsilonModel.getInstance().setSkillState(SkillState.WritOfAceso);
             else{
                 radioButton.setSelected(false);
                 return;
@@ -49,7 +50,7 @@ public class SkillTreeController extends Controller implements Initializable {
         if(radioButton.equals(ares)){
 //            System.out.println("2");
             if(EpsilonModel.getInstance().getXP() >= 750)
-                EpsilonModel.getInstance().setSkillState(EpsilonModel.SkillState.WritOfAres);
+                EpsilonModel.getInstance().setSkillState(SkillState.WritOfAres);
             else{
                 radioButton.setSelected(false);
                 return;
@@ -58,7 +59,7 @@ public class SkillTreeController extends Controller implements Initializable {
         if(radioButton.equals(proteus)){
 //            System.out.println("3");
             if(EpsilonModel.getInstance().getXP() >= 1000)
-                EpsilonModel.getInstance().setSkillState(EpsilonModel.SkillState.WritOfProteus);
+                EpsilonModel.getInstance().setSkillState(SkillState.WritOfProteus);
             else{
                 radioButton.setSelected(false);
                 return;

@@ -10,13 +10,17 @@ public class Constant {
     public static final double FRAME_UPDATE_TIME = ((double) 1) / FPS;
     public static final double MODEL_UPDATE_TIME = ((double) 1) / UPS;
     public static final double EPSILON_RADIUS = 12.5;
-    public static final double ACCELERATION = 10;
+    public static final double EPSILON_DIAMETER = 25;
+    public static final double ACCELERATION = 17;
     public static final double ACCELERATION_DECREASE = 10;
     public static final double EPSILON_SPEED = 6;
     public static final double SPEED = 3;
     public static final double BULLET_SPEED = 8;
     public static final double TRIANGLE_DISTRICT = 25;
     public static final double SQUARE_DISTRICT = 25;
+    public static final double SQUARE_OUTSIDE = 20;
+    public static final double TRIANGLE_OUTSIDE = 20;
+    public static final double SQUARE_INSIDE = 12;
     public static final Dimension GLASS_FRAME_DIMENSION = Toolkit.getDefaultToolkit().getScreenSize();
     public static final double MAX_WIDTH = 700;
     public static final double MAX_HEIGHT = 700;
@@ -32,4 +36,7 @@ public class Constant {
     public static final javafx.scene.paint.Color OUTSIDE_EPSILON_COLOR = Color.WHITE;
     public static final Color INSIDE_EPSILON_COLOR = Color.BLACK;
     public static final int BULLET_DELAY = 250;
+
+    public static final String TRIANGLE_PATH = "src/main/resources/game/windowkill/resources/triangle.png";
+
 }

@@ -157,29 +157,12 @@ public class MotionSceneView {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-        imageView.setFitWidth(25);
-        imageView.setFitHeight(25);
+        imageView.setFitWidth(EPSILON_DIAMETER);
+        imageView.setFitHeight(EPSILON_DIAMETER);
         imageView.setTranslateX(EpsilonView.getInstance().getX());
         imageView.setTranslateY(EpsilonView.getInstance().getY());
 
         pane.getChildren().add(imageView);
-//        System.out.println(EpsilonView.getInstance().getPosition());
-
-//        Circle circleOut = new Circle();
-//        circleOut.setRadius(EpsilonView.getInstance().getRadius());
-//        circleOut.setTranslateX(EpsilonView.getInstance().getX());
-//        circleOut.setTranslateY(EpsilonView.getInstance().getY());
-//        circleOut.setFill(OUTSIDE_EPSILON_COLOR);
-//
-//        Circle inCircle = new Circle();
-//        inCircle.setRadius(EpsilonView.getInstance().getRadius() - 4);
-//        inCircle.setTranslateX(EpsilonView.getInstance().getX() + 0);
-//        inCircle.setTranslateY(EpsilonView.getInstance().getY() + 0);
-//        inCircle.setFill(INSIDE_EPSILON_COLOR);
-
-
-//        pane.getChildren().add(circleOut);
-//        pane.getChildren().add(inCircle);
 
         for(BulletView bullet : BulletView.bulletViews){
 //            if(b)
@@ -188,29 +171,26 @@ public class MotionSceneView {
             bull.setRadius(Constant.BULLET_RADIUS);
             bull.setTranslateX(bullet.getPosition().getX());
             bull.setTranslateY(bullet.getPosition().getY());
-//            circle.setFill(Color.AZURE);
-
             pane.getChildren().add(bull);
         }
 
         for(SquareView squareView : SquareView.squareViews){
-//            System.out.println(squareView.getPosition() + " " + left + " " + right);
-            if(squareView.getPosition().getX() + 20 + stage.getX() < left ||
+            if(squareView.getPosition().getX() + SQUARE_OUTSIDE + stage.getX() < left ||
                 squareView.getPosition().getX() + stage.getX() > right ||
-                squareView.getPosition().getY() + 20 + stage.getY() < top ||
+                squareView.getPosition().getY() + SQUARE_OUTSIDE + stage.getY() < top ||
                 squareView.getPosition().getY() + stage.getY() > down)
                 continue;
             Rectangle rectangleOut = new Rectangle();
             rectangleOut.setFill(Color.GREEN);
-            rectangleOut.setHeight(20);
-            rectangleOut.setWidth(20);
+            rectangleOut.setHeight(SQUARE_OUTSIDE);
+            rectangleOut.setWidth(SQUARE_OUTSIDE);
             rectangleOut.setX(squareView.getPosition().getX());
             rectangleOut.setY(squareView.getPosition().getY());
 
             Rectangle rectangleIn = new Rectangle();
             rectangleIn.setFill(Color.BLACK);
-            rectangleIn.setHeight(12);
-            rectangleIn.setWidth(12);
+            rectangleIn.setHeight(SQUARE_INSIDE);
+            rectangleIn.setWidth(SQUARE_INSIDE);
             rectangleIn.setX(squareView.getPosition().getX() + 4);
             rectangleIn.setY(squareView.getPosition().getY() + 4);
 
@@ -230,13 +210,14 @@ public class MotionSceneView {
         }
 
         for(TriangleView triangleView : TriangleView.triangleViews){
-            if(triangleView.getPosition().getX() + 20 + stage.getX() < left ||
+            if(triangleView.getPosition().getX() + TRIANGLE_OUTSIDE + stage.getX() < left ||
                     triangleView.getPosition().getX() + stage.getX() > right ||
-                    triangleView.getPosition().getY() + 20 + stage.getY() < top ||
+                    triangleView.getPosition().getY() + TRIANGLE_OUTSIDE + stage.getY() < top ||
                     triangleView.getPosition().getY() + stage.getY() > down)
                 continue;
-            //TODO : make it correct;
-            file = new File("src/main/resources/game/windowkill/resources/triangle.png");
+            //todo
+            file = new File(TRIANGLE_PATH);
+
             ImageView triangleImage = null;
             try {
                 triangleImage = new ImageView(String.valueOf(file.toURI().toURL()));
@@ -245,41 +226,10 @@ public class MotionSceneView {
             }
             triangleImage.setTranslateX(triangleView.getPosition().getX());
             triangleImage.setTranslateY(triangleView.getPosition().getY());
-            triangleImage.setFitHeight(20);
-            triangleImage.setFitWidth(20);
+            triangleImage.setFitHeight(TRIANGLE_OUTSIDE);
+            triangleImage.setFitWidth(TRIANGLE_OUTSIDE);
 
             pane.getChildren().add(triangleImage);
-//            Point2D left = new Point2D(triangleView.getPosition().getX(), triangleView.getPosition().getY() + 20);
-//            Point2D right = new Point2D(triangleView.getPosition().getX() + 20, triangleView.getPosition().getY() + 20);
-//            Point2D up = new Point2D(triangleView.getPosition().getX() + 10, triangleView.getPosition().getY());
-//
-//            Line leftLine = new Line();
-//            leftLine.setFill(Color.YELLOW);
-//            leftLine.setStartX(left.getX());
-//            leftLine.setStartY(left.getY());
-//            leftLine.setEndX(up.getX());
-//            leftLine.setEndY(up.getY());
-//
-//            Line rightLine = new Line();
-//            rightLine.setFill(Color.YELLOW);
-//            rightLine.setStartX(right.getX());
-//            rightLine.setStartY(right.getY());
-//            rightLine.setEndX(up.getX());
-//            rightLine.setEndY(up.getY());
-//
-//            Line downLine = new Line();
-////            downLine.setTranslateX(right.getX());
-////            downLine.setTranslateY(right.getY());
-//            downLine.setFill(Paint.valueOf("0xffff00ff"));
-//            downLine.setStartX(right.getX());
-//            downLine.setStartY(right.getY());
-//            downLine.setEndX(left.getX());
-//            downLine.setEndY(left.getY());
-//            System.out.println(downLine.getTranslateX() + " " + downLine.getTranslateY());
-//
-//            pane.getChildren().add(downLine);
-//            pane.getChildren().add(leftLine);
-//            pane.getChildren().add(rightLine);
         }
     }
 }

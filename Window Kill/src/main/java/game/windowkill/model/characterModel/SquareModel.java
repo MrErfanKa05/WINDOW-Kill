@@ -1,6 +1,9 @@
 package game.windowkill.model.characterModel;
 
+import game.windowkill.controller.Constant;
 import game.windowkill.controller.Utils;
+import game.windowkill.model.characterModel.collision.normalShape.CollisionSquareSquare;
+import game.windowkill.model.characterModel.collision.normalShape.CollisionSquareTriangle;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.view.characterView.SquareView;
 import game.windowkill.view.characterView.TriangleView;
@@ -8,7 +11,10 @@ import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
 
-public class SquareModel extends Entity {
+import static game.windowkill.controller.Constant.SQUARE_DISTRICT;
+import static game.windowkill.controller.Constant.SQUARE_OUTSIDE;
+
+public class SquareModel extends Entity implements CollisionSquareSquare, CollisionSquareTriangle {
     public static ArrayList<SquareModel> squareModels = new ArrayList<>();
     public SquareModel(double x, double y){
         super(x, y);
@@ -35,10 +41,10 @@ public class SquareModel extends Entity {
         impact();
         //TODO
         getVertices().clear();
-        Point2D dLeft = Utils.addVector(new Point2D(0, 20), getPosition());
-        Point2D dRight = Utils.addVector(new Point2D(20, 20), getPosition());
+        Point2D dLeft = Utils.addVector(new Point2D(0, SQUARE_OUTSIDE), getPosition());
+        Point2D dRight = Utils.addVector(new Point2D(SQUARE_OUTSIDE, SQUARE_OUTSIDE), getPosition());
         Point2D uRight = Utils.addVector(new Point2D(0, 0), getPosition());
-        Point2D uLeft = Utils.addVector(new Point2D(20, 0), getPosition());
+        Point2D uLeft = Utils.addVector(new Point2D(SQUARE_OUTSIDE, 0), getPosition());
         getVertices().add(uLeft);
         getVertices().add(uRight);
         getVertices().add(dRight);
@@ -46,12 +52,8 @@ public class SquareModel extends Entity {
 
     }
 
-    public boolean isPointInsideSquare(double x1, double y1, double sideLength, double px, double py) {
-        double x2 = x1 + sideLength;
-        double y2 = y1 + sideLength;
 
-        return px >= x1 && px <= x2 && py >= y1 && py <= y2;
-    }
+
     @Override
     public boolean collision(Point2D point2D) {
         return isPointInsideSquare(getX(), getY(), 20, point2D.getX(), point2D.getY());
@@ -66,14 +68,15 @@ public class SquareModel extends Entity {
             Point2D p2 = entity.getVertices().get(1);
             Point2D p3 = entity.getVertices().get(2);
             Point2D p4 = entity.getVertices().get(3);
-            return collision(p1) || collision(p2) || collision(p3) || collision(p4);
+            checkSquareSquare(p1, p2, p3, p4);
         }
-        TriangleModel triangleModel = (TriangleModel) entity;
-        boolean b1, b2, b3;
-        b1 = collision(triangleModel.getVertices().get(0));
-        b2 = collision(triangleModel.getVertices().get(1));
-        b3 = collision(triangleModel.getVertices().get(2));
-        if(b1 || b2 || b3)return true;
+        if(entity instanceof TriangleModel) {
+            TriangleModel triangleModel = (TriangleModel) entity;
+            Point2D p1 = triangleModel.getVertices().get(0);
+            Point2D p2 = triangleModel.getVertices().get(1);
+            Point2D p3 = triangleModel.getVertices().get(2);
+            checkSquareTriangle(p1, p2, p3);
+        }
         return false;
     }
 
@@ -86,23 +89,15 @@ public class SquareModel extends Entity {
             Point2D p2 = entity.getVertices().get(1);
             Point2D p3 = entity.getVertices().get(2);
             Point2D p4 = entity.getVertices().get(3);
-            if(collision(p1))
-                return p1;
-            if(collision(p2))
-                return p2;
-            if(collision(p3))
-                return p3;
-            if(collision(p4))
-                return p4;
+            return getSquareSquare(p1, p2, p3, p4);
         }
-        TriangleModel triangleModel = (TriangleModel) entity;
-        boolean b1, b2, b3;
-        b1 = collision(triangleModel.getVertices().get(0));
-        b2 = collision(triangleModel.getVertices().get(1));
-        b3 = collision(triangleModel.getVertices().get(2));
-        if(b1)return triangleModel.getVertices().get(0);
-        if(b2)return triangleModel.getVertices().get(1);
-        if(b3)return triangleModel.getVertices().get(2);
+        if(entity instanceof TriangleModel) {
+            TriangleModel triangleModel = (TriangleModel) entity;
+            Point2D p1 = entity.getVertices().get(0);
+            Point2D p2 = entity.getVertices().get(1);
+            Point2D p3 = entity.getVertices().get(2);
+            return getSquareTriangle(p1, p2, p3);
+        }
 
         return null;
     }
