@@ -1,4 +1,4 @@
-package game.windowkill.view.characterView;
+package game.windowkill.view.characterView.enemy;
 
 import game.windowkill.controller.DataHolder;
 import game.windowkill.model.characterModel.move.Direction;

@@ -33,10 +33,10 @@ public interface CollisionSquareCircle extends ModeInitialize {
         Point2D f2 = pointInsideCircle(p3.getX(), p3.getY(), p2.getX(), p2.getY(), x, y);
         Point2D f3 = pointInsideCircle(p1.getX(), p1.getY(), p4.getX(), p4.getY(), x, y);
         Point2D f4 = pointInsideCircle(p4.getX(), p4.getY(), p3.getX(), p3.getY(), x, y);
-        double dis1 = pointLineDistance(p1.getX(), p1.getY(), p2.getX(), p2.getY(), x + radius, y + radius);
-        double dis2 = pointLineDistance(p3.getX(), p3.getY(), p2.getX(), p2.getY(), x + radius, y + radius);
-        double dis3 = pointLineDistance(p1.getX(), p1.getY(), p4.getX(), p4.getY(), x + radius, y + radius);
-        double dis4 = pointLineDistance(p4.getX(), p4.getY(), p3.getX(), p3.getY(), x + radius, y + radius);
+        double dis1 = pointLineDistance(p1.getX(), p1.getY(), p2.getX(), p2.getY(), x, y);
+        double dis2 = pointLineDistance(p3.getX(), p3.getY(), p2.getX(), p2.getY(), x, y);
+        double dis3 = pointLineDistance(p1.getX(), p1.getY(), p4.getX(), p4.getY(), x, y);
+        double dis4 = pointLineDistance(p4.getX(), p4.getY(), p3.getX(), p3.getY(), x, y);
         if(dis3 <= radius) ans = f3;
         if(dis2 <= radius) ans = f2;
         if(dis1 <= radius) ans = f1;

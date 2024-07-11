@@ -2,9 +2,8 @@ package game.windowkill.view;
 
 import game.windowkill.controller.DataHolder;
 import game.windowkill.model.characterModel.Entity;
-import game.windowkill.model.characterModel.SquareModel;
-import game.windowkill.model.characterModel.TriangleModel;
-import game.windowkill.model.characterModel.collision.Collidable;
+import game.windowkill.model.characterModel.enemy.SquareModel;
+import game.windowkill.model.characterModel.enemy.TriangleModel;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 

@@ -44,7 +44,6 @@ public class EpsilonView {
     public Point2D getPosition() {
         double paneX = position.getX() - DataHolder.stage.getX();
         double paneY = position.getY() - DataHolder.stage.getY();
-//        System.out.println(position.getX() + " " + paneX);
         return new Point2D(paneX, paneY);
     }
 

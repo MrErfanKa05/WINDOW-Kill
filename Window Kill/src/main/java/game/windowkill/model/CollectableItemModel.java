@@ -27,9 +27,11 @@ public class CollectableItemModel implements Collidable {
     }
     public void remove(){
         collectableItemModels.remove(this);
+        CollectableItemView view = null;
         for(CollectableItemView collectableItemView : CollectableItemView.collectableItemViews)
             if(collectableItemView.getId().equals(getId()))
-                CollectableItemView.collectableItemViews.remove(collectableItemView);
+                view = collectableItemView;
+        CollectableItemView.collectableItemViews.remove(view);
     }
 
     public double getTime() {

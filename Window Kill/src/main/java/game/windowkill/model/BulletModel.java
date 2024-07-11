@@ -6,7 +6,6 @@ import game.windowkill.model.characterModel.collision.Collidable;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.model.characterModel.move.Movable;
 import game.windowkill.view.BulletView;
-import game.windowkill.view.characterView.SquareView;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;

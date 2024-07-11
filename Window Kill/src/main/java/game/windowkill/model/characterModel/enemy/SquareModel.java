@@ -1,17 +1,17 @@
-package game.windowkill.model.characterModel;
+package game.windowkill.model.characterModel.enemy;
 
-import game.windowkill.controller.Constant;
 import game.windowkill.controller.Utils;
+import game.windowkill.model.characterModel.Entity;
+import game.windowkill.model.characterModel.EpsilonModel;
 import game.windowkill.model.characterModel.collision.normalShape.CollisionSquareSquare;
 import game.windowkill.model.characterModel.collision.normalShape.CollisionSquareTriangle;
 import game.windowkill.model.characterModel.move.Direction;
-import game.windowkill.view.characterView.SquareView;
-import game.windowkill.view.characterView.TriangleView;
+import game.windowkill.model.strategy.Routing;
+import game.windowkill.view.characterView.enemy.SquareView;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
 
-import static game.windowkill.controller.Constant.SQUARE_DISTRICT;
 import static game.windowkill.controller.Constant.SQUARE_OUTSIDE;
 
 public class SquareModel extends Entity implements CollisionSquareSquare, CollisionSquareTriangle {
@@ -32,6 +32,7 @@ public class SquareModel extends Entity implements CollisionSquareSquare, Collis
             if(squareView.getId().equals(getId()))
                 nowSquareView = squareView;
         SquareView.squareViews.remove(nowSquareView);
+        entities.remove(this);
     }
 
     @Override

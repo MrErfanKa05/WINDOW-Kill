@@ -1,12 +1,11 @@
 package game.windowkill.controller.builder;
 
-import game.windowkill.model.characterModel.SquareModel;
-import game.windowkill.model.characterModel.TriangleModel;
+import game.windowkill.model.characterModel.enemy.SquareModel;
+import game.windowkill.model.characterModel.enemy.TriangleModel;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 
-import javax.imageio.plugins.tiff.TIFFDirectory;
 import java.util.Random;
 
 import static game.windowkill.controller.Constant.*;

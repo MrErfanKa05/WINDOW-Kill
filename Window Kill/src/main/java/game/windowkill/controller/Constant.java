@@ -39,4 +39,12 @@ public class Constant {
 
     public static final String TRIANGLE_PATH = "src/main/resources/game/windowkill/resources/triangle.png";
 
+    public static final int BULLET_DECRASE_HEALTH = 5;
+    public static final double CHANGE_FRAME = 0.6;
+    public static final double CHANGE_TIME = 0.5;
+    public static final int MOTION_SCENE_WIDTH = 202;
+    public static final int MOTION_SCENE_HEIGHT = 202;
+    public static final int ARCHMIRE_OUTSIDE = 40 * 40;
+    public static final int AOE = 2;
+    public static final int DROWN = 10;
 }

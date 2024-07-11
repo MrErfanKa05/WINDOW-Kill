@@ -1,10 +1,12 @@
-package game.windowkill.model.characterModel;
+package game.windowkill.model.characterModel.enemy;
 
 import game.windowkill.controller.Utils;
+import game.windowkill.model.characterModel.Entity;
+import game.windowkill.model.characterModel.EpsilonModel;
 import game.windowkill.model.characterModel.collision.normalShape.CollisionTriangleTriangle;
 import game.windowkill.model.characterModel.move.Direction;
-import game.windowkill.view.characterView.SquareView;
-import game.windowkill.view.characterView.TriangleView;
+import game.windowkill.model.strategy.Routing;
+import game.windowkill.view.characterView.enemy.TriangleView;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public class TriangleModel extends Entity implements CollisionTriangleTriangle {
             if(triangleView.getId().equals(getId()))
                 nowTriangleView = triangleView;
         TriangleView.triangleViews.remove(nowTriangleView);
+        entities.remove(this);
     }
 
     @Override
