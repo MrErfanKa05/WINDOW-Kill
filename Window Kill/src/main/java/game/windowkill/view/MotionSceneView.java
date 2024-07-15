@@ -155,8 +155,8 @@ public class MotionSceneView {
         }
         imageView.setFitWidth(EPSILON_DIAMETER);
         imageView.setFitHeight(EPSILON_DIAMETER);
-        imageView.setTranslateX(EpsilonView.getInstance().getX());
-        imageView.setTranslateY(EpsilonView.getInstance().getY());
+        imageView.setTranslateX(EpsilonView.getInstance().getX() - EPSILON_RADIUS - stage.getX());
+        imageView.setTranslateY(EpsilonView.getInstance().getY() - EPSILON_RADIUS - stage.getY());
 
         pane.getChildren().add(imageView);
 
@@ -165,30 +165,30 @@ public class MotionSceneView {
             Circle bull = new Circle();
             bull.setFill(Color.DARKMAGENTA);
             bull.setRadius(Constant.BULLET_RADIUS);
-            bull.setTranslateX(bullet.getPosition().getX());
-            bull.setTranslateY(bullet.getPosition().getY());
+            bull.setTranslateX(bullet.getPosition().getX() - BULLET_RADIUS - stage.getX());
+            bull.setTranslateY(bullet.getPosition().getY() - BULLET_RADIUS - stage.getY());
             pane.getChildren().add(bull);
         }
 
         for(SquareView squareView : SquareView.squareViews){
-            if(squareView.getPosition().getX() + SQUARE_OUTSIDE + stage.getX() < left ||
-                squareView.getPosition().getX() + stage.getX() > right ||
-                squareView.getPosition().getY() + SQUARE_OUTSIDE + stage.getY() < top ||
-                squareView.getPosition().getY() + stage.getY() > down)
+            if(squareView.getPosition().getX() + SQUARE_OUTSIDE < left ||
+                squareView.getPosition().getX() > right ||
+                squareView.getPosition().getY() + SQUARE_OUTSIDE < top ||
+                squareView.getPosition().getY() > down)
                 continue;
             Rectangle rectangleOut = new Rectangle();
             rectangleOut.setFill(Color.GREEN);
             rectangleOut.setHeight(SQUARE_OUTSIDE);
             rectangleOut.setWidth(SQUARE_OUTSIDE);
-            rectangleOut.setX(squareView.getPosition().getX());
-            rectangleOut.setY(squareView.getPosition().getY());
+            rectangleOut.setTranslateX(squareView.getPosition().getX() - stage.getX());
+            rectangleOut.setTranslateY(squareView.getPosition().getY() - stage.getY());
 
             Rectangle rectangleIn = new Rectangle();
             rectangleIn.setFill(Color.BLACK);
             rectangleIn.setHeight(SQUARE_INSIDE);
             rectangleIn.setWidth(SQUARE_INSIDE);
-            rectangleIn.setX(squareView.getPosition().getX() + 4);
-            rectangleIn.setY(squareView.getPosition().getY() + 4);
+            rectangleIn.setTranslateX(squareView.getPosition().getX() + 4 - stage.getX());
+            rectangleIn.setTranslateY(squareView.getPosition().getY() + 4 - stage.getY());
 
             pane.getChildren().add(rectangleOut);
             pane.getChildren().add(rectangleIn);
@@ -198,18 +198,18 @@ public class MotionSceneView {
             Circle circle = new Circle();
             circle.setRadius(collectableItemView.getRadius());
 //            circle.setRadius(20);
-            circle.setTranslateX(collectableItemView.getPosition().getX());
-            circle.setTranslateY(collectableItemView.getPosition().getY());
+            circle.setTranslateX(collectableItemView.getPosition().getX() - stage.getX());
+            circle.setTranslateY(collectableItemView.getPosition().getY() - stage.getY());
             circle.setFill(collectableItemView.getColor());
 
             pane.getChildren().add(circle);
         }
 
         for(TriangleView triangleView : TriangleView.triangleViews){
-            if(triangleView.getPosition().getX() + TRIANGLE_OUTSIDE + stage.getX() < left ||
-                    triangleView.getPosition().getX() + stage.getX() > right ||
-                    triangleView.getPosition().getY() + TRIANGLE_OUTSIDE + stage.getY() < top ||
-                    triangleView.getPosition().getY() + stage.getY() > down)
+            if(triangleView.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+                    triangleView.getPosition().getX() > right ||
+                    triangleView.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    triangleView.getPosition().getY() > down)
                 continue;
             //todo
             file = new File(TRIANGLE_PATH);
@@ -220,8 +220,8 @@ public class MotionSceneView {
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
-            triangleImage.setTranslateX(triangleView.getPosition().getX());
-            triangleImage.setTranslateY(triangleView.getPosition().getY());
+            triangleImage.setTranslateX(triangleView.getPosition().getX() - stage.getX());
+            triangleImage.setTranslateY(triangleView.getPosition().getY() - stage.getY());
             triangleImage.setFitHeight(TRIANGLE_OUTSIDE);
             triangleImage.setFitWidth(TRIANGLE_OUTSIDE);
 

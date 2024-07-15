@@ -1,9 +1,12 @@
 package game.windowkill.model.characterModel.enemy;
 
 import game.windowkill.controller.Utils;
+import game.windowkill.model.attack.MeleeAttack;
 import game.windowkill.model.characterModel.Entity;
 import game.windowkill.model.characterModel.EpsilonModel;
 import game.windowkill.model.characterModel.collision.normalShape.CollisionTriangleTriangle;
+import game.windowkill.model.characterModel.miniBoss.Barricados;
+import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.model.strategy.Routing;
 import game.windowkill.view.characterView.enemy.TriangleView;
@@ -13,7 +16,7 @@ import java.util.ArrayList;
 
 import static game.windowkill.controller.Constant.TRIANGLE_OUTSIDE;
 
-public class TriangleModel extends Entity implements CollisionTriangleTriangle {
+public class TriangleModel extends Entity implements CollisionTriangleTriangle, MeleeAttack {
     public static ArrayList<TriangleModel> triangleModels = new ArrayList<>();
     public TriangleModel(double x, double y){
         super(x, y);
@@ -22,6 +25,7 @@ public class TriangleModel extends Entity implements CollisionTriangleTriangle {
         hp = 15;
         attackHp = 10;
         collectables = 2;
+        collectableXP = 5;
     }
 
     public void remove(){
@@ -72,8 +76,21 @@ public class TriangleModel extends Entity implements CollisionTriangleTriangle {
             Point2D p1 = entity.getVertices().get(0);
             Point2D p2 = entity.getVertices().get(1);
             Point2D p3 = entity.getVertices().get(2);
-            return checkTriangleTriangle(p1, p2, p3);
+            Point2D d1 = getVertices().get(0);
+            Point2D d2 = getVertices().get(1);
+            Point2D d3 = getVertices().get(2);
+            return checkTriangleTriangle(this, p1, p2, p3) || checkTriangleTriangle(entity, d1, d2, d3);
         }
+        if(entity instanceof Omenoct)
+            return entity.checkIntersect(this);
+        if(entity instanceof NecroPick)
+            return entity.checkIntersect(this);
+        if(entity instanceof Archmire)
+            return entity.checkIntersect(this);
+        if(entity instanceof Wyrm)
+            return entity.checkIntersect(this);
+        if(entity instanceof BlackOrb || entity instanceof Barricados)
+            return entity.checkIntersect(this);
         return false;
     }
 
@@ -81,14 +98,31 @@ public class TriangleModel extends Entity implements CollisionTriangleTriangle {
     public Point2D getIntersect(Entity entity) {
         if(entity instanceof EpsilonModel)
             return entity.getIntersect(this);
-        if(entity instanceof SquareModel)
+        if(entity instanceof SquareModel) {
             return entity.getIntersect(this);
+        }
         if(entity instanceof TriangleModel){
             Point2D p1 = entity.getVertices().get(0);
             Point2D p2 = entity.getVertices().get(1);
             Point2D p3 = entity.getVertices().get(2);
-            return getTriangleTriangle(p1, p2, p3);
+            Point2D d1 = getVertices().get(0);
+            Point2D d2 = getVertices().get(1);
+            Point2D d3 = getVertices().get(2);
+            Point2D point2D1 = getTriangleTriangle(this, p1, p2, p3);
+            Point2D point2D2 = getTriangleTriangle(entity, d1, d2, d3);
+            Point2D ans = (point2D1 == null ? point2D2 : point2D1);
+            return ans;
         }
+        if(entity instanceof Omenoct)
+            return entity.getIntersect(this);
+        if(entity instanceof NecroPick)
+            return entity.getIntersect(this);
+        if(entity instanceof Archmire)
+            return entity.getIntersect(this);
+        if(entity instanceof Wyrm)
+            return entity.getIntersect(this);
+        if(entity instanceof BlackOrb || entity instanceof Barricados)
+            return entity.getIntersect(this);
         return null;
     }
 

@@ -2,22 +2,16 @@ package game.windowkill.model.characterModel;
 
 import game.windowkill.controller.Utils;
 import game.windowkill.model.characterModel.collision.Collidable;
-import game.windowkill.model.characterModel.collision.normalShape.*;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.model.characterModel.move.Impactable;
 import game.windowkill.model.characterModel.move.Movable;
 import game.windowkill.model.sceneModel.BaseSceneModel;
 import game.windowkill.model.strategy.Routing;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.geometry.Point2D;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static game.windowkill.controller.Constant.ACCELERATION;
-import static game.windowkill.controller.Constant.ACCELERATION_TIME;
 import static java.lang.Math.max;
 
 public abstract class Entity implements Collidable, Movable, Impactable {
@@ -32,16 +26,16 @@ public abstract class Entity implements Collidable, Movable, Impactable {
     protected double acceleration = 0;
     protected double speed = Utils.getSpeed();
     protected ArrayList<Point2D> vertices = new ArrayList<>();
-    protected double hp, attackHp;
+    protected double hp, attackHp, rangeAttackHp, collectableXP;
     protected int collectables;
     protected BaseSceneModel baseSceneModel = null;
 
-    public Routing routing = Routing.LocalRouting;
+    public Routing routing = Routing.Isometric;
 
     public Entity(double x, double y){
         id = UUID.randomUUID().toString();
         position = new Point2D(x, y);
-        update();
+//        update();
         entities.add(this);
     }
     public void playAcceleration(Point2D point2D, double acc){
@@ -49,7 +43,12 @@ public abstract class Entity implements Collidable, Movable, Impactable {
     }
     public void playAcceleration(Direction direction, double acc){
         acceleration = acc;
-        impactDirection = new Direction(direction.getDirectionVector());
+        Direction p1 = new Direction(Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration));
+        Direction p2 = new Direction(Utils.multiplyVector(direction.getDirectionVector(), acc));
+
+        impactDirection = new Direction(Utils.addVector(p1.getDirectionVector(), p2.getDirectionVector()));
+//        impactDirection = new Direction(Utils.addVector(new Direction(direction.getDirectionVector()).getDirectionVector(),
+//                impactDirection.getDirectionVector()));
     }
 
     public Direction getImpactDirection() {
@@ -71,7 +70,7 @@ public abstract class Entity implements Collidable, Movable, Impactable {
     @Override
     public void impact(){
         impactDirection = new Direction(Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration));
-        acceleration = acceleration -= 5;
+        acceleration -= 2.5;
         acceleration = max(acceleration, 0);
         move(impactDirection);
     }
@@ -136,6 +135,14 @@ public abstract class Entity implements Collidable, Movable, Impactable {
 
     public void setAttackHp(double attackHp) {
         this.attackHp = attackHp;
+    }
+
+    public double getRangeAttackHp() {
+        return rangeAttackHp;
+    }
+
+    public double getCollectableXP() {
+        return collectableXP;
     }
 
     public int getCollectables() {

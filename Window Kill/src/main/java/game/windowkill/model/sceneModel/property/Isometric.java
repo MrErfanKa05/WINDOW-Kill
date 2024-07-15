@@ -55,6 +55,11 @@ public interface Isometric extends SceneCollidable {
         rightAcceleration = max(0, rightAcceleration - changeTime);
         topAcceleration = max(0, topAcceleration - changeTime);
 
+        right = model.getRight();
+        left = model.getLeft();
+        top = model.getTop();
+        down = model.getDown();
+
         top = max(0, top);
         left = max(0, left);
         down = top + model.height;
@@ -64,14 +69,14 @@ public interface Isometric extends SceneCollidable {
         left = right - model.width;
         top = down - model.height;
 
-        if(model.isGoRight())
-            model.setRight(right);
-        if(model.isGoLeft())
-            model.setLeft(left);
-        if(model.isGoTop())
-            model.setTop(top);
-        if(model.isGoDown())
-            model.setDown(down);
+//        if(model.isGoRight())
+        model.setRight(right);
+//        if(model.isGoLeft())
+        model.setLeft(left);
+//        if(model.isGoTop())
+        model.setTop(top);
+//        if(model.isGoDown())
+        model.setDown(down);
 
         model.setTopAcceleration(topAcceleration);
         model.setDownAcceleration(downAcceleration);

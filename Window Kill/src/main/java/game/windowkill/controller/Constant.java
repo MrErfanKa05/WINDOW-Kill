@@ -47,4 +47,7 @@ public class Constant {
     public static final int ARCHMIRE_OUTSIDE = 40 * 40;
     public static final int AOE = 2;
     public static final int DROWN = 10;
+    public static final int MELEE_DISTANCE = 10;
+    public static final int BIG_ENEMY_OUTSIDE = 40;
+    public static final int BLACKORB_RADIUS = 30;
 }

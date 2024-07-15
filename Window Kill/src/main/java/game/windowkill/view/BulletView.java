@@ -25,8 +25,8 @@ public class BulletView {
     }
 
     public Point2D getPosition() {
-        double paneX = position.getX() - DataHolder.stage.getX();
-        double paneY = position.getY() - DataHolder.stage.getY();
+        double paneX = position.getX();
+        double paneY = position.getY();
 //        System.out.println(position.getX() + " " + paneX);
         return new Point2D(paneX, paneY);
     }

@@ -1,41 +1,28 @@
-package game.windowkill.model;
+package game.windowkill.model.bullets;
 
 import game.windowkill.controller.Utils;
 import game.windowkill.model.characterModel.Entity;
 import game.windowkill.model.characterModel.collision.Collidable;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.model.characterModel.move.Movable;
-import game.windowkill.view.BulletView;
 import javafx.geometry.Point2D;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import static game.windowkill.controller.Constant.BULLET_RADIUS;
 import static game.windowkill.controller.Constant.BULLET_SPEED;
 
-public class BulletModel implements Collidable , Movable {
-    public static ArrayList<BulletModel> bulletModels = new ArrayList<>();
+public abstract class BulletModel implements Collidable, Movable {
 
-    private String id;
-    private double radius = BULLET_RADIUS;
-    private double speed = BULLET_SPEED;
-    Direction direction = new Direction(0, 0);
-    private Point2D position;
+    protected String id;
+    protected double radius = BULLET_RADIUS;
+    protected double speed = BULLET_SPEED;
+    protected Direction direction = new Direction(0, 0);
+    protected Point2D position;
+
     public BulletModel(double x, double y){
         position = new Point2D(x, y);
-        bulletModels.add(this);
         id = UUID.randomUUID().toString();
-        new BulletView(id, position);
-    }
-
-    public void remove(){
-        bulletModels.remove(this);
-        BulletView nowBulletView = null;
-        for(BulletView bulletView : BulletView.bulletViews)
-            if(bulletView.getId().equals(getId()))
-                nowBulletView = bulletView;
-        BulletView.bulletViews.remove(nowBulletView);
     }
 
     public String getId() {

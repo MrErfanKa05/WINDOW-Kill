@@ -1,20 +1,24 @@
 package game.windowkill.model.characterModel;
 
 import game.windowkill.controller.Utils;
+import game.windowkill.model.attack.MeleeAttack;
+import game.windowkill.model.characterModel.enemy.*;
+import game.windowkill.model.characterModel.miniBoss.Barricados;
+import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.model.characterModel.multiScene.LocalMultiScene;
 import game.windowkill.model.sceneModel.BaseSceneModel;
 import game.windowkill.model.sceneModel.MotionSceneModel;
 import game.windowkill.model.characterModel.collision.normalShape.CollisionSquareCircle;
 import game.windowkill.model.characterModel.collision.normalShape.CollisionTriangleCircle;
-import game.windowkill.model.characterModel.enemy.SquareModel;
-import game.windowkill.model.characterModel.enemy.TriangleModel;
 import game.windowkill.model.characterModel.move.Direction;
 import javafx.geometry.Point2D;
+
+import java.util.ArrayList;
 
 import static game.windowkill.controller.Constant.*;
 import static java.lang.Math.abs;
 
-public class EpsilonModel extends Entity implements CollisionSquareCircle, CollisionTriangleCircle, LocalMultiScene {
+public class EpsilonModel extends Entity implements CollisionSquareCircle, CollisionTriangleCircle, LocalMultiScene, MeleeAttack {
     private static EpsilonModel epsilonModel;
     public static EpsilonModel getInstance(){
         if(epsilonModel == null)epsilonModel = new EpsilonModel();
@@ -55,7 +59,6 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
     private EpsilonModel() {
         super(SCREEN_WIDTH /2 , SCREEN_HEIGHT /2);
         init();
-        baseSceneModel = MotionSceneModel.getInstance();
     }
     public void init(){
         speed = Utils.getEpsilonSpeed();
@@ -63,11 +66,30 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
         hp = 100;
         attackHp = 5;
         position = new Point2D(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+        baseSceneModel = MotionSceneModel.getInstance();
         update();
     }
 
     public double getRadius() {
         return radius;
+    }
+
+    private int verticesNum = 0;
+
+    public void addVertex(){
+        verticesNum++;
+        createAngles();
+    }
+
+    public ArrayList<Double> sin = new ArrayList<>();
+    public ArrayList<Double> cos = new ArrayList<>();
+    public void createAngles(){
+        sin.clear();
+        cos.clear();
+        for(int i = 0; i < verticesNum; i++){
+            sin.add(Math.sin(2 * Math.PI / verticesNum));
+            cos.add(Math.cos(2 * Math.PI / verticesNum));
+        }
     }
 
     @Override
@@ -97,8 +119,10 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
         double down = MotionSceneModel.getInstance().getDown();
 
 //        System.out.println(left + " " + point.getX());
+//        System.out.println(left + " " + getX() + " " + EPSILON_RADIUS);
 
-        if(abs(point.getX() + EPSILON_RADIUS - left) <= 3){
+        if(abs(point.getX() - EPSILON_RADIUS - left) <= 3){
+
             position = new Point2D(getX() + 1, getY());
             return;
         }
@@ -106,7 +130,7 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
             position = new Point2D(getX() - 1, getY());
             return;
         }
-        if(abs(point.getY() + EPSILON_RADIUS - top) <= 3){
+        if(abs(point.getY() - EPSILON_RADIUS - top) <= 3){
             position = new Point2D(getX(), getY() + 1);
             return;
         }
@@ -135,20 +159,28 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
             Point2D p1 = entity.vertices.get(0);
             Point2D p2 = entity.vertices.get(1);
             Point2D p3 = entity.vertices.get(2);
-            boolean c = checkTriangleCircle(p1, p2, p3, getX(), getY(), getRadius());
-            if(c)hp -= 10;
-            return c;
+            return checkTriangleCircle(p1, p2, p3, getX(), getY(), getRadius());
         }
         else if(entity instanceof SquareModel squareModel){
             Point2D p1 = squareModel.getVertices().get(0);
             Point2D p2 = squareModel.getVertices().get(1);
             Point2D p3 = squareModel.getVertices().get(2);
             Point2D p4 = squareModel.getVertices().get(3);
-            boolean c = checkSquareCircle(p1, p2, p3, p4,
+            return checkSquareCircle(p1, p2, p3, p4,
                     getPosition().getX(), getPosition().getY(), getRadius());
-            if(c)hp -= 6;
-            return c;
         }
+        if(entity instanceof Omenoct)
+            return entity.checkIntersect(this);
+        if(entity instanceof NecroPick)
+            return entity.checkIntersect(this);
+        if(entity instanceof Archmire)
+            return entity.checkIntersect(this);
+        if(entity instanceof Wyrm)
+            return entity.checkIntersect(this);
+        if(entity instanceof Barricados)
+            return entity.checkIntersect(this);
+        if(entity instanceof BlackOrb)
+            return entity.checkIntersect(this);
         return false;
     }
 
@@ -168,6 +200,16 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
             Point2D p4 = entity.vertices.get(3);
             return getSquareCircle(p1, p2, p3, p4, getX(), getY(), getRadius());
         }
+        if(entity instanceof Omenoct)
+            return entity.getIntersect(this);
+        if(entity instanceof NecroPick)
+            return entity.getIntersect(this);
+        if(entity instanceof Archmire)
+            return entity.getIntersect(this);
+        if(entity instanceof Wyrm)
+            return entity.getIntersect(this);
+        if(entity instanceof BlackOrb || entity instanceof Barricados)
+            return entity.getIntersect(this);
         return null;
     }
 
@@ -176,6 +218,15 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
         Point2D changePosition = Utils.multiplyVector(direction.getDirectionVector(), speed);
         position = Utils.addVector(position, changePosition);
         impact();
+
+        vertices.clear();
+
+        for(int i = 0; i < verticesNum; i++){
+            double x = radius * cos.get(i) + getX();
+            double y = radius * sin.get(i) + getY();
+            vertices.add(new Point2D(x, y));
+        }
+
         if(isMultiScene()){
             double left = baseSceneModel.getLeft();
             double right = baseSceneModel.getRight();
@@ -241,6 +292,9 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
             double r = model.getRight();
             double t = model.getTop();
             double d = model.getDown();
+
+            if(l == left && r == right && d == down && t == top)
+                return false;
 
             Point2D p1 = new Point2D(l, t);
             Point2D p2 = new Point2D(l, d);

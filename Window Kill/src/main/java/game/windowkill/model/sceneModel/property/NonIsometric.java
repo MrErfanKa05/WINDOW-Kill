@@ -25,33 +25,40 @@ public interface NonIsometric extends SceneCollidable {
         double topAcceleration = model.getTopAcceleration();
         double downAcceleration = model.getDownAcceleration();
 
-        if(downAcceleration > 0)
+        if(downAcceleration > 0 && model.isGoDown())
             model.setGoDown(downAcceleration);
-        if(leftAcceleration > 0)
+        if(leftAcceleration > 0 && model.isGoLeft())
             model.setGoLeft(leftAcceleration);
-        if(rightAcceleration > 0)
+        if(rightAcceleration > 0 && model.isGoRight())
             model.setGoRight(rightAcceleration);
-        if(topAcceleration > 0)
+        if(topAcceleration > 0 && model.isGoTop())
             model.setGoTop(topAcceleration);
+//            model.setLeft(model.getLeft() - 30);
 
+//        System.out.println(model.getLeft());
         downAcceleration = max(0, downAcceleration - changeTime);
         leftAcceleration = max(0, leftAcceleration - changeTime);
         rightAcceleration = max(0, rightAcceleration - changeTime);
         topAcceleration = max(0, topAcceleration - changeTime);
+
+        right = model.getRight();
+        left = model.getLeft();
+        top = model.getTop();
+        down = model.getDown();
 
         top = max(0, top);
         left = max(0, left);
         down = min(SCREEN_HEIGHT, down);
         right = min(SCREEN_WIDTH, right);
 
-        if(model.isGoRight())
-            model.setRight(right);
-        if(model.isGoLeft())
-            model.setLeft(left);
-        if(model.isGoTop())
-            model.setTop(top);
-        if(model.isGoDown())
-            model.setDown(down);
+//        if(model.isGoRight())
+        model.setRight(right);
+//        if(model.isGoLeft())
+        model.setLeft(left);
+//        if(model.isGoTop())
+        model.setTop(top);
+//        if(model.isGoDown())
+        model.setDown(down);
 
         model.setTopAcceleration(topAcceleration);
         model.setDownAcceleration(downAcceleration);
@@ -71,6 +78,7 @@ public interface NonIsometric extends SceneCollidable {
         double downAcceleration = model.getDownAcceleration();
 
         //todo here for mistake
+//        System.out.println("Dsdasdsadsada");
 
         if(right - left <= model.width){
             right += changeFrame;
@@ -90,14 +98,14 @@ public interface NonIsometric extends SceneCollidable {
         down = min(SCREEN_HEIGHT, down);
         right = min(SCREEN_WIDTH, right);
 
-        if(model.isGoRight())
-            model.setRight(right);
-        if(model.isGoLeft())
-            model.setLeft(left);
-        if(model.isGoTop())
-            model.setTop(top);
-        if(model.isGoDown())
-            model.setDown(down);
+//        if(model.isGoRight())
+        model.setRight(right);
+//        if(model.isGoLeft())
+        model.setLeft(left);
+//        if(model.isGoTop())
+        model.setTop(top);
+//        if(model.isGoDown())
+        model.setDown(down);
 
         if(right + rightAcceleration - left + leftAcceleration<= 202){
 //            right++;

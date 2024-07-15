@@ -2,8 +2,9 @@ package game.windowkill.controller;
 
 import game.windowkill.controller.builder.EnemyBuilder;
 import game.windowkill.controller.loader.SceneLoader;
-import game.windowkill.model.BulletModel;
+import game.windowkill.model.bullets.EpsilonBulletModel;
 import game.windowkill.model.CollectableItemModel;
+import game.windowkill.model.attack.MeleeAttack;
 import game.windowkill.model.characterModel.Entity;
 import game.windowkill.model.sceneModel.MotionSceneModel;
 import game.windowkill.model.characterModel.EpsilonModel;
@@ -27,7 +28,6 @@ import java.util.ArrayList;
 
 import static game.windowkill.controller.Constant.*;
 import static game.windowkill.controller.DataHolder.stage;
-import static java.lang.Math.E;
 import static java.lang.Math.max;
 
 public class Update {
@@ -39,9 +39,9 @@ public class Update {
         EpsilonView.getInstance().setPosition(EpsilonModel.getInstance().getPosition());
 
         for(BulletView bulletView : BulletView.bulletViews){
-            for(BulletModel bulletModel : BulletModel.bulletModels) {
-                if (bulletModel.getId().equals(bulletView.getId())) {
-                    bulletView.setPosition(bulletModel.getPosition());
+            for(EpsilonBulletModel epsilonBulletModel : EpsilonBulletModel.epsilonBulletModels) {
+                if (epsilonBulletModel.getId().equals(bulletView.getId())) {
+                    bulletView.setPosition(epsilonBulletModel.getPosition());
                 }
             }
         }
@@ -88,6 +88,8 @@ public class Update {
         collectableGet();
 
         move();
+
+//        System.out.println(EpsilonModel.getInstance().getPosition());
 
     }));
 
@@ -137,8 +139,26 @@ public class Update {
             for (Entity entity1 : Entity.entities) {
                 if (entity.getId().equals(entity1.getId()))
                     continue;
-                if (entity.routing.equals(Routing.LocalRouting) && entity1.routing.equals(Routing.LocalRouting) && entity.checkIntersect(entity1))
-                    impact(entity1.getIntersect(entity));
+                if (entity.routing.equals(Routing.Isometric) && entity1.routing.equals(Routing.Isometric) && entity.checkIntersect(entity1)) {
+                    impact(entity.getIntersect(entity1));
+                    if(entity instanceof MeleeAttack meleeAttack){
+                        meleeAttack.meleeAttack(entity, entity1);
+                    }
+                    if(entity1 instanceof  MeleeAttack meleeAttack){
+                        meleeAttack.meleeAttack(entity1, entity);
+                    }
+//                        System.out.println(entity.getIntersect(entity1));
+                    //todo fix this : check for decrease hp
+                    //todo : maybe incorrect circle intersect
+//                    Point2D point2D = entity1.getIntersect(entity);
+//                    System.out.println(entity1 + " " + entity + " " + point2D);
+//                    try {
+//
+//                        impact(entity1.getIntersect(entity));
+//                    }catch (Exception e){
+//                        death();
+//                    }
+                }
             }
         }
 
@@ -150,40 +170,40 @@ public class Update {
     }
 
     public void bulletIntersect(){
-        ArrayList<BulletModel> Bullets = new ArrayList<>();
+        ArrayList<EpsilonBulletModel> Bullets = new ArrayList<>();
 
-        for(BulletModel bulletModel : BulletModel.bulletModels) {
-            if (MotionSceneModel.getInstance().collision(bulletModel.getPosition())) {
-                Point2D point2D = bulletModel.getPosition();
-                if (point2D.getY() + BULLET_RADIUS - MotionSceneModel.getInstance().getTop() <= 1)
+        for(EpsilonBulletModel epsilonBulletModel : EpsilonBulletModel.epsilonBulletModels) {
+            if (MotionSceneModel.getInstance().collision(epsilonBulletModel.getPosition())) {
+                Point2D point2D = epsilonBulletModel.getPosition();
+                if (point2D.getY() - MotionSceneModel.getInstance().getTop() <= 2)
                     MotionSceneModel.getInstance().change(0, -1);
-                else if (MotionSceneModel.getInstance().getDown() - point2D.getY() - BULLET_RADIUS <= 1)
+                else if (MotionSceneModel.getInstance().getDown() - point2D.getY() <= 2)
                     MotionSceneModel.getInstance().change(0, 1);
-                else if (point2D.getX() + BULLET_RADIUS - MotionSceneModel.getInstance().getLeft() <= 1)
+                else if (point2D.getX() - MotionSceneModel.getInstance().getLeft() <= 2)
                     MotionSceneModel.getInstance().change(-1, 0);
-                else if (MotionSceneModel.getInstance().getRight() - point2D.getX() - BULLET_RADIUS <= 1)
+                else if (MotionSceneModel.getInstance().getRight() - point2D.getX() <= 2)
                     MotionSceneModel.getInstance().change(1, 0);
-                Bullets.add(bulletModel);
-                impact(bulletModel.getPosition());
+                Bullets.add(epsilonBulletModel);
+                impact(epsilonBulletModel.getPosition());
             }
             for(TriangleModel triangleModel : TriangleModel.triangleModels){
-                if(triangleModel.collision(bulletModel.getPosition())){
-                    Bullets.add(bulletModel);
-                    impact(bulletModel.getPosition());
+                if(triangleModel.collision(epsilonBulletModel.getPosition())){
+                    Bullets.add(epsilonBulletModel);
+                    impact(epsilonBulletModel.getPosition());
                     triangleModel.decreaseHearth(BULLET_DECRASE_HEALTH);
                 }
             }
             for(SquareModel squareModel : SquareModel.squareModels){
-                if(squareModel.collision(bulletModel.getPosition())){
-                    Bullets.add(bulletModel);
-                    impact(bulletModel.getPosition());
+                if(squareModel.collision(epsilonBulletModel.getPosition())){
+                    Bullets.add(epsilonBulletModel);
+                    impact(epsilonBulletModel.getPosition());
                     squareModel.decreaseHearth(BULLET_DECRASE_HEALTH);
                 }
             }
         }
 
-        for(BulletModel bulletModel : Bullets)
-            bulletModel.remove();
+        for(EpsilonBulletModel epsilonBulletModel : Bullets)
+            epsilonBulletModel.remove();
     }
 
     public void collectableGet(){
@@ -243,8 +263,8 @@ public class Update {
             squareModel.update();
         for(TriangleModel triangleModel : TriangleModel.triangleModels)
             triangleModel.update();
-        for(BulletModel bulletModel : BulletModel.bulletModels)
-            bulletModel.update();
+        for(EpsilonBulletModel epsilonBulletModel : EpsilonBulletModel.epsilonBulletModels)
+            epsilonBulletModel.update();
 
         MotionSceneModel.getInstance().update();
 //        MotionSceneView.getInstance().paint();
@@ -253,17 +273,17 @@ public class Update {
         double C = 0.0003;
         for(SquareModel squareModel : SquareModel.squareModels){
             double dis = squareModel.getDistance(squareModel.getPosition(), point2D);
-            if(dis <= 5)squareModel.playAcceleration(point2D, ACCELERATION / C);
-            else squareModel.playAcceleration(point2D, ACCELERATION / (dis * C));
+            if(dis <= 25)squareModel.playAcceleration(point2D, ACCELERATION / C);
+            else squareModel.playAcceleration(point2D, ACCELERATION / (dis*dis * C));
         }
         for(TriangleModel triangleModel : TriangleModel.triangleModels){
             double dis = triangleModel.getDistance(triangleModel.getPosition(), point2D);
-            if(dis <= 5)triangleModel.playAcceleration(point2D, ACCELERATION / C);
-            else triangleModel.playAcceleration(point2D, ACCELERATION / (dis * C));
+            if(dis <= 25)triangleModel.playAcceleration(point2D, ACCELERATION / C);
+            else triangleModel.playAcceleration(point2D, ACCELERATION / (dis*dis * C));
         }
         EpsilonModel model = EpsilonModel.getInstance();
         double dis = model.getDistance(model.getPosition(), point2D);
-        if(dis <= 5)model.playAcceleration(point2D, ACCELERATION / (C * 1));
+        if(dis <= 25)model.playAcceleration(point2D, ACCELERATION / (C * 1));
         else model.playAcceleration(point2D, ACCELERATION / (dis*dis * C * 1));
     }
     private void death(){
@@ -322,7 +342,7 @@ public class Update {
         EpsilonModel.getInstance().init();
         TriangleModel.triangleModels.clear();
         SquareModel.squareModels.clear();
-        BulletModel.bulletModels.clear();
+        EpsilonBulletModel.epsilonBulletModels.clear();
         CollectableItemModel.collectableItemModels.clear();
     }
 
@@ -330,8 +350,8 @@ public class Update {
         if(System.currentTimeMillis() - dalay > BULLET_DELAY) {
 //            new BulletModel(point2D.getX() + stage.getX(), point2D.getY() + stage.getY());
             Point2D pos = new Point2D(EpsilonModel.getInstance().getX(), EpsilonModel.getInstance().getY());
-            BulletModel bulletModel = new BulletModel(pos.getX(), pos.getY());
-            bulletModel.setDirection(new Direction(Utils.relativeLocation(new Point2D(point2D.getX() + stage.getX(), point2D.getY() + stage.getY()),
+            EpsilonBulletModel epsilonBulletModel = new EpsilonBulletModel(pos.getX(), pos.getY());
+            epsilonBulletModel.setDirection(new Direction(Utils.relativeLocation(new Point2D(point2D.getX() + stage.getX(), point2D.getY() + stage.getY()),
                     pos)).getDirectionVector());
 //            System.out.println(point2D.getX() + " " + point2D.getY());
             dalay = System.currentTimeMillis();

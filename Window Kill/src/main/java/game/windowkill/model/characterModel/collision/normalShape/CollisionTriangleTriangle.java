@@ -1,26 +1,27 @@
 package game.windowkill.model.characterModel.collision.normalShape;
 
+import game.windowkill.model.characterModel.Entity;
 import game.windowkill.model.characterModel.collision.Collidable;
 import game.windowkill.model.characterModel.collision.ModeInitialize;
 import javafx.geometry.Point2D;
 
 public interface CollisionTriangleTriangle extends ModeInitialize {
-    default boolean checkTriangleTriangle(Point2D p1, Point2D p2, Point2D p3){
-        return collision(p1) || collision(p2) || collision(p3);
+    default boolean checkTriangleTriangle(Entity entity, Point2D p1, Point2D p2, Point2D p3){
+        return entity.collision(p1) || entity.collision(p2) || entity.collision(p3);
     }
-    default Point2D getTriangleTriangle(Point2D p1, Point2D p2, Point2D p3){
-        if(collision(p1))
+    default Point2D getTriangleTriangle(Entity entity, Point2D p1, Point2D p2, Point2D p3){
+        if(entity.collision(p1))
             return p1;
-        if(collision(p2))
+        if(entity.collision(p2))
             return p2;
-        if(collision(p3))
+        if(entity.collision(p3))
             return p3;
         return null;
     }
     default double sign(double p1x, double p1y, double p2x, double p2y, double p3x, double p3y) {
         return (p1x - p3x) * (p2y - p3y) - (p2x - p3x) * (p1y - p3y);
     }
-    default public boolean isPointInsideTriangle(double x1, double y1, double x2, double y2, double x3, double y3, double px, double py) {
+    default boolean isPointInsideTriangle(double x1, double y1, double x2, double y2, double x3, double y3, double px, double py) {
         double d1, d2, d3;
         boolean has_neg, has_pos;
 

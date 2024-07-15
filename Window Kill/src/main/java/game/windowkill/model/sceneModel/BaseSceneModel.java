@@ -14,12 +14,11 @@ public abstract class BaseSceneModel implements SceneCollidable {
     public static ArrayList<BaseSceneModel> baseSceneModels = new ArrayList<>();
 
     protected Direction direction;
-    protected double top, left, right, down;
+    protected double top = 0, left = 0, right = 0, down = 0;
     protected double topAcceleration = 0, downAcceleration = 0, rightAcceleration = 0, leftAcceleration = 0;
     protected boolean goTop = true, goLeft = true, goRight = true, goDown = true;
     public double width, height;
 
-    public static ArrayList<? extends BaseSceneModel> baseSceneModels = new ArrayList<>();
     protected String id;
 
     public abstract void reset();
@@ -164,8 +163,9 @@ public abstract class BaseSceneModel implements SceneCollidable {
         down += 1 * nowAcceleration;
     }
     public void setGoLeft(double acceleration){
-        double nowAcceleration = min(acceleration + 2, ACCELERATION - acceleration) + 2;
+        double nowAcceleration = min(acceleration, ACCELERATION - acceleration) + 2;
         left -= 1 * nowAcceleration;
+//        System.out.println(left + " " + nowAcceleration);
     }
     public void setGoRight(double acceleration){
         double nowAcceleration = min(acceleration, ACCELERATION - acceleration) + 2;

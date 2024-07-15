@@ -2,6 +2,8 @@ package game.windowkill.controller;
 
 import javafx.geometry.Point2D;
 
+import java.util.ArrayList;
+
 import static game.windowkill.controller.Constant.EPSILON_SPEED;
 import static game.windowkill.controller.Constant.SPEED;
 
@@ -23,5 +25,9 @@ public class Utils {
     }
     public static Point2D weightedAddVectors(Point2D point1,Point2D point2,double weight1,double weight2){
         return multiplyVector(addVector(multiplyVector(point1,weight1),multiplyVector(point2,weight2)),1/(weight1+weight2));
+    }
+    public static double getDistance(Point2D point1, Point2D point2){
+        return Math.sqrt((point2.getX() - point1.getX()) * (point2.getX() - point1.getX()) +
+                (point2.getY() - point1.getY()) * (point2.getY() - point1.getY()));
     }
 }
