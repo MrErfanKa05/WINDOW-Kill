@@ -1,13 +1,18 @@
-package game.windowkill.view;
+package game.windowkill.view.scene;
 
 import game.windowkill.controller.Constant;
 import game.windowkill.controller.DataHolder;
 import game.windowkill.controller.InputManager;
 import game.windowkill.controller.builder.EnemyBuilder;
 import game.windowkill.model.characterModel.EpsilonModel;
+import game.windowkill.view.CollectableItemView;
+import game.windowkill.view.bullet.EnemyBulletView;
+import game.windowkill.view.bullet.EpsilonBulletView;
+import game.windowkill.view.characterView.EntityView;
 import game.windowkill.view.characterView.EpsilonView;
-import game.windowkill.view.characterView.enemy.SquareView;
-import game.windowkill.view.characterView.enemy.TriangleView;
+import game.windowkill.view.characterView.enemy.*;
+import game.windowkill.view.characterView.miniBoss.BarricadosView;
+import game.windowkill.view.characterView.miniBoss.BlackOrbView;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -140,41 +145,157 @@ public class MotionSceneView {
         stage.setWidth(right - left);
         stage.setHeight(down - top);
     }
-    public void paint(){
-        pane.getChildren().clear();
-        setPage();
-
-        addBars();
-
-        File file = new File("src/main/resources/game/windowkill/resources/circle.png");
+    public void imagePaint(File file, int size, EntityView view){
         ImageView imageView = null;
         try {
             imageView = new ImageView(String.valueOf(file.toURI().toURL()));
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-        imageView.setFitWidth(EPSILON_DIAMETER);
-        imageView.setFitHeight(EPSILON_DIAMETER);
-        imageView.setTranslateX(EpsilonView.getInstance().getX() - EPSILON_RADIUS - stage.getX());
-        imageView.setTranslateY(EpsilonView.getInstance().getY() - EPSILON_RADIUS - stage.getY());
+        imageView.setTranslateX(view.getPosition().getX() - stage.getX());
+        imageView.setTranslateY(view.getPosition().getY() - stage.getY());
+        imageView.setFitHeight(size);
+        imageView.setFitWidth(size);
 
         pane.getChildren().add(imageView);
+    }
 
-        for(BulletView bullet : BulletView.bulletViews){
+    public void paint(){
+        pane.getChildren().clear();
+        setPage();
+
+        addBars();
+
+        for(ArchmireView view : ArchmireView.archmireViews){
+            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+                    view.getPosition().getX() > right ||
+                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() > down)
+                continue;
+
+            File file = new File(ARCHMIRE_PATH);
+
+            imagePaint(file, BIG_ENEMY_OUTSIDE, view);
+        }
+
+        for(NecropickView view : NecropickView.necropickViews){
+            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+                    view.getPosition().getX() > right ||
+                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() > down)
+                continue;
+
+            File file = new File(NECROPICK_PATH);
+
+            imagePaint(file, BIG_ENEMY_OUTSIDE, view);
+        }
+
+        for(OmenoctView view : OmenoctView.omenoctViews){
+            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+                    view.getPosition().getX() > right ||
+                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() > down)
+                continue;
+
+            File file = new File(OMENOCT_PATH);
+
+            imagePaint(file, BIG_ENEMY_OUTSIDE, view);
+        }
+
+        for(WyrmView view : WyrmView.wyrmViews){
+            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+                    view.getPosition().getX() > right ||
+                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() > down)
+                continue;
+
+            File file = new File(WYRM_PATH);
+
+            imagePaint(file, BIG_ENEMY_OUTSIDE, view);
+        }
+
+        for(BarricadosView view : BarricadosView.barricadosViews){
+            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+                    view.getPosition().getX() > right ||
+                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() > down)
+                continue;
+
+            File file = new File(BARRICADOS_PATH);
+
+            imagePaint(file, BIG_ENEMY_OUTSIDE, view);
+        }
+
+        for(BlackOrbView view : BlackOrbView.blackOrbViews){
+            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+                    view.getPosition().getX() > right ||
+                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() > down)
+                continue;
+
+            File file = new File(BLACKORB_PATH);
+
+            imagePaint(file, BIG_ENEMY_OUTSIDE, view);
+        }
+
+        {
+            EpsilonView view = EpsilonView.getInstance();
+            if (!(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+                    view.getPosition().getX() > right ||
+                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() > down)) {
+                File file = new File("src/main/resources/game/windowkill/resources/circle.png");
+                ImageView imageView = null;
+                try {
+                    imageView = new ImageView(String.valueOf(file.toURI().toURL()));
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                }
+                imageView.setFitWidth(EpsilonView.getInstance().getRadius() * 2);
+                imageView.setFitHeight(EpsilonView.getInstance().getRadius() * 2);
+                imageView.setTranslateX(EpsilonView.getInstance().getX() - EpsilonView.getInstance().getRadius() - stage.getX());
+                imageView.setTranslateY(EpsilonView.getInstance().getY() - EpsilonView.getInstance().getRadius() - stage.getY());
+
+                pane.getChildren().add(imageView);
+            }
+        }
+
+        //todo : add cerberusbullet
+
+        for(EnemyBulletView view : EnemyBulletView.enemyBulletViews){
+            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+                    view.getPosition().getX() > right ||
+                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() > down)
+                continue;
+            Circle bull = new Circle();
+            bull.setFill(Color.GREENYELLOW);
+            bull.setRadius(Constant.BULLET_RADIUS);
+            bull.setTranslateX(view.getPosition().getX() - BULLET_RADIUS - stage.getX());
+            bull.setTranslateY(view.getPosition().getY() - BULLET_RADIUS - stage.getY());
+            pane.getChildren().add(bull);
+        }
+
+        for(EpsilonBulletView view : EpsilonBulletView.epsilonBulletViews){
+            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+                    view.getPosition().getX() > right ||
+                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() > down)
+                continue;
 //            if(b)
             Circle bull = new Circle();
             bull.setFill(Color.DARKMAGENTA);
             bull.setRadius(Constant.BULLET_RADIUS);
-            bull.setTranslateX(bullet.getPosition().getX() - BULLET_RADIUS - stage.getX());
-            bull.setTranslateY(bullet.getPosition().getY() - BULLET_RADIUS - stage.getY());
+            bull.setTranslateX(view.getPosition().getX() - BULLET_RADIUS - stage.getX());
+            bull.setTranslateY(view.getPosition().getY() - BULLET_RADIUS - stage.getY());
             pane.getChildren().add(bull);
         }
 
         for(SquareView squareView : SquareView.squareViews){
             if(squareView.getPosition().getX() + SQUARE_OUTSIDE < left ||
-                squareView.getPosition().getX() > right ||
-                squareView.getPosition().getY() + SQUARE_OUTSIDE < top ||
-                squareView.getPosition().getY() > down)
+                    squareView.getPosition().getX() > right ||
+                    squareView.getPosition().getY() + SQUARE_OUTSIDE < top ||
+                    squareView.getPosition().getY() > down)
                 continue;
             Rectangle rectangleOut = new Rectangle();
             rectangleOut.setFill(Color.GREEN);
@@ -194,38 +315,32 @@ public class MotionSceneView {
             pane.getChildren().add(rectangleIn);
         }
 
-        for(CollectableItemView collectableItemView : CollectableItemView.collectableItemViews){
+        for(CollectableItemView view : CollectableItemView.collectableItemViews){
+            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+                    view.getPosition().getX() > right ||
+                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() > down)
+                continue;
             Circle circle = new Circle();
-            circle.setRadius(collectableItemView.getRadius());
+            circle.setRadius(view.getRadius());
 //            circle.setRadius(20);
-            circle.setTranslateX(collectableItemView.getPosition().getX() - stage.getX());
-            circle.setTranslateY(collectableItemView.getPosition().getY() - stage.getY());
-            circle.setFill(collectableItemView.getColor());
+            circle.setTranslateX(view.getPosition().getX() - stage.getX());
+            circle.setTranslateY(view.getPosition().getY() - stage.getY());
+            circle.setFill(view.getColor());
 
             pane.getChildren().add(circle);
         }
 
-        for(TriangleView triangleView : TriangleView.triangleViews){
-            if(triangleView.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
-                    triangleView.getPosition().getX() > right ||
-                    triangleView.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
-                    triangleView.getPosition().getY() > down)
+        for(TriangleView view : TriangleView.triangleViews){
+            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+                    view.getPosition().getX() > right ||
+                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() > down)
                 continue;
-            //todo
-            file = new File(TRIANGLE_PATH);
 
-            ImageView triangleImage = null;
-            try {
-                triangleImage = new ImageView(String.valueOf(file.toURI().toURL()));
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-            triangleImage.setTranslateX(triangleView.getPosition().getX() - stage.getX());
-            triangleImage.setTranslateY(triangleView.getPosition().getY() - stage.getY());
-            triangleImage.setFitHeight(TRIANGLE_OUTSIDE);
-            triangleImage.setFitWidth(TRIANGLE_OUTSIDE);
+            File file = new File(TRIANGLE_PATH);
 
-            pane.getChildren().add(triangleImage);
+            imagePaint(file, (int) TRIANGLE_OUTSIDE, view);
         }
     }
 }

@@ -1,7 +1,7 @@
 package game.windowkill.controller.fxmlController;
 
 import game.windowkill.model.characterModel.EpsilonModel;
-import game.windowkill.view.MotionSceneView;
+import game.windowkill.view.scene.MotionSceneView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;

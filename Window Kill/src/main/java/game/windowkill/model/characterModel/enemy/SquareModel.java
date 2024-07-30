@@ -46,18 +46,20 @@ public class SquareModel extends Entity implements CollisionSquareSquare, Collis
         impact();
         //TODO
         getVertices().clear();
-        Point2D uLeft = Utils.addVector(new Point2D(0, 0), getPosition());
-        Point2D uRight = Utils.addVector(new Point2D(SQUARE_OUTSIDE, 0), getPosition());
-        Point2D dRight = Utils.addVector(new Point2D(SQUARE_OUTSIDE, SQUARE_OUTSIDE), getPosition());
-        Point2D dLeft = Utils.addVector(new Point2D(0, SQUARE_OUTSIDE), getPosition());
+//        Point2D uLeft = Utils.addVector(new Point2D(0, 0), getPosition());
+//        Point2D uRight = Utils.addVector(new Point2D(SQUARE_OUTSIDE, 0), getPosition());
+//        Point2D dRight = Utils.addVector(new Point2D(SQUARE_OUTSIDE, SQUARE_OUTSIDE), getPosition());
+//        Point2D dLeft = Utils.addVector(new Point2D(0, SQUARE_OUTSIDE), getPosition());
+        Point2D uLeft = new Point2D(0 + getX(), 0 + getY());
+        Point2D uRight = new Point2D(SQUARE_OUTSIDE + getX(), 0 + getY());
+        Point2D dRight = new Point2D(SQUARE_OUTSIDE + getX(), SQUARE_OUTSIDE + getY());
+        Point2D dLeft = new Point2D(0 + getX(), SQUARE_OUTSIDE + getY());
         getVertices().add(uLeft);
         getVertices().add(uRight);
         getVertices().add(dRight);
         getVertices().add(dLeft);
 
     }
-
-
 
     @Override
     public boolean collision(Point2D point2D) {

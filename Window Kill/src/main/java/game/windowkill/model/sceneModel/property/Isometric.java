@@ -13,8 +13,12 @@ import static java.lang.Math.min;
 public interface Isometric extends SceneCollidable {
     ArrayList<? super Isometric>  isometrics = new ArrayList<>();
 
-    default <T extends Isometric> void add(T t){
+    default <T extends Isometric> void addIsometric(T t){
         isometrics.add(t);
+    }
+
+    default <T extends Isometric> void removeIsometric(T t){
+        isometrics.remove(t);
     }
 
     @Override

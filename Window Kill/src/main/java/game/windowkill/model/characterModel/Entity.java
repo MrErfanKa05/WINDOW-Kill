@@ -26,11 +26,11 @@ public abstract class Entity implements Collidable, Movable, Impactable {
     protected double acceleration = 0;
     protected double speed = Utils.getSpeed();
     protected ArrayList<Point2D> vertices = new ArrayList<>();
-    protected double hp, attackHp, rangeAttackHp, collectableXP;
+    protected int hp, attackHp, rangeAttackHp, collectableXP;
     protected int collectables;
     protected BaseSceneModel baseSceneModel = null;
 
-    public Routing routing = Routing.Isometric;
+    public Routing routing = Routing.LocalRouting;
 
     public Entity(double x, double y){
         id = UUID.randomUUID().toString();
@@ -47,6 +47,7 @@ public abstract class Entity implements Collidable, Movable, Impactable {
         Direction p2 = new Direction(Utils.multiplyVector(direction.getDirectionVector(), acc));
 
         impactDirection = new Direction(Utils.addVector(p1.getDirectionVector(), p2.getDirectionVector()));
+//        impactDirection = Utils.
 //        impactDirection = new Direction(Utils.addVector(new Direction(direction.getDirectionVector()).getDirectionVector(),
 //                impactDirection.getDirectionVector()));
     }
@@ -63,16 +64,16 @@ public abstract class Entity implements Collidable, Movable, Impactable {
         this.acceleration = acceleration;
     }
 
-    public void decreaseHearth(double num){
+    public void decreaseHearth(int num){
         hp -= num;
         hp = max(hp, 0);
     }
     @Override
     public void impact(){
-        impactDirection = new Direction(Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration));
+        Direction movement = new Direction(Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration));
         acceleration -= 2.5;
         acceleration = max(acceleration, 0);
-        move(impactDirection);
+        move(movement);
     }
 
     public String getId() {
@@ -121,32 +122,48 @@ public abstract class Entity implements Collidable, Movable, Impactable {
         position = Utils.addVector(position, movement);
     }
 
-    public double getHp() {
+    public int getHp() {
         return hp;
     }
 
-    public void setHp(double hp) {
+    public void setHp(int hp) {
         this.hp = hp;
     }
 
-    public double getAttackHp() {
+    public int getAttackHp() {
         return attackHp;
     }
 
-    public void setAttackHp(double attackHp) {
+    public void setAttackHp(int attackHp) {
         this.attackHp = attackHp;
     }
 
-    public double getRangeAttackHp() {
+    public int getRangeAttackHp() {
         return rangeAttackHp;
     }
 
-    public double getCollectableXP() {
+    public int getCollectableXP() {
         return collectableXP;
     }
 
     public int getCollectables() {
         return collectables;
+    }
+
+    public void setRangeAttackHp(int rangeAttackHp) {
+        this.rangeAttackHp = rangeAttackHp;
+    }
+
+    public void setPosition(Point2D position) {
+        this.position = position;
+    }
+
+    public void setBaseSceneModel(BaseSceneModel baseSceneModel) {
+        this.baseSceneModel = baseSceneModel;
+    }
+
+    public BaseSceneModel getBaseSceneModel() {
+        return baseSceneModel;
     }
 
     public void setCollectables(int collectables) {

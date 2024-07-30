@@ -71,7 +71,7 @@ public interface NonIsometric extends SceneCollidable {
         double left = model.getLeft();
         double down = model.getDown();
         double top = model.getTop();
-        double changeFrame = model.getChangeFrame();
+        double changeFrame = BaseSceneModel.getChangeFrame();
         double rightAcceleration = model.getRightAcceleration();
         double leftAcceleration = model.getLeftAcceleration();
         double topAcceleration = model.getTopAcceleration();

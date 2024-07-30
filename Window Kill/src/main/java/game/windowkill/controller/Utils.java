@@ -17,6 +17,10 @@ public class Utils {
     public static Point2D addVector(Point2D point2D1, Point2D point2D2){
         return new Point2D(point2D2.getX() + point2D1.getX(), point2D2.getY() + point2D1.getY());
     }
+//    public static Point2D unitVector(Point2D point2D){
+//        double size = getDistance(point2D, new Point2D(0, 0));
+//        return new Point2D(1, point2D.getY()/point2D.getX());
+//    }
     public static Point2D multiplyVector(Point2D point2D, double scalar){
         return new Point2D(point2D.getX() * scalar, point2D.getY() * scalar);
     }

@@ -32,13 +32,15 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
         this.radius = radius;
     }
 
-    public int getXP() {
+    public synchronized int getXP() {
         return XP;
     }
 
-    public void setXP(int XP) {
+    public synchronized void setXP(int XP) {
         this.XP = XP;
     }
+
+    SkillState skillState = SkillState.Neutral;
 
     public SkillState getSkillState() {
         return skillState;
@@ -54,8 +56,6 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
         double y = getY();
         return new Point2D(x, y);
     }
-
-    SkillState skillState = SkillState.Neutral;
     private EpsilonModel() {
         super(SCREEN_WIDTH /2 , SCREEN_HEIGHT /2);
         init();
@@ -66,6 +66,7 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
         hp = 100;
         attackHp = 5;
         position = new Point2D(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+        impactDirection = new Direction(0, 0);
         baseSceneModel = MotionSceneModel.getInstance();
         update();
     }
@@ -294,7 +295,7 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
             double d = model.getDown();
 
             if(l == left && r == right && d == down && t == top)
-                return false;
+                continue;
 
             Point2D p1 = new Point2D(l, t);
             Point2D p2 = new Point2D(l, d);

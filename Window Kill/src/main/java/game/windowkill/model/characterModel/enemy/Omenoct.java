@@ -10,6 +10,7 @@ import game.windowkill.model.characterModel.collision.normalShape.CollisionSquar
 import game.windowkill.model.characterModel.miniBoss.Barricados;
 import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.model.characterModel.move.Direction;
+import game.windowkill.view.characterView.enemy.OmenoctView;
 import game.windowkill.view.characterView.enemy.SquareView;
 import javafx.geometry.Point2D;
 
@@ -28,12 +29,17 @@ public class Omenoct extends Entity implements MeleeAttack, CollisionSquareTrian
         collectables = 8;
         rangeAttackHp = 4;
         collectableXP = 4;
+        new OmenoctView(getId(), getPosition(), getDirection());
     }
 
     public void remove(){
         omenocts.remove(this);
         entities.remove(this);
-        //todo : remove for view
+        OmenoctView view = null;
+        for(OmenoctView omenoctView : OmenoctView.omenoctViews)
+            if(omenoctView.getId().equals(getId()))
+                view = omenoctView;
+        OmenoctView.omenoctViews.remove(view);
     }
 
     @Override

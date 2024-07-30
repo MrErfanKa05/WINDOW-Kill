@@ -1,9 +1,7 @@
 package game.windowkill.view.characterView;
 
-import game.windowkill.controller.DataHolder;
 import game.windowkill.model.characterModel.EpsilonModel;
 import game.windowkill.model.characterModel.move.Direction;
-import game.windowkill.view.MotionSceneView;
 import javafx.geometry.Point2D;
 
 public class EpsilonView {

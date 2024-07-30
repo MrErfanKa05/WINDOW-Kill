@@ -14,6 +14,7 @@ import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
 
+import static game.windowkill.controller.Constant.SQUARE_OUTSIDE;
 import static game.windowkill.controller.Constant.TRIANGLE_OUTSIDE;
 
 public class TriangleModel extends Entity implements CollisionTriangleTriangle, MeleeAttack {
@@ -46,9 +47,12 @@ public class TriangleModel extends Entity implements CollisionTriangleTriangle, 
         //TODO : update here in Update class
         getVertices().clear();
 
-        Point2D left = Utils.addVector(new Point2D(0, TRIANGLE_OUTSIDE), getPosition());
-        Point2D right = Utils.addVector(new Point2D(TRIANGLE_OUTSIDE, TRIANGLE_OUTSIDE), getPosition());
-        Point2D up = Utils.addVector(new Point2D(TRIANGLE_OUTSIDE/2, 0), getPosition());
+//        Point2D left = Utils.addVector(new Point2D(0, TRIANGLE_OUTSIDE), getPosition());
+//        Point2D right = Utils.addVector(new Point2D(TRIANGLE_OUTSIDE, TRIANGLE_OUTSIDE), getPosition());
+//        Point2D up = Utils.addVector(new Point2D(TRIANGLE_OUTSIDE/2, 0), getPosition());
+        Point2D left = new Point2D(0 + getX(), TRIANGLE_OUTSIDE + getY());
+        Point2D right = new Point2D(TRIANGLE_OUTSIDE + getX(), TRIANGLE_OUTSIDE + getY());
+        Point2D up = new Point2D(TRIANGLE_OUTSIDE/2 + getX(), 0 + getY());
         getVertices().add(right);
         getVertices().add(left);
         getVertices().add(up);

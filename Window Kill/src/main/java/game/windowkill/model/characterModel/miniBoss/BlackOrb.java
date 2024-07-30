@@ -10,6 +10,7 @@ import game.windowkill.model.characterModel.collision.normalShape.CollisionTrian
 import game.windowkill.model.characterModel.enemy.*;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.view.characterView.enemy.SquareView;
+import game.windowkill.view.characterView.miniBoss.BlackOrbView;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
@@ -28,13 +29,17 @@ public class BlackOrb extends Entity implements CollisionSquareCircle, Collision
         collectables = 5;
         collectableXP = 30;
 
-        //todo : two type
+        new BlackOrbView(getId(), getPosition(), getDirection());
     }
 
     public void remove(){
         blackOrbs.remove(this);
         entities.remove(this);
-        //todo : remove for view
+        BlackOrbView view = null;
+        for(BlackOrbView blackOrbView : BlackOrbView.blackOrbViews)
+            if(blackOrbView.getId().equals(getId()))
+                view = blackOrbView;
+        BlackOrbView.blackOrbViews.remove(view);
     }
 
     @Override

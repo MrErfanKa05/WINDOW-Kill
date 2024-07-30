@@ -1,24 +1,24 @@
 package game.windowkill.model.bullets;
 
-import game.windowkill.view.BulletView;
+import game.windowkill.view.bullet.EnemyBulletView;
 
 import java.util.ArrayList;
 
 public class EnemyBulletModel extends BulletModel{
     public static ArrayList<EnemyBulletModel> enemyBulletModels = new ArrayList<>();
 
-    public EnemyBulletModel(double x, double y) {
-        super(x, y);
+    public EnemyBulletModel(double x, double y, int attackHp) {
+        super(x, y, attackHp);
         enemyBulletModels.add(this);
-//        new BulletView(id, position);
+        new EnemyBulletView(id, position);
     }
 
     public void remove(){
         enemyBulletModels.remove(this);
-//        BulletView nowBulletView = null;
-//        for(BulletView bulletView : BulletView.bulletViews)
-//            if(bulletView.getId().equals(getId()))
-//                nowBulletView = bulletView;
-//        BulletView.bulletViews.remove(nowBulletView);
+        EnemyBulletView view = null;
+        for(EnemyBulletView enemyBulletView : EnemyBulletView.enemyBulletViews)
+            if(enemyBulletView.getId().equals(getId()))
+                view = enemyBulletView;
+        EnemyBulletView.enemyBulletViews.remove(view);
     }
 }

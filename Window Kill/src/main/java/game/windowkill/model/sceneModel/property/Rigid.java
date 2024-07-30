@@ -1,6 +1,5 @@
 package game.windowkill.model.sceneModel.property;
 
-import game.windowkill.model.characterModel.collision.Collidable;
 import game.windowkill.model.sceneModel.BaseSceneModel;
 import game.windowkill.model.sceneModel.SceneCollidable;
 import javafx.geometry.Point2D;
@@ -22,8 +21,12 @@ public interface Rigid extends SceneCollidable {
         return false;
     }
 
-    default <T extends Rigid> void add(T t){
+    default <T extends Rigid> void addRigid(T t){
         rigids.add(t);
+    }
+
+    default <T extends Rigid> void removeRigid(T t){
+        rigids.remove(t);
     }
 
 }

@@ -9,6 +9,7 @@ import game.windowkill.model.characterModel.collision.normalShape.CollisionSquar
 import game.windowkill.model.characterModel.enemy.*;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.view.characterView.enemy.SquareView;
+import game.windowkill.view.characterView.miniBoss.BarricadosView;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
@@ -22,13 +23,17 @@ public class Barricados extends Entity implements CollisionSquareCircle, Collisi
         barricados.add(this);
         new SquareView(id, position, direction);
         hp = Integer.MAX_VALUE;
-        //todo : two type
+        new BarricadosView(getId(), getPosition(), getDirection());
     }
 
     public void remove(){
         barricados.remove(this);
         entities.remove(this);
-        //todo : remove for view
+        BarricadosView view = null;
+        for(BarricadosView barricadosView : BarricadosView.barricadosViews)
+            if(barricadosView.getId().equals(getId()))
+                view = barricadosView;
+        BarricadosView.barricadosViews.remove(view);
     }
 
     @Override

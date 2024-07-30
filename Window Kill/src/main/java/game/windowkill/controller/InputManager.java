@@ -1,6 +1,5 @@
 package game.windowkill.controller;
 
-import game.windowkill.view.MotionSceneView;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;

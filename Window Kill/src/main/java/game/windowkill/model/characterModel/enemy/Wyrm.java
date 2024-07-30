@@ -10,6 +10,7 @@ import game.windowkill.model.characterModel.miniBoss.Barricados;
 import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.view.characterView.enemy.SquareView;
+import game.windowkill.view.characterView.enemy.WyrmView;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
@@ -28,12 +29,17 @@ public class Wyrm extends Entity implements CollisionSquareCircle, CollisionSqua
         collectables = 2;
         rangeAttackHp = 8;
         collectableXP = 8;
+        new WyrmView(getId(), getPosition(), getDirection());
     }
 
     public void remove(){
         wyrms.remove(this);
         entities.remove(this);
-        //todo : remove for view
+        WyrmView view = null;
+        for(WyrmView wyrmView : WyrmView.wyrmViews)
+            if(wyrmView.getId().equals(getId()))
+                view = wyrmView;
+        WyrmView.wyrmViews.remove(view);
     }
 
     @Override
@@ -44,9 +50,9 @@ public class Wyrm extends Entity implements CollisionSquareCircle, CollisionSqua
 
         vertices.clear();
         Point2D uLeft = new Point2D(getX(), getY());
-        Point2D uRight = Utils.addVector(new Point2D(0, SQUARE_OUTSIDE), getPosition());
-        Point2D dRight = Utils.addVector(new Point2D(SQUARE_OUTSIDE, SQUARE_OUTSIDE), getPosition());
-        Point2D dLeft = Utils.addVector(new Point2D(SQUARE_OUTSIDE, 0), getPosition());
+        Point2D uRight = Utils.addVector(new Point2D(0, BIG_ENEMY_OUTSIDE), getPosition());
+        Point2D dRight = Utils.addVector(new Point2D(BIG_ENEMY_OUTSIDE, BIG_ENEMY_OUTSIDE), getPosition());
+        Point2D dLeft = Utils.addVector(new Point2D(BIG_ENEMY_OUTSIDE, 0), getPosition());
         vertices.add(uRight);
         vertices.add(uLeft);
         vertices.add(dRight);

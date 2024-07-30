@@ -10,6 +10,7 @@ import game.windowkill.model.characterModel.collision.normalShape.CollisionSquar
 import game.windowkill.model.characterModel.miniBoss.Barricados;
 import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.model.characterModel.move.Direction;
+import game.windowkill.view.characterView.enemy.ArchmireView;
 import game.windowkill.view.characterView.enemy.SquareView;
 import javafx.geometry.Point2D;
 
@@ -32,6 +33,7 @@ public class Archmire extends Entity implements CollisionSquareTriangle, Collisi
         attackHp = 0;
         collectables = 5;
         collectableXP = 6;
+        new ArchmireView(getId(), getPosition(), getDirection());
     }
 
     public void drown(Entity entity){
@@ -61,7 +63,11 @@ public class Archmire extends Entity implements CollisionSquareTriangle, Collisi
     public void remove(){
         archmires.remove(this);
         entities.remove(this);
-        //todo : remove for view
+        ArchmireView view = null;
+        for(ArchmireView archmireView : ArchmireView.archmireViews)
+            if(archmireView.getId().equals(getId()))
+                view = archmireView;
+        ArchmireView.archmireViews.remove(view);
     }
 
     @Override

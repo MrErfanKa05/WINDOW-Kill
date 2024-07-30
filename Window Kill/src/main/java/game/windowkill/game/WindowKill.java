@@ -1,9 +1,7 @@
 package game.windowkill.game;
 
 import game.windowkill.controller.DataHolder;
-import game.windowkill.controller.Update;
 import game.windowkill.controller.loader.SceneLoader;
-import game.windowkill.view.MotionSceneView;
 //import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;

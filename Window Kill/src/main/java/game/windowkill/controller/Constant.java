@@ -1,5 +1,6 @@
 package game.windowkill.controller;
 
+import game.windowkill.model.characterModel.EpsilonModel;
 import javafx.scene.paint.Color;
 
 import java.awt.*;
@@ -9,8 +10,17 @@ public class Constant {
     public static final int FPS = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDisplayMode().getRefreshRate();;
     public static final double FRAME_UPDATE_TIME = ((double) 1) / FPS;
     public static final double MODEL_UPDATE_TIME = ((double) 1) / UPS;
-    public static final double EPSILON_RADIUS = 12.5;
-    public static final double EPSILON_DIAMETER = 25;
+    public static final double EPSILON_RADIUS_BEGIN = 12.5;
+    public static final double EPSILON_DIAMETER_BEGIN = 25;
+    public static final int CERBERUS_RADIUS = 5;
+    public static double EPSILON_RADIUS = EPSILON_RADIUS_BEGIN;
+    public static double EPSILON_DIAMETER = EPSILON_DIAMETER_BEGIN;
+    public static void changeEpsilonRadius(double per){
+        EPSILON_RADIUS -= EPSILON_RADIUS*per / 100;
+        EPSILON_DIAMETER -= EPSILON_DIAMETER*per / 100;
+        EpsilonModel.getInstance().setRadius(EPSILON_RADIUS);
+    }
+
     public static final double ACCELERATION = 17;
     public static final double ACCELERATION_DECREASE = 10;
     public static final double EPSILON_SPEED = 6;
@@ -38,6 +48,12 @@ public class Constant {
     public static final int BULLET_DELAY = 250;
 
     public static final String TRIANGLE_PATH = "src/main/resources/game/windowkill/resources/triangle.png";
+    public static final String OMENOCT_PATH = "src/main/resources/game/windowkill/resources/omenoct.png";
+    public static final String NECROPICK_PATH = "src/main/resources/game/windowkill/resources/necropick.png";
+    public static final String ARCHMIRE_PATH = "src/main/resources/game/windowkill/resources/archmire.png";
+    public static final String WYRM_PATH = "src/main/resources/game/windowkill/resources/wyrm.png";
+    public static final String BARRICADOS_PATH = "src/main/resources/game/windowkill/resources/barricados.png";
+    public static final String BLACKORB_PATH = "src/main/resources/game/windowkill/resources/blackorb.png";
 
     public static final int BULLET_DECRASE_HEALTH = 5;
     public static final double CHANGE_FRAME = 0.6;
@@ -50,4 +66,5 @@ public class Constant {
     public static final int MELEE_DISTANCE = 10;
     public static final int BIG_ENEMY_OUTSIDE = 40;
     public static final int BLACKORB_RADIUS = 30;
+    public static final int SKILL_TREE_XP = 100;
 }

@@ -1,18 +1,31 @@
 package game.windowkill.model.sceneModel;
 
-import game.windowkill.model.characterModel.Entity;
-import game.windowkill.model.characterModel.EpsilonModel;
-import javafx.geometry.Point2D;
+import game.windowkill.model.sceneModel.property.Isometric;
+import game.windowkill.model.sceneModel.property.Rigid;
+import game.windowkill.view.scene.IsoRigidSceneView;
 
-public class NormalSceneModel extends BaseSceneModel implements {
+import java.util.ArrayList;
 
-    public NormalSceneModel(double left, double right, double top, double down) {
+public class IsoRigidScene extends BaseSceneModel implements Isometric, Rigid {
+    public static ArrayList<IsoRigidScene> isoRigidScenes = new ArrayList<>();
+
+    public IsoRigidScene(double left, double right, double top, double down) {
         super();
         set(left, right, top, down);
+        isoRigidScenes.add(this);
+        addRigid(this);
+        addIsometric(this);
+        new IsoRigidSceneView(id, left, right, top, down);
     }
 
-    @Override
-    public void reset() {
-
+    public void remove(){
+        isoRigidScenes.remove(this);
+        removeIsometric(this);
+        removeRigid(this);
+        IsoRigidSceneView view = null;
+        for(IsoRigidSceneView isoRigidSceneView : IsoRigidSceneView.isoRigidSceneViews)
+            if(isoRigidSceneView.getId().equals(getId()))
+                view = isoRigidSceneView;
+        IsoRigidSceneView.isoRigidSceneViews.remove(view);
     }
 }

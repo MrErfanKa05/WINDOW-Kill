@@ -2,22 +2,28 @@ package game.windowkill.controller;
 
 import game.windowkill.controller.builder.EnemyBuilder;
 import game.windowkill.controller.loader.SceneLoader;
+import game.windowkill.model.bullets.EnemyBulletModel;
 import game.windowkill.model.bullets.EpsilonBulletModel;
 import game.windowkill.model.CollectableItemModel;
 import game.windowkill.model.attack.MeleeAttack;
+import game.windowkill.model.characterModel.CerberusBallModel;
 import game.windowkill.model.characterModel.Entity;
-import game.windowkill.model.sceneModel.MotionSceneModel;
+import game.windowkill.model.characterModel.SkillState;
+import game.windowkill.model.characterModel.enemy.*;
+import game.windowkill.model.characterModel.miniBoss.Barricados;
+import game.windowkill.model.characterModel.miniBoss.BlackOrb;
+import game.windowkill.model.sceneModel.*;
 import game.windowkill.model.characterModel.EpsilonModel;
-import game.windowkill.model.characterModel.enemy.SquareModel;
-import game.windowkill.model.characterModel.enemy.TriangleModel;
 import game.windowkill.model.characterModel.move.Direction;
-import game.windowkill.model.strategy.Routing;
-import game.windowkill.view.BulletView;
+import game.windowkill.view.bullet.CerberusBulletView;
+import game.windowkill.view.bullet.EnemyBulletView;
+import game.windowkill.view.bullet.EpsilonBulletView;
 import game.windowkill.view.CollectableItemView;
-import game.windowkill.view.MotionSceneView;
+import game.windowkill.view.characterView.enemy.*;
+import game.windowkill.view.characterView.miniBoss.BarricadosView;
+import game.windowkill.view.characterView.miniBoss.BlackOrbView;
+import game.windowkill.view.scene.*;
 import game.windowkill.view.characterView.EpsilonView;
-import game.windowkill.view.characterView.enemy.SquareView;
-import game.windowkill.view.characterView.enemy.TriangleView;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -33,16 +39,34 @@ import static java.lang.Math.max;
 public class Update {
     private InputManager inputManager;
     private EnemyBuilder enemyBuilder;
-    private double dalay = 0;
+    private double delay = 0;
+    private boolean gameFinish = false;
+    public static boolean bigImpact = false, bigShot = false, stopGame = false, farEnemy = false, multiShot;
+    public static ArrayList<SkillState> onSkillStates = new ArrayList<>();
     Timeline updateView = new Timeline(new KeyFrame(Duration.millis(FRAME_UPDATE_TIME * 1000), actionEvent -> {
         MotionSceneModel model = MotionSceneModel.getInstance();
         EpsilonView.getInstance().setPosition(EpsilonModel.getInstance().getPosition());
+        EpsilonView.getInstance().setRadius(EpsilonModel.getInstance().getRadius());
 
-        for(BulletView bulletView : BulletView.bulletViews){
+        for(EpsilonBulletView epsilonBulletView : EpsilonBulletView.epsilonBulletViews){
             for(EpsilonBulletModel epsilonBulletModel : EpsilonBulletModel.epsilonBulletModels) {
-                if (epsilonBulletModel.getId().equals(bulletView.getId())) {
-                    bulletView.setPosition(epsilonBulletModel.getPosition());
+                if (epsilonBulletModel.getId().equals(epsilonBulletView.getId())) {
+                    epsilonBulletView.setPosition(epsilonBulletModel.getPosition());
                 }
+            }
+        }
+
+        for(EnemyBulletView enemyBulletView : EnemyBulletView.enemyBulletViews){
+            for(EnemyBulletModel enemyBulletModel : EnemyBulletModel.enemyBulletModels){
+                if(enemyBulletModel.getId().equals(enemyBulletView.getId()))
+                    enemyBulletView.setPosition(enemyBulletModel.getPosition());
+            }
+        }
+
+        for(CerberusBulletView cerberusBulletView : CerberusBulletView.cerberusBulletViews){
+            for(CerberusBallModel cerberusBallModel : CerberusBallModel.cerberusBallModels){
+                if(cerberusBallModel.getId().equals(cerberusBulletView.getId()))
+                    cerberusBulletView.setPosition(cerberusBallModel.getPosition());
             }
         }
 
@@ -69,12 +93,87 @@ public class Update {
             }
         }
 
+        for(OmenoctView omenoctView : OmenoctView.omenoctViews){
+            for(Omenoct omenoct : Omenoct.omenocts)
+                if(omenoct.getId().equals(omenoctView.getId()))
+                    omenoctView.setPosition(omenoct.getPosition());
+        }
+
+        for(ArchmireView archmireView : ArchmireView.archmireViews){
+            for(Archmire archmire : Archmire.archmires)
+                if(archmire.getId().equals(archmireView.getId()))
+                    archmireView.setPosition(archmire.getPosition());
+        }
+
+        for(NecropickView necropickView : NecropickView.necropickViews){
+            for(NecroPick necroPick : NecroPick.necroPicks)
+                if(necroPick.getId().equals(necropickView.getId()))
+                    necropickView.setPosition(necroPick.getPosition());
+        }
+
+        for(WyrmView wyrmView : WyrmView.wyrmViews){
+            for(Wyrm wyrm : Wyrm.wyrms)
+                if(wyrm.getId().equals(wyrmView.getId()))
+                    wyrmView.setPosition(wyrm.getPosition());
+        }
+
+        for(BarricadosView barricadosView : BarricadosView.barricadosViews){
+            for(Barricados barricados : Barricados.barricados)
+                if(barricados.getId().equals(barricadosView.getId()))
+                    barricadosView.setPosition(barricados.getPosition());
+        }
+
+        for(BlackOrbView blackOrbView : BlackOrbView.blackOrbViews){
+            for(BlackOrb blackOrb : BlackOrb.blackOrbs)
+                if(blackOrb.getId().equals(blackOrbView.getId()))
+                    blackOrbView.setPosition(blackOrb.getPosition());
+        }
+
+        for(NonIsoRigidSceneView view : NonIsoRigidSceneView.nonIsoRigidSceneViews){
+            for(NonIsoRigidScene scene : NonIsoRigidScene.nonIsoRigidScenes)
+                if(scene.getId().equals(view.getId()))
+                    view.set(scene.getLeft(), scene.getRight(), scene.getTop(), scene.getDown());
+        }
+
+        for(NonIsoNonRigidSceneView view : NonIsoNonRigidSceneView.nonIsoNonRigidSceneViews){
+            for(NonIsoNonRigidScene scene : NonIsoNonRigidScene.nonIsoNonRigidScenes)
+                if(scene.getId().equals(view.getId()))
+                    view.set(scene.getLeft(), scene.getRight(), scene.getTop(), scene.getDown());
+        }
+
+        for(IsoNonRigidSceneView view : IsoNonRigidSceneView.isoNonRigidSceneViews){
+            for(IsoNonRigidScene scene : IsoNonRigidScene.isoNonRigidScenes)
+                if(scene.getId().equals(view.getId()))
+                    view.set(scene.getLeft(), scene.getRight(), scene.getTop(), scene.getDown());
+        }
+
+        for(IsoRigidSceneView view : IsoRigidSceneView.isoRigidSceneViews){
+            for(IsoRigidScene scene : IsoRigidScene.isoRigidScenes)
+                if(scene.getId().equals(view.getId()))
+                    view.set(scene.getLeft(), scene.getRight(), scene.getTop(), scene.getDown());
+        }
+
+        //todo : for motionSceneView : set right and left and... with epsilon.mainScene
+
         model = MotionSceneModel.getInstance();
         MotionSceneView.getInstance().set(model.getTop(), model.getDown(), model.getRight(), model.getLeft());
         MotionSceneView.getInstance().paint();
 
+        for(IsoRigidSceneView view : IsoRigidSceneView.isoRigidSceneViews)
+            view.paint();
+        for(IsoNonRigidSceneView view : IsoNonRigidSceneView.isoNonRigidSceneViews)
+            view.paint();
+        for(NonIsoNonRigidSceneView view : NonIsoNonRigidSceneView.nonIsoNonRigidSceneViews)
+            view.paint();
+        for(NonIsoRigidSceneView view : NonIsoRigidSceneView.nonIsoRigidSceneViews)
+            view.paint();
+
     }));
     Timeline updateModel = new Timeline(new KeyFrame(Duration.millis(MODEL_UPDATE_TIME * 1000), actionEvent -> {
+        checkShop();
+
+        checkAbility();
+
         playWave();
 
         update();
@@ -93,11 +192,43 @@ public class Update {
 
     }));
 
+    public void checkShop(){
+
+    }
+
+    public void checkAbility(){
+
+    }
+
     public void playWave(){
         if(enemyBuilder.waveFinish){
             switch (enemyBuilder.wave) {
+                case 12:
+                    waveFinisher();
+                    break;
+                case 11:
+                    enemyBuilder.playWave11();
+                    break;
+                case 10:
+                    stopWaveChanger();
+                case 9:
+                    enemyBuilder.playWave9();
+                    break;
+                case 8:
+                    enemyBuilder.playWave8();
+                    break;
+                case 7:
+                    enemyBuilder.playWave7();
+                    break;
+                case 6:
+                    enemyBuilder.playWave6();
+                    break;
+                case 5:
+                    enemyBuilder.playWave5();
+                    break;
                 case 4:
-                    win();
+                    waveFinisher();
+                    break;
                 case 3:
                     enemyBuilder.playWave3();
                     break;
@@ -139,7 +270,8 @@ public class Update {
             for (Entity entity1 : Entity.entities) {
                 if (entity.getId().equals(entity1.getId()))
                     continue;
-                if (entity.routing.equals(Routing.Isometric) && entity1.routing.equals(Routing.Isometric) && entity.checkIntersect(entity1)) {
+                if (entity.checkIntersect(entity1)) {
+                    //todo : check for the globalRouting and local
                     impact(entity.getIntersect(entity1));
                     if(entity instanceof MeleeAttack meleeAttack){
                         meleeAttack.meleeAttack(entity, entity1);
@@ -162,9 +294,9 @@ public class Update {
             }
         }
 
-        if(MotionSceneModel.getInstance().checkIntersect(EpsilonModel.getInstance())){
-            impact(MotionSceneModel.getInstance().getIntersect(EpsilonModel.getInstance()));
-        }
+//        if(MotionSceneModel.getInstance().checkIntersect(EpsilonModel.getInstance())){
+//            impact(MotionSceneModel.getInstance().getIntersect(EpsilonModel.getInstance()));
+//        }
 
 
     }
@@ -257,6 +389,46 @@ public class Update {
             EpsilonModel.getInstance().change(new Direction(0));
     }
 
+    private Timeline waveChanger = new Timeline(new KeyFrame(Duration.millis(50), actionEvent -> {
+        EpsilonModel.getInstance().setRadius(EpsilonModel.getInstance().getRadius() + 3);
+
+        MotionSceneModel.getInstance().setLeft(MotionSceneModel.getInstance().getLeft() + 3);
+        MotionSceneModel.getInstance().setTop(MotionSceneModel.getInstance().getTop() + 3);
+        MotionSceneModel.getInstance().setRight(MotionSceneModel.getInstance().getRight() - 3);
+        MotionSceneModel.getInstance().setDown(MotionSceneModel.getInstance().getDown() - 3);
+        if(max(MotionSceneModel.getInstance().getRight() - MotionSceneModel.getInstance().getLeft(),
+                MotionSceneModel.getInstance().getDown() - MotionSceneModel.getInstance().getTop()) <= 5)
+            stopWaveChanger();
+    }));
+
+    private void stopWaveChanger(){
+        waveChanger.stop();
+        if(EnemyBuilder.wave == 12)
+            win();
+        if(EnemyBuilder.wave == 10){
+            setPosition();
+        }
+        if(EnemyBuilder.wave == 4){
+            updateModel.play();
+            setPosition();
+        }
+
+        for(EnemyBulletModel enemyBulletModel : EnemyBulletModel.enemyBulletModels)
+            enemyBulletModel.remove();
+        for(EpsilonBulletModel epsilonBulletModel : EpsilonBulletModel.epsilonBulletModels)
+            epsilonBulletModel.remove();
+
+    }
+
+    public void waveFinisher(){
+
+        waveChanger.setCycleCount(Animation.INDEFINITE);
+        updateModel.pause();
+        waveChanger.play();
+
+        //todo : make everything ok before and after this
+    }
+
     private void update(){
         EpsilonModel.getInstance().update();
         for(SquareModel squareModel : SquareModel.squareModels)
@@ -265,26 +437,53 @@ public class Update {
             triangleModel.update();
         for(EpsilonBulletModel epsilonBulletModel : EpsilonBulletModel.epsilonBulletModels)
             epsilonBulletModel.update();
+        for(Archmire archmire : Archmire.archmires)
+            archmire.update();
+        for(NecroPick necroPick : NecroPick.necroPicks)
+            necroPick.update();
+        for(Omenoct omenoct : Omenoct.omenocts)
+            omenoct.update();
+        for(Wyrm wyrm : Wyrm.wyrms)
+            wyrm.update();
+        for(Barricados barricados : Barricados.barricados)
+            barricados.update();
+        for(BlackOrb blackOrb : BlackOrb.blackOrbs)
+            blackOrb.update();
+        for(IsoRigidScene scene : IsoRigidScene.isoRigidScenes)
+            scene.update();
+        for(NonIsoNonRigidScene scene : NonIsoNonRigidScene.nonIsoNonRigidScenes)
+            scene.update();
+        for(NonIsoRigidScene scene : NonIsoRigidScene.nonIsoRigidScenes)
+            scene.update();
+        for(IsoNonRigidScene scene : IsoNonRigidScene.isoNonRigidScenes)
+            scene.update();
 
         MotionSceneModel.getInstance().update();
 //        MotionSceneView.getInstance().paint();
     }
-    private void impact(Point2D point2D){
-        double C = 0.0003;
+    private void impact(Point2D point2D, double C){
         for(SquareModel squareModel : SquareModel.squareModels){
             double dis = squareModel.getDistance(squareModel.getPosition(), point2D);
-            if(dis <= 25)squareModel.playAcceleration(point2D, ACCELERATION / C);
+            if(dis <= 25)squareModel.playAcceleration(point2D, ACCELERATION / (C * dis));
             else squareModel.playAcceleration(point2D, ACCELERATION / (dis*dis * C));
         }
         for(TriangleModel triangleModel : TriangleModel.triangleModels){
             double dis = triangleModel.getDistance(triangleModel.getPosition(), point2D);
-            if(dis <= 25)triangleModel.playAcceleration(point2D, ACCELERATION / C);
+            if(dis <= 25)triangleModel.playAcceleration(point2D, ACCELERATION / (C * dis));
             else triangleModel.playAcceleration(point2D, ACCELERATION / (dis*dis * C));
         }
         EpsilonModel model = EpsilonModel.getInstance();
         double dis = model.getDistance(model.getPosition(), point2D);
-        if(dis <= 25)model.playAcceleration(point2D, ACCELERATION / (C * 1));
+        if(dis <= 25)model.playAcceleration(point2D, ACCELERATION / (dis * C * 1));
         else model.playAcceleration(point2D, ACCELERATION / (dis*dis * C * 1));
+    }
+    private void impact(Point2D point2D){
+        double C = 0.003;
+        impact(point2D, C);
+    }
+    private void bigImpact(Point2D point2D){
+        double C = 0.0007;
+        impact(point2D, C);
     }
     private void death(){
         finish();
@@ -299,6 +498,7 @@ public class Update {
     }
 
     private void finish(){
+        gameFinish = true;
         SquareModel.squareModels.clear();
         SquareView.squareViews.clear();
         TriangleModel.triangleModels.clear();
@@ -307,6 +507,7 @@ public class Update {
         CollectableItemView.collectableItemViews.clear();
         MotionSceneModel.getInstance().reset();
 //        EpsilonModel.getInstance().init();
+        //todo : end the thread
 //        update();
 
         updateModel.stop();
@@ -318,15 +519,24 @@ public class Update {
         stage.setWidth(MAX_WIDTH);
         stage.setHeight(MAX_HEIGHT);
 
+    }
 
+    public void setPosition(){
+        MotionSceneModel.getInstance().reset();
+
+        stage.setHeight(MAX_HEIGHT);
+        stage.setWidth(MAX_WIDTH);
+        stage.setX(SCREEN_WIDTH/2 - (MotionSceneModel.getInstance().getRight() - MotionSceneModel.getInstance().getLeft())/2);
+        stage.setY(SCREEN_HEIGHT/2 - (MotionSceneModel.getInstance().getDown() - MotionSceneModel.getInstance().getTop())/2);
+
+        EpsilonModel.getInstance().setPosition(new Point2D(SCREEN_WIDTH/2, SCREEN_HEIGHT/2));
     }
 
     public Update(){
 
         //TODO : clear all past things and make almost everything empty
 
-        stage.setHeight(700);
-        stage.setWidth(700);
+        gameFinish = false;
 
         updateModel.setCycleCount(Animation.INDEFINITE);
         updateView.setCycleCount(Animation.INDEFINITE);
@@ -347,14 +557,14 @@ public class Update {
     }
 
     public void shoot(Point2D point2D){
-        if(System.currentTimeMillis() - dalay > BULLET_DELAY) {
+        if(System.currentTimeMillis() - delay > BULLET_DELAY) {
 //            new BulletModel(point2D.getX() + stage.getX(), point2D.getY() + stage.getY());
             Point2D pos = new Point2D(EpsilonModel.getInstance().getX(), EpsilonModel.getInstance().getY());
-            EpsilonBulletModel epsilonBulletModel = new EpsilonBulletModel(pos.getX(), pos.getY());
+            EpsilonBulletModel epsilonBulletModel = new EpsilonBulletModel(pos.getX(), pos.getY(), EpsilonModel.getInstance().getRangeAttackHp());
             epsilonBulletModel.setDirection(new Direction(Utils.relativeLocation(new Point2D(point2D.getX() + stage.getX(), point2D.getY() + stage.getY()),
                     pos)).getDirectionVector());
 //            System.out.println(point2D.getX() + " " + point2D.getY());
-            dalay = System.currentTimeMillis();
+            delay = System.currentTimeMillis();
         }
     }
 }

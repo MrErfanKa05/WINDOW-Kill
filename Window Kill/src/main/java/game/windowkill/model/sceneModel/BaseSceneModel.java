@@ -1,5 +1,8 @@
 package game.windowkill.model.sceneModel;
 
+import game.windowkill.model.characterModel.Entity;
+import game.windowkill.model.characterModel.EpsilonModel;
+import game.windowkill.model.characterModel.collision.scenes.CollisionCircleScene;
 import game.windowkill.model.characterModel.move.Direction;
 import javafx.geometry.Point2D;
 
@@ -10,7 +13,7 @@ import static game.windowkill.controller.Constant.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-public abstract class BaseSceneModel implements SceneCollidable {
+public abstract class BaseSceneModel implements SceneCollidable, CollisionCircleScene {
     public static ArrayList<BaseSceneModel> baseSceneModels = new ArrayList<>();
 
     protected Direction direction;
@@ -21,7 +24,15 @@ public abstract class BaseSceneModel implements SceneCollidable {
 
     protected String id;
 
-    public abstract void reset();
+    public void set(double left, double right, double top, double down){
+        this.left = left;
+        this.right = right;
+        this.top = top;
+        this.down = down;
+    }
+
+
+    public void reset(){};
 
     public double getLeftAcceleration() {
         return leftAcceleration;
@@ -119,15 +130,23 @@ public abstract class BaseSceneModel implements SceneCollidable {
         this.goDown = goDown;
     }
 
-    protected double changeTime = CHANGE_TIME;
-    protected double changeFrame = CHANGE_FRAME;
+    protected static double changeTime = CHANGE_TIME;
+    protected static double changeFrame = CHANGE_FRAME;
 
-    public double getChangeTime() {
+    public static double getChangeTime() {
         return changeTime;
     }
 
-    public double getChangeFrame() {
+    public static double getChangeFrame() {
         return changeFrame;
+    }
+
+    public static void setChangeTime(double changeTime) {
+        BaseSceneModel.changeTime = changeTime;
+    }
+
+    public static void setChangeFrame(double changeFrame) {
+        BaseSceneModel.changeFrame = changeFrame;
     }
 
     public void change(double x, double y){
@@ -137,13 +156,36 @@ public abstract class BaseSceneModel implements SceneCollidable {
         if(y < 0)topAcceleration = ACCELERATION;
     }
 
+    @Deprecated
+    public void changeAs(double x, double y){
+        //todo : check this
+        if(x < left){
+            leftAcceleration = -ACCELERATION;
+            rightAcceleration = ACCELERATION;
+        }
+        if(x > right) {
+            leftAcceleration = ACCELERATION;
+            rightAcceleration = -ACCELERATION;
+        }
+        if(y < top){
+            topAcceleration = -ACCELERATION;
+            downAcceleration = ACCELERATION;
+        }
+        if(y > down){
+            topAcceleration = ACCELERATION;
+            downAcceleration = -ACCELERATION;
+        }
+    }
+
     public void update(){
         changeScene(this);
     }
 
     public BaseSceneModel() {
         id = UUID.randomUUID().toString();
-        baseSceneModels.add(this);
+        direction = new Direction(0, 0);
+//        baseSceneModels.add(this);
+        reset();
     }
 
     public String getId() {
@@ -180,5 +222,26 @@ public abstract class BaseSceneModel implements SceneCollidable {
                 right - point2D.getX() <= 2)
             return true;
         return false;
+    }
+
+    @Override
+    public boolean checkIntersect(Entity entity) {
+        if(entity instanceof EpsilonModel) {
+            return checkCircleScene(entity, top, down, left, right);
+        }
+        return false;
+    }
+
+    @Override
+    public Point2D getIntersect(Entity entity) {
+        if(entity instanceof EpsilonModel) {
+            Point2D p1 = new Point2D(entity.getPosition().getX(), top);
+            Point2D p2 = new Point2D(entity.getPosition().getX(), down);
+            Point2D p3 = new Point2D(right, entity.getPosition().getY());
+            Point2D p4 = new Point2D(left, entity.getPosition().getY());
+            return getCircleScene(entity, p1, p2, p3, p4);
+        }
+
+        return null;
     }
 }

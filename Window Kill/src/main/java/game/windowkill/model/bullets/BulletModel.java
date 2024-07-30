@@ -19,10 +19,20 @@ public abstract class BulletModel implements Collidable, Movable {
     protected double speed = BULLET_SPEED;
     protected Direction direction = new Direction(0, 0);
     protected Point2D position;
+    protected int attackHp;
 
-    public BulletModel(double x, double y){
+    public BulletModel(double x, double y, int attackHp){
         position = new Point2D(x, y);
         id = UUID.randomUUID().toString();
+        this.attackHp = attackHp;
+    }
+
+    public int getAttackHp() {
+        return attackHp;
+    }
+
+    public void setAttackHp(int attackHp) {
+        this.attackHp = attackHp;
     }
 
     public String getId() {
