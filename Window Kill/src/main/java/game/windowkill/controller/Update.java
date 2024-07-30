@@ -12,6 +12,7 @@ import game.windowkill.model.characterModel.SkillState;
 import game.windowkill.model.characterModel.enemy.*;
 import game.windowkill.model.characterModel.miniBoss.Barricados;
 import game.windowkill.model.characterModel.miniBoss.BlackOrb;
+import game.windowkill.model.characterModel.property.EnemyOverlaps;
 import game.windowkill.model.sceneModel.*;
 import game.windowkill.model.characterModel.EpsilonModel;
 import game.windowkill.model.characterModel.move.Direction;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 
 import static game.windowkill.controller.Constant.*;
 import static game.windowkill.controller.DataHolder.stage;
+import static java.lang.Math.E;
 import static java.lang.Math.max;
 
 public class Update {
@@ -243,24 +245,58 @@ public class Update {
     }
 
     public void entityDeath(){
-        ArrayList<TriangleModel> triangleModels = new ArrayList<>();
+        ArrayList<Entity> entities = new ArrayList<>();
         for(TriangleModel triangleModel : TriangleModel.triangleModels)
             if(triangleModel.getHp() <= 0) {
-                triangleModels.add(triangleModel);
+                entities.add(triangleModel);
                 new CollectableItemModel(triangleModel.getPosition(), 5, triangleModel);
                 new CollectableItemModel(Utils.addVector(triangleModel.getPosition(), new Point2D(5, 2)), 5, triangleModel);
             }
-        for(TriangleModel triangleModel : triangleModels)
-            triangleModel.remove();
-
-        ArrayList<SquareModel> squareModels = new ArrayList<>();
         for(SquareModel squareModel : SquareModel.squareModels)
             if(squareModel.getHp() <= 0) {
-                squareModels.add(squareModel);
+                entities.add(squareModel);
                 new CollectableItemModel(squareModel.getPosition(), 5, squareModel);
             }
-        for(SquareModel squareModel : squareModels)
-            squareModel.remove();
+        for(Wyrm model : Wyrm.wyrms)
+            if(model.getHp() <= 0){
+                entities.add(model);
+                for(int i = 0; i < model.getCollectables(); i++)
+                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D(i/3, i%3)), 5, model);
+            }
+        for(NecroPick model : NecroPick.necroPicks)
+            if(model.getHp() <= 0){
+                entities.add(model);
+                for(int i = 0; i < model.getCollectables(); i++)
+                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D(i/3, i%3)), 5, model);
+            }
+        for(Omenoct model : Omenoct.omenocts)
+            if(model.getHp() <= 0){
+                entities.add(model);
+                for(int i = 0; i < model.getCollectables(); i++)
+                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D(i/3, i%3)), 5, model);
+            }
+        for(Archmire model : Archmire.archmires)
+            if(model.getHp() <= 0){
+                entities.add(model);
+                for(int i = 0; i < model.getCollectables(); i++)
+                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D(i/3, i%3)), 5, model);
+            }
+        for(BlackOrb model : BlackOrb.blackOrbs)
+            if(model.getHp() <= 0){
+                entities.add(model);
+                for(int i = 0; i < model.getCollectables(); i++)
+                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D(i/3, i%3)), 5, model);
+            }
+        for(Barricados model : Barricados.barricados)
+            if(model.getHp() <= 0){
+                entities.add(model);
+                for(int i = 0; i < model.getCollectables(); i++)
+                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D(i/3, i%3)), 5, model);
+            }
+
+
+        for(Entity entity : entities)
+            entity.remove();
 
         if(EpsilonModel.getInstance().getHp() <= 0)death();
     }
@@ -273,10 +309,14 @@ public class Update {
                 if (entity.checkIntersect(entity1)) {
                     //todo : check for the globalRouting and local
                     impact(entity.getIntersect(entity1));
-                    if(entity instanceof MeleeAttack meleeAttack){
+                    if(entity instanceof MeleeAttack meleeAttack && !(entity1 instanceof Wyrm) &&
+                            !(entity instanceof Archmire) && !(entity instanceof NecroPick) && !(entity instanceof Barricados) &&
+                            !(entity instanceof BlackOrb)){
                         meleeAttack.meleeAttack(entity, entity1);
                     }
-                    if(entity1 instanceof  MeleeAttack meleeAttack){
+                    if(entity1 instanceof  MeleeAttack meleeAttack && !(entity instanceof Wyrm) &&
+                            !(entity1 instanceof Archmire) && !(entity1 instanceof NecroPick) && !(entity1 instanceof Barricados) &&
+                            !(entity1 instanceof BlackOrb)){
                         meleeAttack.meleeAttack(entity1, entity);
                     }
 //                        System.out.println(entity.getIntersect(entity1));
@@ -318,24 +358,34 @@ public class Update {
                 Bullets.add(epsilonBulletModel);
                 impact(epsilonBulletModel.getPosition());
             }
-            for(TriangleModel triangleModel : TriangleModel.triangleModels){
-                if(triangleModel.collision(epsilonBulletModel.getPosition())){
+            for(Entity entity : Entity.entities){
+                if(entity instanceof EpsilonModel)
+                    continue;
+                if(entity.collision(epsilonBulletModel.getPosition())){
                     Bullets.add(epsilonBulletModel);
                     impact(epsilonBulletModel.getPosition());
-                    triangleModel.decreaseHearth(BULLET_DECRASE_HEALTH);
-                }
-            }
-            for(SquareModel squareModel : SquareModel.squareModels){
-                if(squareModel.collision(epsilonBulletModel.getPosition())){
-                    Bullets.add(epsilonBulletModel);
-                    impact(epsilonBulletModel.getPosition());
-                    squareModel.decreaseHearth(BULLET_DECRASE_HEALTH);
+                    entity.decreaseHearth(BULLET_DECRASE_HEALTH);
                 }
             }
         }
 
         for(EpsilonBulletModel epsilonBulletModel : Bullets)
             epsilonBulletModel.remove();
+
+        ArrayList<EnemyBulletModel> enemyBulletModels = new ArrayList<>();
+
+        for(EnemyBulletModel enemyBulletModel : EnemyBulletModel.enemyBulletModels){
+            if(EpsilonModel.getInstance().collision(enemyBulletModel.getPosition())){
+                if(EpsilonModel.getInstance().collision(enemyBulletModel.getPosition())){
+                    enemyBulletModels.add(enemyBulletModel);
+                    impact(enemyBulletModel.getPosition());
+                    EpsilonModel.getInstance().decreaseHearth(BULLET_DECRASE_HEALTH);
+                }
+            }
+        }
+
+        for(EnemyBulletModel model : EnemyBulletModel.enemyBulletModels)
+            model.remove();
     }
 
     public void collectableGet(){
@@ -347,7 +397,7 @@ public class Update {
                     (EpsilonModel.getInstance().getY() - y) * (EpsilonModel.getInstance().getY() - y);
             if(dis <= EpsilonModel.getInstance().getRadius() * EpsilonModel.getInstance().getRadius()) {
                 collectableItemModels.add(collectableItemModel);
-                EpsilonModel.getInstance().setXP(EpsilonModel.getInstance().getXP() + 5);
+                EpsilonModel.getInstance().setXP(EpsilonModel.getInstance().getXP() + collectableItemModel.getXp());
             }
             if(System.currentTimeMillis() - collectableItemModel.getTime() >= 10000)
                 collectableItemModels.add(collectableItemModel);
@@ -376,6 +426,22 @@ public class Update {
             direction = new Direction(Utils.multiplyVector(direction.getDirectionVector(),
                     (triangleModel.getDistance(triangleModel.getPosition(), EpsilonModel.getInstance().getPosition())) > 100 ? 1.7 : 1));
             triangleModel.move(direction);
+        }
+        for(NecroPick necroPick : NecroPick.necroPicks){
+            if(necroPick.onGround)
+                if(System.currentTimeMillis()-necroPick.time >= 8){
+                    necroPick.onGround = false;
+                    necroPick.time = System.currentTimeMillis();
+                }
+            else{
+                    if(System.currentTimeMillis()-necroPick.time >= 4){
+                        necroPick.onGround = true;
+                        necroPick.time = System.currentTimeMillis();
+                        for(int i = 0; i < 8; i++){
+                            new EnemyBulletModel(necroPick.getPosition().getX(), necroPick.getPosition().getY(), necroPick.getRangeAttackHp());
+                        }
+                    }
+                }
         }
 
 
@@ -462,15 +528,12 @@ public class Update {
 //        MotionSceneView.getInstance().paint();
     }
     private void impact(Point2D point2D, double C){
-        for(SquareModel squareModel : SquareModel.squareModels){
-            double dis = squareModel.getDistance(squareModel.getPosition(), point2D);
-            if(dis <= 25)squareModel.playAcceleration(point2D, ACCELERATION / (C * dis));
-            else squareModel.playAcceleration(point2D, ACCELERATION / (dis*dis * C));
-        }
-        for(TriangleModel triangleModel : TriangleModel.triangleModels){
-            double dis = triangleModel.getDistance(triangleModel.getPosition(), point2D);
-            if(dis <= 25)triangleModel.playAcceleration(point2D, ACCELERATION / (C * dis));
-            else triangleModel.playAcceleration(point2D, ACCELERATION / (dis*dis * C));
+        for(Entity model : Entity.entities){
+            if(model.enemyOverlaps.equals(EnemyOverlaps.Hovering))
+                continue;
+            double dis = Utils.getDistance(model.getPosition(), point2D);
+            if(dis <= 25)model.playAcceleration(point2D, ACCELERATION / (C * dis));
+            else model.playAcceleration(point2D, ACCELERATION / (dis*dis * C));
         }
         EpsilonModel model = EpsilonModel.getInstance();
         double dis = model.getDistance(model.getPosition(), point2D);

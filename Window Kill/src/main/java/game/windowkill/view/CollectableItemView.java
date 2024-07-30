@@ -15,17 +15,16 @@ public class CollectableItemView{
     private Entity type;
     private String id;
     private Color color;
+    private int xp;
     public static ArrayList<CollectableItemView> collectableItemViews = new ArrayList<>();
 
-    public CollectableItemView(String id, Point2D position, double radius, Entity type) {
+    public CollectableItemView(String id, Point2D position, double radius, Color color, int xp) {
         this.position = position;
         this.radius = radius;
 //        this.type = type;
-        if(type instanceof TriangleModel)
-            color = Color.YELLOW;
-        if(type instanceof SquareModel)
-            color = Color.GREEN;
+        this.color = color;
         this.id = id;
+        this.xp = xp;
         collectableItemViews.add(this);
     }
 

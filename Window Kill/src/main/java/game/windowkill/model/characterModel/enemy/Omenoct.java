@@ -10,6 +10,8 @@ import game.windowkill.model.characterModel.collision.normalShape.CollisionSquar
 import game.windowkill.model.characterModel.miniBoss.Barricados;
 import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.model.characterModel.move.Direction;
+import game.windowkill.model.characterModel.property.EnemyOverlaps;
+import game.windowkill.model.characterModel.property.EnemyProperty;
 import game.windowkill.view.characterView.enemy.OmenoctView;
 import game.windowkill.view.characterView.enemy.SquareView;
 import javafx.geometry.Point2D;
@@ -30,6 +32,8 @@ public class Omenoct extends Entity implements MeleeAttack, CollisionSquareTrian
         rangeAttackHp = 4;
         collectableXP = 4;
         new OmenoctView(getId(), getPosition(), getDirection());
+        enemyOverlaps = EnemyOverlaps.NonHovering;
+        enemyProperty = EnemyProperty.NonRigid;
     }
 
     public void remove(){

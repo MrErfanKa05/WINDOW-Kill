@@ -5,6 +5,8 @@ import game.windowkill.model.characterModel.collision.Collidable;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.model.characterModel.move.Impactable;
 import game.windowkill.model.characterModel.move.Movable;
+import game.windowkill.model.characterModel.property.EnemyOverlaps;
+import game.windowkill.model.characterModel.property.EnemyProperty;
 import game.windowkill.model.sceneModel.BaseSceneModel;
 import game.windowkill.model.strategy.Routing;
 import javafx.geometry.Point2D;
@@ -12,6 +14,7 @@ import javafx.geometry.Point2D;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import static java.lang.Math.E;
 import static java.lang.Math.max;
 
 public abstract class Entity implements Collidable, Movable, Impactable {
@@ -20,6 +23,8 @@ public abstract class Entity implements Collidable, Movable, Impactable {
     protected Point2D position;
     protected Direction direction = new Direction(0, 0);
     protected Direction impactDirection = new Direction(0, 0);
+    public EnemyOverlaps enemyOverlaps = EnemyOverlaps.NonHovering;
+    public EnemyProperty enemyProperty = EnemyProperty.NonRigid;
 
     public static ArrayList<Entity> entities = new ArrayList<>();
 
@@ -31,6 +36,8 @@ public abstract class Entity implements Collidable, Movable, Impactable {
     protected BaseSceneModel baseSceneModel = null;
 
     public Routing routing = Routing.LocalRouting;
+
+    public abstract void remove();
 
     public Entity(double x, double y){
         id = UUID.randomUUID().toString();

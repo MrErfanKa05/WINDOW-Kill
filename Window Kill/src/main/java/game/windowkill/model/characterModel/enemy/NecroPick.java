@@ -9,6 +9,8 @@ import game.windowkill.model.characterModel.collision.normalShape.CollisionSquar
 import game.windowkill.model.characterModel.miniBoss.Barricados;
 import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.model.characterModel.move.Direction;
+import game.windowkill.model.characterModel.property.EnemyOverlaps;
+import game.windowkill.model.characterModel.property.EnemyProperty;
 import game.windowkill.view.characterView.enemy.NecropickView;
 import game.windowkill.view.characterView.enemy.SquareView;
 import javafx.geometry.Point2D;
@@ -29,7 +31,13 @@ public class NecroPick extends Entity implements CollisionSquareSquare, Collisio
         rangeAttackHp = 5;
         collectableXP = 2;
         new NecropickView(getId(), getPosition(), getDirection());
+        enemyOverlaps = EnemyOverlaps.NonHovering;
+        enemyProperty = EnemyProperty.Rigid;
+        time = System.currentTimeMillis();
     }
+
+    public boolean onGround;
+    public long time = 0;
 
     public void remove(){
         necroPicks.remove(this);

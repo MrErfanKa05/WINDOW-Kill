@@ -2,8 +2,12 @@ package game.windowkill.model;
 
 import game.windowkill.model.characterModel.Entity;
 import game.windowkill.model.characterModel.collision.Collidable;
+import game.windowkill.model.characterModel.enemy.*;
+import game.windowkill.model.characterModel.miniBoss.Barricados;
+import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.view.CollectableItemView;
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -14,6 +18,7 @@ public class CollectableItemModel implements Collidable {
     private Entity type;
     private String id;
     private double time;
+    private int xp;
     public static ArrayList<CollectableItemModel> collectableItemModels = new ArrayList<>();
 
     public CollectableItemModel(Point2D position, double radius, Entity type) {
@@ -23,8 +28,31 @@ public class CollectableItemModel implements Collidable {
         this.type = type;
         this.id = UUID.randomUUID().toString();
         collectableItemModels.add(this);
-        new CollectableItemView(id, position, radius, type);
+        Color color = null;
+        if(type instanceof TriangleModel)
+            color = Color.YELLOW;
+        if(type instanceof SquareModel)
+            color = Color.GREEN;
+        if(type instanceof Barricados)
+            color = Color.GRAY;
+        if(type instanceof BlackOrb)
+            color = Color.BLUE;
+        if(type instanceof Wyrm)
+            color = Color.WHITE;
+        if(type instanceof NecroPick)
+            color = Color.LIGHTCYAN;
+        if(type instanceof Omenoct)
+            color = Color.RED;
+        if(type instanceof Archmire)
+            color = Color.ORANGE;
+        xp = type.getCollectableXP();
+        new CollectableItemView(id, position, radius, color, xp);
     }
+
+    public int getXp() {
+        return xp;
+    }
+
     public void remove(){
         collectableItemModels.remove(this);
         CollectableItemView view = null;

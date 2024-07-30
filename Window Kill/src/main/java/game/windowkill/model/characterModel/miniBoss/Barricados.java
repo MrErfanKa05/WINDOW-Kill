@@ -8,6 +8,8 @@ import game.windowkill.model.characterModel.collision.normalShape.CollisionSquar
 import game.windowkill.model.characterModel.collision.normalShape.CollisionSquareTriangle;
 import game.windowkill.model.characterModel.enemy.*;
 import game.windowkill.model.characterModel.move.Direction;
+import game.windowkill.model.characterModel.property.EnemyOverlaps;
+import game.windowkill.model.characterModel.property.EnemyProperty;
 import game.windowkill.view.characterView.enemy.SquareView;
 import game.windowkill.view.characterView.miniBoss.BarricadosView;
 import javafx.geometry.Point2D;
@@ -24,6 +26,8 @@ public class Barricados extends Entity implements CollisionSquareCircle, Collisi
         new SquareView(id, position, direction);
         hp = Integer.MAX_VALUE;
         new BarricadosView(getId(), getPosition(), getDirection());
+        enemyOverlaps = EnemyOverlaps.NonHovering;
+        enemyProperty = EnemyProperty.Rigid;
     }
 
     public void remove(){

@@ -10,6 +10,8 @@ import game.windowkill.model.characterModel.collision.normalShape.CollisionSquar
 import game.windowkill.model.characterModel.miniBoss.Barricados;
 import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.model.characterModel.move.Direction;
+import game.windowkill.model.characterModel.property.EnemyOverlaps;
+import game.windowkill.model.characterModel.property.EnemyProperty;
 import game.windowkill.view.characterView.enemy.ArchmireView;
 import game.windowkill.view.characterView.enemy.SquareView;
 import javafx.geometry.Point2D;
@@ -34,6 +36,8 @@ public class Archmire extends Entity implements CollisionSquareTriangle, Collisi
         collectables = 5;
         collectableXP = 6;
         new ArchmireView(getId(), getPosition(), getDirection());
+        enemyOverlaps = EnemyOverlaps.Hovering;
+        enemyProperty = EnemyProperty.NonRigid;
     }
 
     public void drown(Entity entity){

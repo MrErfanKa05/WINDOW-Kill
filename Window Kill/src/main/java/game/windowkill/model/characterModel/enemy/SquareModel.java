@@ -9,6 +9,8 @@ import game.windowkill.model.characterModel.collision.normalShape.CollisionSquar
 import game.windowkill.model.characterModel.miniBoss.Barricados;
 import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.model.characterModel.move.Direction;
+import game.windowkill.model.characterModel.property.EnemyOverlaps;
+import game.windowkill.model.characterModel.property.EnemyProperty;
 import game.windowkill.model.strategy.Routing;
 import game.windowkill.view.characterView.enemy.SquareView;
 import javafx.geometry.Point2D;
@@ -27,6 +29,8 @@ public class SquareModel extends Entity implements CollisionSquareSquare, Collis
         attackHp = 6;
         collectables = 1;
         collectableXP = 5;
+        enemyOverlaps = EnemyOverlaps.NonHovering;
+        enemyProperty = EnemyProperty.NonRigid;
     }
 
     public void remove(){

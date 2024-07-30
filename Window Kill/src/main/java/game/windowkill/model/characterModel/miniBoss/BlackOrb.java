@@ -9,6 +9,8 @@ import game.windowkill.model.characterModel.collision.normalShape.CollisionSquar
 import game.windowkill.model.characterModel.collision.normalShape.CollisionTriangleCircle;
 import game.windowkill.model.characterModel.enemy.*;
 import game.windowkill.model.characterModel.move.Direction;
+import game.windowkill.model.characterModel.property.EnemyOverlaps;
+import game.windowkill.model.characterModel.property.EnemyProperty;
 import game.windowkill.view.characterView.enemy.SquareView;
 import game.windowkill.view.characterView.miniBoss.BlackOrbView;
 import javafx.geometry.Point2D;
@@ -30,6 +32,8 @@ public class BlackOrb extends Entity implements CollisionSquareCircle, Collision
         collectableXP = 30;
 
         new BlackOrbView(getId(), getPosition(), getDirection());
+        enemyOverlaps = EnemyOverlaps.NonHovering;
+        enemyProperty = EnemyProperty.Rigid;
     }
 
     public void remove(){

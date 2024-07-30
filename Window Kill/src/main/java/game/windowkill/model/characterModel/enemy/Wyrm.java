@@ -9,6 +9,8 @@ import game.windowkill.model.characterModel.collision.normalShape.CollisionSquar
 import game.windowkill.model.characterModel.miniBoss.Barricados;
 import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.model.characterModel.move.Direction;
+import game.windowkill.model.characterModel.property.EnemyOverlaps;
+import game.windowkill.model.characterModel.property.EnemyProperty;
 import game.windowkill.view.characterView.enemy.SquareView;
 import game.windowkill.view.characterView.enemy.WyrmView;
 import javafx.geometry.Point2D;
@@ -30,6 +32,8 @@ public class Wyrm extends Entity implements CollisionSquareCircle, CollisionSqua
         rangeAttackHp = 8;
         collectableXP = 8;
         new WyrmView(getId(), getPosition(), getDirection());
+        enemyOverlaps = EnemyOverlaps.NonHovering;
+        enemyProperty = EnemyProperty.NonRigid;
     }
 
     public void remove(){
