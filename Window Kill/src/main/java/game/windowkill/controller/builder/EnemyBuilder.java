@@ -19,7 +19,8 @@ import static game.windowkill.model.attack.AreaOfEffect.deleteArea;
 public class EnemyBuilder {
     private int wave1Triangle, wave1Square, wave2Triangle, wave2Square, wave3Triangle, wave3Square;
     private int CWave1Triangle, CWave1Square, CWave2Triangle, CWave2Square, CWave3Triangle, CWave3Square;
-    private int totalTime = 0, w1Time = 0, w2Time = 0, w3Time = 0, w5Time = 0, w6Time = 0, w7Time = 0, w8Time = 0, w9Time = 0, w11Time = 0;
+    private int w1Time = 0, w2Time = 0, w3Time = 0, w5Time = 0, w6Time = 0, w7Time = 0, w8Time = 0, w9Time = 0, w11Time = 0;
+    public int totalTime = 0;
     private Random random = new Random();
     public static int wave = 1;
     public boolean waveFinish = true;
@@ -41,7 +42,7 @@ public class EnemyBuilder {
         this.CWave3Square = wave3Square;
         startWave.setCycleCount(-1);
         past.setCycleCount(1);
-        wave = 9;
+        wave = 1;
         timer.setCycleCount(Animation.INDEFINITE);
         timingWave.setCycleCount(Animation.INDEFINITE);
     }
@@ -248,16 +249,16 @@ public class EnemyBuilder {
             if(Math.random() * 100 < 50)
                 createTriangle();
         }
-        else{
-            createTriangle();
-        }
+//        else{
+//            createTriangle();
+//        }
         if(10 - time > nowS){
             if(Math.random() * 100 < 50)
                 createSquare();
         }
-        else{
-            createSquare();
-        }
+//        else{
+//            createSquare();
+//        }
         time++;
         if(time >= 10){
             finishWave();

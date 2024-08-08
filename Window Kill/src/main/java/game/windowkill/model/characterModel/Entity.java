@@ -8,12 +8,14 @@ import game.windowkill.model.characterModel.move.Movable;
 import game.windowkill.model.characterModel.property.EnemyOverlaps;
 import game.windowkill.model.characterModel.property.EnemyProperty;
 import game.windowkill.model.sceneModel.BaseSceneModel;
+import game.windowkill.model.sceneModel.MotionSceneModel;
 import game.windowkill.model.strategy.Routing;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
+import static game.windowkill.controller.Utils.addVector;
 import static java.lang.Math.E;
 import static java.lang.Math.max;
 
@@ -53,7 +55,7 @@ public abstract class Entity implements Collidable, Movable, Impactable {
             Point2D p2 = getVertices().get(1);
             double size = max(p2.getX() - p1.getX(), p2.getY() - p1.getY());
             Point2D point = new Point2D(size, size);
-            playAcceleration(new Direction(Utils.relativeLocation(Utils.addVector(point, position), point2D)), acc);
+            playAcceleration(new Direction(Utils.relativeLocation(addVector(point, position), point2D)), acc);
         }
     }
     public void playAcceleration(Direction direction, double acc){
@@ -61,7 +63,7 @@ public abstract class Entity implements Collidable, Movable, Impactable {
         Direction p1 = new Direction(Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration));
         Direction p2 = new Direction(Utils.multiplyVector(direction.getDirectionVector(), acc));
 
-        impactDirection = new Direction(Utils.addVector(p1.getDirectionVector(), p2.getDirectionVector()));
+        impactDirection = new Direction(addVector(p1.getDirectionVector(), p2.getDirectionVector()));
 //        impactDirection = Utils.
 //        impactDirection = new Direction(Utils.addVector(new Direction(direction.getDirectionVector()).getDirectionVector(),
 //                impactDirection.getDirectionVector()));
@@ -132,9 +134,22 @@ public abstract class Entity implements Collidable, Movable, Impactable {
     public void move(Point2D point2D, double speed) {
         Point2D movement = Utils.multiplyVector(point2D, speed);
         Point2D changePosition = Utils.multiplyVector(direction.getDirectionVector(), speed);
-        movement = Utils.addVector(movement, changePosition);
+        movement = addVector(movement, changePosition);
 //        movement = Utils.addVector(movement, Utils.multiplyVector(impactDirection.getDirectionVector(), accelerationMove))
-        position = Utils.addVector(position, movement);
+        if(this instanceof EpsilonModel model) {
+            double left = MotionSceneModel.getInstance().getLeft();
+            double right = MotionSceneModel.getInstance().getRight();
+            double top = MotionSceneModel.getInstance().getTop();
+            double down = MotionSceneModel.getInstance().getDown();
+            Point2D point = model.getPosition();
+            model.setPosition(addVector(position, movement));
+            if(getX() - model.getRadius() > left && getX() + model.getRadius() < right &&
+                getY() - model.getRadius() > top && getY() + model.getRadius() < down) {
+                return;
+            }
+            else model.setPosition(point);
+        }
+        position = addVector(position, movement);
     }
 
     public int getHp() {

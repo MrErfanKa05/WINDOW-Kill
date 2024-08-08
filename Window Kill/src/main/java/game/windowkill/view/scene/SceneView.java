@@ -98,10 +98,26 @@ public abstract class SceneView {
         pane.getChildren().clear();
         setPage();
 
+        for(Point2D view : ArchmireView.areas){
+            if(view.getX() < left ||
+                    view.getX() > right ||
+                    view.getY() < top ||
+                    view.getY() > down)
+                continue;
+            Rectangle rectangle = new Rectangle();
+            rectangle.setFill(Color.LIGHTPINK);
+            rectangle.setTranslateX(view.getX() - stage.getX());
+            rectangle.setTranslateY(view.getY() - stage.getY());
+            rectangle.setHeight(BIG_ENEMY_OUTSIDE);
+            rectangle.setWidth(BIG_ENEMY_OUTSIDE);
+            pane.getChildren().add(rectangle);
+
+        }
+
         for(ArchmireView view : ArchmireView.archmireViews){
-            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+            if(view.getPosition().getX() + BIG_ENEMY_OUTSIDE < left ||
                     view.getPosition().getX() > right ||
-                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() + BIG_ENEMY_OUTSIDE < top ||
                     view.getPosition().getY() > down)
                 continue;
 
@@ -111,10 +127,13 @@ public abstract class SceneView {
         }
 
         for(NecropickView view : NecropickView.necropickViews){
-            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+            if(view.getPosition().getX() + BIG_ENEMY_OUTSIDE < left ||
                     view.getPosition().getX() > right ||
-                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() + BIG_ENEMY_OUTSIDE < top ||
                     view.getPosition().getY() > down)
+                continue;
+
+            if(!view.onGround)
                 continue;
 
             File file = new File(NECROPICK_PATH);
@@ -123,9 +142,9 @@ public abstract class SceneView {
         }
 
         for(OmenoctView view : OmenoctView.omenoctViews){
-            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+            if(view.getPosition().getX() + BIG_ENEMY_OUTSIDE < left ||
                     view.getPosition().getX() > right ||
-                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() + BIG_ENEMY_OUTSIDE < top ||
                     view.getPosition().getY() > down)
                 continue;
 
@@ -135,9 +154,9 @@ public abstract class SceneView {
         }
 
         for(WyrmView view : WyrmView.wyrmViews){
-            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+            if(view.getPosition().getX() + BIG_ENEMY_OUTSIDE < left ||
                     view.getPosition().getX() > right ||
-                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() + BIG_ENEMY_OUTSIDE < top ||
                     view.getPosition().getY() > down)
                 continue;
 
@@ -147,21 +166,21 @@ public abstract class SceneView {
         }
 
         for(BarricadosView view : BarricadosView.barricadosViews){
-            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+            if(view.getPosition().getX() + BARRICADOS_OUTSIDE < left ||
                     view.getPosition().getX() > right ||
-                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() + BARRICADOS_OUTSIDE < top ||
                     view.getPosition().getY() > down)
                 continue;
 
             File file = new File(BARRICADOS_PATH);
 
-            imagePaint(file, BIG_ENEMY_OUTSIDE, view);
+            imagePaint(file, BARRICADOS_OUTSIDE, view);
         }
 
         for(BlackOrbView view : BlackOrbView.blackOrbViews){
-            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+            if(view.getPosition().getX() + BIG_ENEMY_OUTSIDE < left ||
                     view.getPosition().getX() > right ||
-                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() + BIG_ENEMY_OUTSIDE < top ||
                     view.getPosition().getY() > down)
                 continue;
 
@@ -201,7 +220,7 @@ public abstract class SceneView {
                     view.getPosition().getY() > down)
                 continue;
             Circle bull = new Circle();
-            bull.setFill(Color.GREENYELLOW);
+            bull.setFill(Color.HOTPINK);
             bull.setRadius(Constant.BULLET_RADIUS);
             bull.setTranslateX(view.getPosition().getX() - BULLET_RADIUS - stage.getX());
             bull.setTranslateY(view.getPosition().getY() - BULLET_RADIUS - stage.getY());

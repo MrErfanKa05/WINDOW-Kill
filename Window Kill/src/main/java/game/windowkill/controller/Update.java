@@ -333,26 +333,33 @@ public class Update {
                     //todo : check for the globalRouting and local
                     if(entity.enemyOverlaps!=EnemyOverlaps.Hovering && entity1.enemyOverlaps!=EnemyOverlaps.Hovering)
                         impact(entity.getIntersect(entity1));
-                    if(entity instanceof MeleeAttack meleeAttack && !(entity1 instanceof Wyrm) &&
-                            !(entity instanceof Archmire) && !(entity instanceof NecroPick) && !(entity instanceof Barricados) &&
-                            !(entity instanceof BlackOrb)){
-                        meleeAttack.meleeAttack(entity, entity1);
+                    if(entity instanceof EpsilonModel epsilonModel && !(entity1 instanceof Wyrm) && !(entity1 instanceof Archmire)
+                        && !(entity1 instanceof NecroPick) && !(entity1 instanceof Barricados)){
+                        epsilonModel.meleeAttack(entity, entity1);
                     }
-                    if(entity1 instanceof  MeleeAttack meleeAttack && !(entity instanceof Wyrm) &&
-                            !(entity1 instanceof Archmire) && !(entity1 instanceof NecroPick) && !(entity1 instanceof Barricados) &&
-                            !(entity1 instanceof BlackOrb)){
-                        meleeAttack.meleeAttack(entity1, entity);
-                    }
-
-                    if(entity instanceof EpsilonModel && entity1.enemyProperty==EnemyProperty.NonRigid && entity1.enemyOverlaps==EnemyOverlaps.NonHovering){
+                    if(entity instanceof EpsilonModel model && entity1.enemyProperty==EnemyProperty.NonRigid && entity1.enemyOverlaps==EnemyOverlaps.NonHovering){
                         Point2D point2D = Utils.relativeLocation(EpsilonModel.getInstance().getPosition(),
                                 entity.getIntersect(entity1));
                         point2D = Utils.multiplyVector(point2D, 1);
-                        entity.setPosition(Utils.addVector(entity.getPosition(), point2D));
+                        double left = MotionSceneModel.getInstance().getLeft();
+                        double right = MotionSceneModel.getInstance().getRight();
+                        double top = MotionSceneModel.getInstance().getTop();
+                        double down = MotionSceneModel.getInstance().getDown();
+                        Point2D point = model.getPosition();
+                        if(point2D.getY() > 0 && point2D.getX() > 0)
+                            entity.setPosition(Utils.addVector(entity.getPosition(), point2D));
+                        if(model.getX() - model.getRadius() > left && model.getX() + model.getRadius() < right &&
+                                model.getY() - model.getRadius() > top && model.getY() + model.getRadius() < down) {
+                        }
+                        else model.setPosition(point);
                     }
-//                        System.out.println(entity.getIntersect(entity1));
-                    //todo fix this : check for decrease hp
-                    //todo : maybe incorrect circle intersect
+                    else if(entity.enemyOverlaps==EnemyOverlaps.NonHovering && entity1.enemyOverlaps==EnemyOverlaps.NonHovering){
+                        Point2D point2D = Utils.relativeLocation(entity.getPosition(),
+                                entity.getIntersect(entity1));
+                        point2D = Utils.multiplyVector(point2D, 1);
+                        if(point2D.getY() > 0 && point2D.getX() > 0)
+                            entity.setPosition(Utils.addVector(entity.getPosition(), point2D));
+                    }
                     if(!(entity1 instanceof Archmire) && entity instanceof Archmire archmire){
                         archmire.drown(entity1);
                     }
@@ -463,7 +470,8 @@ public class Update {
 
     public void move(){
         for(SquareModel squareModel : SquareModel.squareModels) {
-            Direction direction = new Direction(Utils.relativeLocation(EpsilonModel.getInstance().getPosition(), squareModel.getPosition()));
+            Direction direction = new Direction(Utils.relativeLocation(EpsilonModel.getInstance().getPosition(),
+                    Utils.addVector(squareModel.getPosition(), new Point2D(SQUARE_OUTSIDE/2, SQUARE_OUTSIDE/2))));
             if(Math.random() * 100 < 0.1 && squareModel.getAcceleration() == 0){
                 double C = 0.0003;
                 double acc = ACCELERATION;
@@ -476,7 +484,8 @@ public class Update {
             squareModel.move(direction);
         }
         for(TriangleModel triangleModel : TriangleModel.triangleModels) {
-            Direction direction = new Direction(Utils.relativeLocation(EpsilonModel.getInstance().getPosition(), triangleModel.getPosition()));
+            Direction direction = new Direction(Utils.relativeLocation(EpsilonModel.getInstance().getPosition(),
+                    Utils.addVector(triangleModel.getPosition(), new Point2D(SQUARE_OUTSIDE/2, SQUARE_OUTSIDE/2))));
             direction = new Direction(Utils.multiplyVector(direction.getDirectionVector(),
                     (triangleModel.getDistance(triangleModel.getPosition(), EpsilonModel.getInstance().getPosition())) > 100 ? 1.7 : 1));
             triangleModel.move(direction);
@@ -690,9 +699,7 @@ public class Update {
     private void win(){
         finish();
 
-//todo
-
-        stage.setScene(SceneLoader.getMenu());
+        stage.setScene(SceneLoader.getWin());
     }
 
     private void finish(){
@@ -704,6 +711,7 @@ public class Update {
         CollectableItemModel.collectableItemModels.clear();
         CollectableItemView.collectableItemViews.clear();
         MotionSceneModel.getInstance().reset();
+        MotionSceneView.getInstance().setElapsedTimeInt(enemyBuilder.totalTime);
 //        EpsilonModel.getInstance().init();
         //todo : end the thread
 //        update();
@@ -797,12 +805,10 @@ public class Update {
 
     public void shoot(Point2D point2D){
         if(System.currentTimeMillis() - delay > BULLET_DELAY) {
-//            new BulletModel(point2D.getX() + stage.getX(), point2D.getY() + stage.getY());
             Point2D pos = new Point2D(EpsilonModel.getInstance().getX(), EpsilonModel.getInstance().getY());
             EpsilonBulletModel epsilonBulletModel = new EpsilonBulletModel(pos.getX(), pos.getY(), EpsilonModel.getInstance().getRangeAttackHp());
             epsilonBulletModel.setDirection(new Direction(Utils.relativeLocation(new Point2D(point2D.getX() + stage.getX(), point2D.getY() + stage.getY()),
                     pos)).getDirectionVector());
-//            System.out.println(point2D.getX() + " " + point2D.getY());
             delay = System.currentTimeMillis();
         }
     }

@@ -63,6 +63,7 @@ public class MotionSceneView {
         pane = new Pane();
         scene = new Scene(pane, SCREEN_WIDTH, SCREEN_HEIGHT);
         inputManager = new InputManager(scene);
+        elapsedTimeInt = 0;
 //        scene.setOnMouseClicked(mouseEvent -> setScene());
         stage.setScene(scene);
         pane.setBackground(Background.fill(Color.BLACK));
@@ -95,6 +96,10 @@ public class MotionSceneView {
 
         timer.setCycleCount(Animation.INDEFINITE);
         timer.play();
+    }
+
+    public void setElapsedTimeInt(int elapsedTimeInt) {
+        this.elapsedTimeInt = elapsedTimeInt;
     }
 
     public int getElapsedTimeInt() {
