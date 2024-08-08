@@ -4,16 +4,18 @@ import game.windowkill.model.characterModel.Entity;
 import game.windowkill.model.characterModel.EpsilonModel;
 import game.windowkill.model.characterModel.collision.scenes.CollisionCircleScene;
 import game.windowkill.model.characterModel.move.Direction;
+import game.windowkill.model.characterModel.multiScene.LocalMultiScene;
+import game.windowkill.model.sceneModel.property.Rigid;
+import game.windowkill.model.sceneModel.property.Isometric;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 import static game.windowkill.controller.Constant.*;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
+import static java.lang.Math.*;
 
-public abstract class BaseSceneModel implements SceneCollidable, CollisionCircleScene {
+public abstract class BaseSceneModel implements SceneCollidable, CollisionCircleScene, LocalMultiScene {
     public static ArrayList<BaseSceneModel> baseSceneModels = new ArrayList<>();
 
     protected Direction direction;
@@ -23,6 +25,14 @@ public abstract class BaseSceneModel implements SceneCollidable, CollisionCircle
     public double width, height;
 
     protected String id;
+
+
+    public BaseSceneModel() {
+        id = UUID.randomUUID().toString();
+        direction = new Direction(0, 0);
+//        baseSceneModels.add(this);
+        reset();
+    }
 
     public void set(double left, double right, double top, double down){
         this.left = left;
@@ -178,14 +188,44 @@ public abstract class BaseSceneModel implements SceneCollidable, CollisionCircle
     }
 
     public void update(){
+//        right = left + width;
+//        down = top + height;
+        if(!(this instanceof Isometric)) {
+            setGoDown(true);
+            setGoRight(true);
+            setGoTop(true);
+            setGoLeft(true);
+        }
+        shrinkage(this);
         changeScene(this);
     }
 
-    public BaseSceneModel() {
-        id = UUID.randomUUID().toString();
-        direction = new Direction(0, 0);
-//        baseSceneModels.add(this);
-        reset();
+    public void checkForMultiScene(BaseSceneModel model){
+        double left = model.getLeft();
+        double right = model.getRight();
+        double top = model.getTop();
+        double down = model.getDown();
+        double C = 5;
+        if(!(down < getTop()) && !(top > getDown())) {
+            setGoRight(!(abs(left - getRight()) <= C));
+            setGoLeft(!(abs(right - getLeft()) <= C));
+        }
+        else {
+            setGoRight(true);
+            setGoLeft(true);
+        }
+        if(!(right < getLeft()) && !(left > getRight())) {
+            setGoDown(!(abs(top - getDown()) <= C));
+            setGoTop(!(abs(down - getTop()) <= C));
+        }
+        else {
+            setGoTop(true);
+            setGoDown(true);
+        }
+//        setGoTop(false);
+//        setGoLeft(false);
+//        setGoDown(false);
+//        setGoRight(false);
     }
 
     public String getId() {
@@ -243,5 +283,67 @@ public abstract class BaseSceneModel implements SceneCollidable, CollisionCircle
         }
 
         return null;
+    }
+
+    public boolean isInIsometricScene(){
+        double left = getLeft();
+        double right = getRight();
+        double down = getDown();
+        double top = getTop();
+        for(BaseSceneModel model : BaseSceneModel.baseSceneModels){
+            if(!(model instanceof Rigid))
+                continue;
+            double l = model.getLeft();
+            double r = model.getRight();
+            double t = model.getTop();
+            double d = model.getDown();
+
+            if(l == left && r == right && d == down && t == top)
+                continue;
+
+            Point2D p1 = new Point2D(l, t);
+            Point2D p2 = new Point2D(l, d);
+            Point2D p3 = new Point2D(r, t);
+            Point2D p4 = new Point2D(r, d);
+
+            if(collision(p1) || collision(p2) || collision(p3) || collision(p4))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isMultiScene() {
+        double left = getLeft();
+        double right = getRight();
+        double down = getDown();
+        double top = getTop();
+        for(BaseSceneModel model : BaseSceneModel.baseSceneModels){
+            double l = model.getLeft();
+            double r = model.getRight();
+            double t = model.getTop();
+            double d = model.getDown();
+
+            if(l == left && r == right && d == down && t == top)
+                continue;
+
+            Point2D p1 = new Point2D(l, t);
+            Point2D p2 = new Point2D(l, d);
+            Point2D p3 = new Point2D(r, t);
+            Point2D p4 = new Point2D(r, d);
+
+            if(collision(p1) || collision(p2) || collision(p3) || collision(p4))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isInsideMultiScene(Point2D point2D) {
+        int num = 0;
+        for(BaseSceneModel model : BaseSceneModel.baseSceneModels)
+            if(model.collision(point2D))
+                num++;
+        return (num >= 2);
     }
 }

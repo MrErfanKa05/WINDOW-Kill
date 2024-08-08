@@ -25,7 +25,6 @@ public class BlackOrb extends Entity implements CollisionSquareCircle, Collision
     public BlackOrb(double x, double y) {
         super(x, y);
         blackOrbs.add(this);
-        new SquareView(id, position, direction);
         hp = 30;
         attackHp = 0;
         collectables = 5;
@@ -44,6 +43,7 @@ public class BlackOrb extends Entity implements CollisionSquareCircle, Collision
             if(blackOrbView.getId().equals(getId()))
                 view = blackOrbView;
         BlackOrbView.blackOrbViews.remove(view);
+        baseSceneModel.remove();
     }
 
     @Override

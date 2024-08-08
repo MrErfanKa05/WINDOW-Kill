@@ -15,4 +15,5 @@ public class NecropickView extends EntityView {
         setDirection(direction);
         necropickViews.add(this);
     }
+    public boolean onGround;
 }

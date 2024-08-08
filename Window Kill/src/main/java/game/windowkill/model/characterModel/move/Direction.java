@@ -30,7 +30,26 @@ public class Direction {
         if (angle >= 0 && angle < 180) state=DirectionState.positive;
         else state=DirectionState.negative;
     }
-
+    public Point2D getAdd90(){
+        Point2D point2D = getDirectionVector();
+        if(state==DirectionState.positive){
+            if(slope < 0){
+                return new Point2D(point2D.getY()*-1, point2D.getX());
+            }
+            else {
+                return new Point2D(point2D.getY()*-1, point2D.getX());
+            }
+        }
+        if(state==DirectionState.negative){
+            if(slope < 0){
+                return new Point2D(point2D.getY()*-1, point2D.getX());
+            }
+            else {
+                return new Point2D(point2D.getY()*-1, point2D.getX());
+            }
+        }
+        return new Point2D(0, 0);
+    }
     public Point2D getDirectionVector(){
         if (state==DirectionState.neutral) return new Point2D(0,0);
         if (isUpward) return new Point2D(0,1);

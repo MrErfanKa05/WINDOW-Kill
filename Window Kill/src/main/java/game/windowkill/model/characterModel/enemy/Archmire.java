@@ -12,6 +12,8 @@ import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.model.characterModel.property.EnemyOverlaps;
 import game.windowkill.model.characterModel.property.EnemyProperty;
+import game.windowkill.model.sceneModel.BaseSceneModel;
+import game.windowkill.model.sceneModel.NonIsoNonRigidScene;
 import game.windowkill.view.characterView.enemy.ArchmireView;
 import game.windowkill.view.characterView.enemy.SquareView;
 import javafx.geometry.Point2D;
@@ -27,10 +29,10 @@ import static java.lang.Math.min;
 public class Archmire extends Entity implements CollisionSquareTriangle, CollisionSquareSquare, CollisionSquareCircle, AreaOfEffect {
     public static ArrayList<Archmire> archmires = new ArrayList<>();
     public static Map<Entity, Long> drownTimes = new HashMap<>();
+
     public Archmire(double x, double y) {
         super(x, y);
         archmires.add(this);
-        new SquareView(id, position, direction);
         hp = 30;
         attackHp = 0;
         collectables = 5;
@@ -38,28 +40,34 @@ public class Archmire extends Entity implements CollisionSquareTriangle, Collisi
         new ArchmireView(getId(), getPosition(), getDirection());
         enemyOverlaps = EnemyOverlaps.Hovering;
         enemyProperty = EnemyProperty.NonRigid;
+        speed/= 5;
+//        baseSceneModel = new NonIsoNonRigidScene(getX() - 4, getX() + 4 + BIG_ENEMY_OUTSIDE, getY() - 4, getY() + 4 + BIG_ENEMY_OUTSIDE);
     }
 
     public void drown(Entity entity){
         int num = 0;
         int type = 10;
-        for(Point2D point2D : entity.getVertices()){
-            if(checkAreaEffect(point2D)) {
-                num++;
-                type = min(type, getAreaEffect(point2D));
+        if(entity instanceof EpsilonModel epsilonModel && checkAreaEffect(Utils.addVector(entity.getPosition(), new Point2D(-1*epsilonModel.getRadius(), -1*epsilonModel.getRadius()))))
+            type = min(type, getAreaEffect(Utils.addVector(entity.getPosition(), new Point2D(-1*epsilonModel.getRadius(), -1*epsilonModel.getRadius()))));
+        else if(checkAreaEffect(entity.getPosition()))
+            type = min(type, getAreaEffect(entity.getPosition()));
+        else type = 0;
+        if(type > 0) {
+            if(drownTimes.containsKey(entity)) {
+                if (System.currentTimeMillis() - drownTimes.get(entity) > 1000) {
+                    entity.decreaseHearth(type);
+                    drownTimes.put(entity, System.currentTimeMillis());
+                }
+            }
+            else {
+                if(entity instanceof EpsilonModel){
+                    drownTimes.put(entity, System.currentTimeMillis());
+                    entity.decreaseHearth(type);
+                }
             }
         }
-        if(num == 0) {
+        else {
             drownTimes.remove(entity);
-            return;
-        }
-        if(drownTimes.containsKey(entity))
-            if(System.currentTimeMillis() - drownTimes.get(entity) < 1000)
-                return;
-        if(!drownTimes.containsKey(entity))
-            drownTimes.put(entity, System.currentTimeMillis());
-        if(num == entity.getVertices().size()){
-            entity.decreaseHearth(type);
         }
 
     }
@@ -89,6 +97,8 @@ public class Archmire extends Entity implements CollisionSquareTriangle, Collisi
         vertices.add(uLeft);
         vertices.add(dRight);
         vertices.add(dLeft);
+
+//        baseSceneModel.set(getX() - 4, getX() + 4 + BIG_ENEMY_OUTSIDE, getY() - 4, getY() + 4 + BIG_ENEMY_OUTSIDE);
     }
 
     @Override
@@ -125,7 +135,7 @@ public class Archmire extends Entity implements CollisionSquareTriangle, Collisi
             Point2D p3 = getVertices().get(2);
             Point2D p4 = getVertices().get(3);
             return checkSquareCircle(p1, p2, p3, p4,
-                    getPosition().getX(), getPosition().getY(), epsilonModel.getRadius());
+                    epsilonModel.getPosition().getX(), epsilonModel.getPosition().getY(), epsilonModel.getRadius());
         }
         if(entity instanceof BlackOrb){
             return entity.checkIntersect(this);
@@ -179,7 +189,7 @@ public class Archmire extends Entity implements CollisionSquareTriangle, Collisi
             Point2D p2 = vertices.get(1);
             Point2D p3 = vertices.get(2);
             Point2D p4 = vertices.get(3);
-            return getSquareCircle(p1, p2, p3, p4, getX(), getY(), epsilonModel.getRadius());
+            return getSquareCircle(p1, p2, p3, p4, epsilonModel.getX(), epsilonModel.getY(), epsilonModel.getRadius());
         }
         if(entity instanceof BlackOrb){
             return entity.getIntersect(this);

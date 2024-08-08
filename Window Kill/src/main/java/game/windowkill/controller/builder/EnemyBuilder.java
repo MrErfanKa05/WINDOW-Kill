@@ -1,12 +1,10 @@
 package game.windowkill.controller.builder;
 
-import game.windowkill.controller.Constant;
-import game.windowkill.controller.DataHolder;
-import game.windowkill.controller.Utils;
+import game.windowkill.model.characterModel.Entity;
 import game.windowkill.model.characterModel.enemy.*;
 import game.windowkill.model.characterModel.miniBoss.Barricados;
 import game.windowkill.model.characterModel.miniBoss.BlackOrb;
-import game.windowkill.model.sceneModel.IsoNonRigidScene;
+import game.windowkill.model.sceneModel.*;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -16,6 +14,7 @@ import java.util.Random;
 
 import static game.windowkill.controller.Constant.*;
 import static game.windowkill.controller.DataHolder.difficulty;
+import static game.windowkill.model.attack.AreaOfEffect.deleteArea;
 
 public class EnemyBuilder {
     private int wave1Triangle, wave1Square, wave2Triangle, wave2Square, wave3Triangle, wave3Square;
@@ -40,9 +39,9 @@ public class EnemyBuilder {
         this.CWave2Square = wave2Square;
         this.CWave3Triangle = wave3Triangle;
         this.CWave3Square = wave3Square;
-        startWave.setCycleCount(10);
+        startWave.setCycleCount(-1);
         past.setCycleCount(1);
-        wave = 1;
+        wave = 9;
         timer.setCycleCount(Animation.INDEFINITE);
         timingWave.setCycleCount(Animation.INDEFINITE);
     }
@@ -55,19 +54,45 @@ public class EnemyBuilder {
         nowT--;
     }
     public void createArchmire(){
-        new Archmire(Math.random() * SCREEN_WIDTH, Math.random() * SCREEN_HEIGHT);
+        Thread thread = new Thread(){
+            @Override
+            public void run() {
+                Archmire archmire = new Archmire(Math.random() * SCREEN_WIDTH, Math.random() * SCREEN_HEIGHT);
+                while (Archmire.archmires.contains(archmire)){
+                    archmire.addArea(archmire.getPosition());
+                    deleteArea();
+                    try {
+                        sleep(500);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+        thread.start();
     }
     public void createOmenoct(){
-        new Omenoct(Math.random() * SCREEN_WIDTH, Math.random() * SCREEN_HEIGHT);
+        Omenoct model = new Omenoct(Math.random() * SCREEN_WIDTH, Math.random() * SCREEN_HEIGHT);
+
     }
     public void createNecropick(){
-        new NecroPick(Math.random() * SCREEN_WIDTH, Math.random() * SCREEN_HEIGHT);
+        NecroPick model = new NecroPick(Math.random() * SCREEN_WIDTH, Math.random() * SCREEN_HEIGHT);
     }
     public void createWyrm(){
-        new Wyrm(Math.random() * SCREEN_WIDTH, Math.random() * SCREEN_HEIGHT);
+        Wyrm model = new Wyrm(Math.random() * SCREEN_WIDTH, Math.random() * SCREEN_HEIGHT);
     }
     public void createBarricados(){
-        new Barricados(Math.random() * SCREEN_WIDTH, Math.random() * SCREEN_HEIGHT);
+        Barricados barricados = new Barricados(Math.random() * SCREEN_WIDTH, Math.random() * SCREEN_HEIGHT);
+        if(Math.random()*100 < 50){
+            new NonIsoRigidScene(barricados.getX() - 4, barricados.getX() + BARRICADOS_OUTSIDE + 4,
+                    barricados.getY() - 4, barricados.getY() + BARRICADOS_OUTSIDE + 4);
+        }
+        else {
+            new IsoRigidScene(barricados.getX() - 4, barricados.getX() + BARRICADOS_OUTSIDE + 4,
+                    barricados.getY() - 4, barricados.getY() + BARRICADOS_OUTSIDE + 4);
+        }
+
+
     }
     public void createBlackOrb(){
         Thread thread = new Thread(){
@@ -100,7 +125,7 @@ public class EnemyBuilder {
                 new BlackOrb(SCREEN_WIDTH*3/5, SCREEN_HEIGHT*3/4);
             }
         };
-        thread.start();
+//        thread.start();
     }
     public void stop(){
         startWave.stop();
@@ -144,7 +169,7 @@ public class EnemyBuilder {
 
     public synchronized void enemyDead(){
         enemyDead++;
-        if(enemyNumber == enemyDead){
+        if(enemyNumber >= enemyDead){
             enoughEnemy = true;
         }
     }
@@ -166,48 +191,53 @@ public class EnemyBuilder {
             return;
         }
         if(isArchmire)
-            for(int i = 0; i < waveTime/6 ; i++){
+            for(int i = 0; i < ((int) Math.log10(waveTime) / Math.log10(6)) - Archmire.archmires.size(); i++){
                 if(Math.random()*100 < 50) {
                     createArchmire();
                     enemies++;
                 }
             }
         if(isOmenoct)
-            for(int i = 0; i < waveTime/5; i++){
-                if(Math.random()*100 < 50) {
-                    createOmenoct();
-                    enemies++;
+            if(Omenoct.omenocts.isEmpty())
+                for(int i = 0; i < ((int) Math.log10(waveTime) / Math.log10(5)) - Omenoct.omenocts.size(); i++){
+                    if(Math.random()*100 < 50) {
+                        createOmenoct();
+                        enemies++;
+                    }
                 }
-            }
         if(isWyrm)
-            for(int i = 0; i < waveTime/4; i++){
+            for(int i = 0; i < ((int) Math.log10(waveTime) / Math.log10(4)) - Wyrm.wyrms.size(); i++){
                 if(Math.random()*100 < 50) {
                     createWyrm();
                     enemies++;
                 }
             }
         if(isNecropick)
-            for(int i = 0; i < waveTime/8; i++){
+            for(int i = 0; i < ((int) Math.log10(waveTime) / Math.log10(8)) - NecroPick.necroPicks.size(); i++){
                 if(Math.random()*100 < 50) {
                     createNecropick();
                     enemies++;
                 }
             }
         if(isBarricados)
-            for(int i = 0; i < waveTime/10; i++){
-                if(Math.random()*100 < 60) {
+            for(int i = 0; i < ((int) Math.log10(waveTime) / Math.log10(10)) - Barricados.barricados.size(); i++){
+                if(Math.random()*100 < 30) {
                     createBarricados();
                     enemies++;
                 }
             }
-        if(isBlackOrb)
-            for(int i = 0; i < 15; i++){
-                if(Math.random()*100 < 100) {
-                    createBlackOrb();
-                    enemies++;
+        if(isBlackOrb){
+            if(BlackOrb.blackOrbs.isEmpty()){
+                if(waveTime > 25){
+                    if(Math.random()*100 < 30){
+                        createBlackOrb();
+                        enemies++;
+                    }
                 }
             }
-        if(enemies < waveTime/5)
+        }
+
+        if(Entity.entities.size() < ((int) Math.log10(waveTime) / Math.log10(3)))
             for(int i = 0; i < waveTime/3 - enemies; i += 2){
                 createSquare();
                 createTriangle();
@@ -229,20 +259,21 @@ public class EnemyBuilder {
             createSquare();
         }
         time++;
-        if(time == 10){
-            time = 0;
+        if(time >= 10){
             finishWave();
         }
     }));
     Timeline past = new Timeline(new KeyFrame(Duration.seconds(4), actionEvent -> {
         startWave.play();
-        timer.play();
     }));
     public void finishWave(){
-        if(!(BlackOrb.blackOrbs.isEmpty() && Barricados.barricados.isEmpty() && TriangleModel.triangleModels.isEmpty() &&
+        if(!(BlackOrb.blackOrbs.isEmpty() && TriangleModel.triangleModels.isEmpty() &&
             SquareModel.squareModels.isEmpty() && Wyrm.wyrms.isEmpty() && Archmire.archmires.isEmpty() && NecroPick.necroPicks.isEmpty() &&
             Omenoct.omenocts.isEmpty()))
             return;
+        for(Barricados barricados : Barricados.barricados)
+            barricados.remove();
+        time = 0;
         waveFinish = true;
         timer.pause();
         wave++;
@@ -253,6 +284,7 @@ public class EnemyBuilder {
         waveFinish = false;
 
         past.play();
+        timer.play();
     }
     public void playWave2(){
         nowS = wave2Square;
@@ -260,6 +292,7 @@ public class EnemyBuilder {
         waveFinish = false;
 
         past.play();
+        timer.play();
     }
     public void playWave3(){
         nowS = wave3Square;
@@ -267,12 +300,14 @@ public class EnemyBuilder {
         waveFinish = false;
 
         past.play();
+        timer.play();
     }
     public void playWave5(){
         waveFinish = false;
 
         enoughEnemy = false;
-        enemyNumber = (int) (4 + (difficulty)/100 * 6);
+        enemyNumber = (int) (5 + (difficulty)/100 * 6);
+        enemyDead = 0;
         isBlackOrb = false;
         isBarricados = false;
         isArchmire = false;
@@ -280,13 +315,15 @@ public class EnemyBuilder {
         isWyrm = false;
         isOmenoct = true;
 
-        past.play();
+        timingWave.play();
+        timer.play();
     }
     public void playWave6(){
         waveFinish = false;
 
         enoughEnemy = false;
-        enemyNumber = (int) (5 + (difficulty)/100 * 7);
+        enemyNumber = (int) (7 + (difficulty)/100 * 7);
+        enemyDead = 0;
         isBlackOrb = false;
         isBarricados = false;
         isArchmire = false;
@@ -294,13 +331,15 @@ public class EnemyBuilder {
         isWyrm = true;
         isOmenoct = true;
 
-        past.play();
+        timingWave.play();
+        timer.play();
     }
     public void playWave7(){
         waveFinish = false;
 
         enoughEnemy = false;
-        enemyNumber = (int) (6 + (difficulty)/100 * 6);
+        enemyNumber = (int) (9 + (difficulty)/100 * 6);
+        enemyDead = 0;
         isBlackOrb = false;
         isBarricados = false;
         isArchmire = true;
@@ -308,13 +347,15 @@ public class EnemyBuilder {
         isWyrm = true;
         isOmenoct = true;
 
-        past.play();
+        timingWave.play();
+        timer.play();
     }
     public void playWave8(){
         waveFinish = false;
 
         enoughEnemy = false;
-        enemyNumber = (int) (7 + (difficulty)/100 * 7);
+        enemyNumber = (int) (12 + (difficulty)/100 * 7);
+        enemyDead = 0;
         isBlackOrb = false;
         isBarricados = true;
         isArchmire = true;
@@ -322,13 +363,15 @@ public class EnemyBuilder {
         isWyrm = true;
         isOmenoct = true;
 
-        past.play();
+        timingWave.play();
+        timer.play();
     }
     public void playWave9(){
         waveFinish = false;
 
         enoughEnemy = false;
-        enemyNumber = (int) (8 + (difficulty)/100 * 8);
+        enemyNumber = (int) (14 + (difficulty)/100 * 8);
+        enemyDead = 0;
         isBlackOrb = true;
         isBarricados = true;
         isArchmire = true;
@@ -336,11 +379,14 @@ public class EnemyBuilder {
         isWyrm = true;
         isOmenoct = true;
 
-        past.play();
+        timingWave.play();
+        timer.play();
     }
     public void playWave11(){
         waveFinish = false;
 
-        past.play();
+        enemyDead = 0;
+        timingWave.play();
+        timer.play();
     }
 }

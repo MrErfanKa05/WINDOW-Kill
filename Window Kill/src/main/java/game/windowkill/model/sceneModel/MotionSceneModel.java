@@ -1,23 +1,15 @@
 package game.windowkill.model.sceneModel;
 
-import game.windowkill.model.characterModel.Entity;
-import game.windowkill.model.characterModel.EpsilonModel;
-import game.windowkill.model.characterModel.collision.Collidable;
-import game.windowkill.model.characterModel.collision.scenes.CollisionCircleScene;
-import game.windowkill.model.characterModel.move.Direction;
-import game.windowkill.model.sceneModel.property.NonIsometric;
+import game.windowkill.model.sceneModel.property.Isometric;
+import game.windowkill.model.sceneModel.property.NonRigid;
 import game.windowkill.model.sceneModel.property.Rigid;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.geometry.Point2D;
-import javafx.util.Duration;
+import game.windowkill.model.sceneModel.property.NonIsometric;
 
 import static game.windowkill.controller.Constant.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-public class MotionSceneModel extends BaseSceneModel implements NonIsometric, Rigid {
+public class MotionSceneModel extends BaseSceneModel implements NonRigid, Isometric {
 
     private static MotionSceneModel model;
     public static MotionSceneModel getInstance(){
@@ -26,6 +18,18 @@ public class MotionSceneModel extends BaseSceneModel implements NonIsometric, Ri
     }
     private MotionSceneModel(){
         super();
+        addIsometric(this);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+
+        for(Object model : Isometric.isometrics){
+            if(((BaseSceneModel) (model)).getId().equals(getId()))
+                continue;
+            checkForMultiScene((BaseSceneModel) model);
+        }
     }
 
     @Override

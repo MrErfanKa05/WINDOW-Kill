@@ -15,5 +15,8 @@ public interface SceneCollidable extends Collidable {
     default void changeScene(BaseSceneModel baseSceneModel){
 
     }
+    default void shrinkage(BaseSceneModel baseSceneModel){
+
+    }
 
 }

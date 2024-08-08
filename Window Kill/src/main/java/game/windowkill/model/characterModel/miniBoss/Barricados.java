@@ -1,5 +1,6 @@
 package game.windowkill.model.characterModel.miniBoss;
 
+import game.windowkill.controller.Constant;
 import game.windowkill.controller.Utils;
 import game.windowkill.model.characterModel.Entity;
 import game.windowkill.model.characterModel.EpsilonModel;
@@ -16,18 +17,20 @@ import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
 
+import static game.windowkill.controller.Constant.BARRICADOS_OUTSIDE;
 import static game.windowkill.controller.Constant.BIG_ENEMY_OUTSIDE;
 
 public class Barricados extends Entity implements CollisionSquareCircle, CollisionSquareSquare, CollisionSquareTriangle {
     public static ArrayList<Barricados> barricados = new ArrayList<>();
+    private long createTime = 0;
     public Barricados(double x, double y) {
         super(x, y);
         barricados.add(this);
-        new SquareView(id, position, direction);
         hp = Integer.MAX_VALUE;
         new BarricadosView(getId(), getPosition(), getDirection());
         enemyOverlaps = EnemyOverlaps.NonHovering;
         enemyProperty = EnemyProperty.Rigid;
+        createTime = System.currentTimeMillis();
     }
 
     public void remove(){
@@ -38,6 +41,7 @@ public class Barricados extends Entity implements CollisionSquareCircle, Collisi
             if(barricadosView.getId().equals(getId()))
                 view = barricadosView;
         BarricadosView.barricadosViews.remove(view);
+        baseSceneModel.remove();
     }
 
     @Override
@@ -48,17 +52,20 @@ public class Barricados extends Entity implements CollisionSquareCircle, Collisi
 
         vertices.clear();
         Point2D uLeft = new Point2D(getX(), getY());
-        Point2D uRight = Utils.addVector(new Point2D(0, BIG_ENEMY_OUTSIDE), getPosition());
-        Point2D dRight = Utils.addVector(new Point2D(BIG_ENEMY_OUTSIDE, BIG_ENEMY_OUTSIDE), getPosition());
-        Point2D dLeft = Utils.addVector(new Point2D(BIG_ENEMY_OUTSIDE, 0), getPosition());
+        Point2D uRight = Utils.addVector(new Point2D(0, BARRICADOS_OUTSIDE), getPosition());
+        Point2D dRight = Utils.addVector(new Point2D(BARRICADOS_OUTSIDE, BARRICADOS_OUTSIDE), getPosition());
+        Point2D dLeft = Utils.addVector(new Point2D(BARRICADOS_OUTSIDE, 0), getPosition());
         vertices.add(uRight);
         vertices.add(uLeft);
         vertices.add(dRight);
         vertices.add(dLeft);
+
+        if(System.currentTimeMillis() - createTime >= 120000)
+            remove();
     }
     @Override
     public boolean collision(Point2D point2D) {
-        return isPointInsideSquare(getX(), getY(), BIG_ENEMY_OUTSIDE, point2D.getX(), point2D.getY());
+        return isPointInsideSquare(getX(), getY(), BARRICADOS_OUTSIDE, point2D.getX(), point2D.getY());
     }
 
     @Override
@@ -90,7 +97,7 @@ public class Barricados extends Entity implements CollisionSquareCircle, Collisi
             Point2D p3 = getVertices().get(2);
             Point2D p4 = getVertices().get(3);
             return checkSquareCircle(p1, p2, p3, p4,
-                    getPosition().getX(), getPosition().getY(), epsilonModel.getRadius());
+                    epsilonModel.getPosition().getX(), epsilonModel.getPosition().getY(), epsilonModel.getRadius());
         }
         if(entity instanceof BlackOrb){
             return entity.checkIntersect(this);
@@ -144,7 +151,7 @@ public class Barricados extends Entity implements CollisionSquareCircle, Collisi
             Point2D p2 = vertices.get(1);
             Point2D p3 = vertices.get(2);
             Point2D p4 = vertices.get(3);
-            return getSquareCircle(p1, p2, p3, p4, getX(), getY(), epsilonModel.getRadius());
+            return getSquareCircle(p1, p2, p3, p4, epsilonModel.getX(), epsilonModel.getY(), epsilonModel.getRadius());
         }
         if(entity instanceof BlackOrb){
             return entity.getIntersect(this);

@@ -11,6 +11,8 @@ import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.model.characterModel.property.EnemyOverlaps;
 import game.windowkill.model.characterModel.property.EnemyProperty;
+import game.windowkill.model.sceneModel.BaseSceneModel;
+import game.windowkill.model.sceneModel.NonIsoNonRigidScene;
 import game.windowkill.view.characterView.enemy.NecropickView;
 import game.windowkill.view.characterView.enemy.SquareView;
 import javafx.geometry.Point2D;
@@ -24,7 +26,6 @@ public class NecroPick extends Entity implements CollisionSquareSquare, Collisio
     public NecroPick(double x, double y) {
         super(x, y);
         necroPicks.add(this);
-        new SquareView(id, position, direction);
         hp = 10;
         attackHp = 0;
         collectables = 4;
@@ -34,6 +35,8 @@ public class NecroPick extends Entity implements CollisionSquareSquare, Collisio
         enemyOverlaps = EnemyOverlaps.NonHovering;
         enemyProperty = EnemyProperty.Rigid;
         time = System.currentTimeMillis();
+        BaseSceneModel sceneModel = new NonIsoNonRigidScene(getX() - 4, getX() + 4 + BIG_ENEMY_OUTSIDE, getY() - 4, getY() + 4 + BIG_ENEMY_OUTSIDE);
+        setBaseSceneModel(sceneModel);
     }
 
     public boolean onGround;
@@ -47,6 +50,7 @@ public class NecroPick extends Entity implements CollisionSquareSquare, Collisio
             if(necropickView.getId().equals(getId()))
                 view = necropickView;
         NecropickView.necropickViews.remove(view);
+        baseSceneModel.remove();
     }
 
     @Override
@@ -64,6 +68,8 @@ public class NecroPick extends Entity implements CollisionSquareSquare, Collisio
         vertices.add(uLeft);
         vertices.add(dRight);
         vertices.add(dLeft);
+
+        baseSceneModel.set(getX() - 4, getX() + 4 + BIG_ENEMY_OUTSIDE, getY() - 4, getY() + 4 + BIG_ENEMY_OUTSIDE);
     }
 
     @Override
@@ -100,7 +106,7 @@ public class NecroPick extends Entity implements CollisionSquareSquare, Collisio
             Point2D p3 = getVertices().get(2);
             Point2D p4 = getVertices().get(3);
             return checkSquareCircle(p1, p2, p3, p4,
-                    getPosition().getX(), getPosition().getY(), epsilonModel.getRadius());
+                    epsilonModel.getPosition().getX(), epsilonModel.getPosition().getY(), epsilonModel.getRadius());
         }
         if(entity instanceof BlackOrb){
             return entity.checkIntersect(this);
@@ -154,7 +160,7 @@ public class NecroPick extends Entity implements CollisionSquareSquare, Collisio
             Point2D p2 = vertices.get(1);
             Point2D p3 = vertices.get(2);
             Point2D p4 = vertices.get(3);
-            return getSquareCircle(p1, p2, p3, p4, getX(), getY(), epsilonModel.getRadius());
+            return getSquareCircle(p1, p2, p3, p4, epsilonModel.getX(), epsilonModel.getY(), epsilonModel.getRadius());
         }
         if(entity instanceof BlackOrb){
             return entity.getIntersect(this);

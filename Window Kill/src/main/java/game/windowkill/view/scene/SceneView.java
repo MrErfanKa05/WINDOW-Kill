@@ -72,7 +72,7 @@ public abstract class SceneView {
 
     private Pane pane;
     private Scene scene;
-    private Stage stage;
+    public Stage stage;
     public void setPage(){
         stage.setX(left);
         stage.setY(top);
@@ -315,7 +315,7 @@ public abstract class SceneView {
         this.down = down;
     }
 
-    public javafx.geometry.Point2D getPosition() {
+    public Point2D getPosition() {
         double paneX = position.getX();
         double paneY = position.getY();
 //        System.out.println(position.getX() + " " + paneX);

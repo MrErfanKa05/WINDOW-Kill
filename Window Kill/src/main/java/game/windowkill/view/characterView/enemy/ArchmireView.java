@@ -14,4 +14,5 @@ public class ArchmireView extends EntityView {
         setDirection(direction);
         archmireViews.add(this);
     }
+    public static ArrayList<Point2D> areas = new ArrayList<>();
 }

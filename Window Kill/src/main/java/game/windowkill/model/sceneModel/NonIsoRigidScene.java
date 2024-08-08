@@ -1,12 +1,14 @@
 package game.windowkill.model.sceneModel;
 
+import game.windowkill.model.sceneModel.property.NonIsometric;
+import game.windowkill.model.sceneModel.property.NonRigid;
+import game.windowkill.model.sceneModel.property.Isometric;
 import game.windowkill.model.sceneModel.property.Rigid;
-import game.windowkill.view.scene.IsoRigidSceneView;
 import game.windowkill.view.scene.NonIsoRigidSceneView;
 
 import java.util.ArrayList;
 
-public class NonIsoRigidScene extends BaseSceneModel implements Rigid {
+public class NonIsoRigidScene extends BaseSceneModel implements Rigid, NonIsometric {
     public static ArrayList<NonIsoRigidScene> nonIsoRigidScenes = new ArrayList<>();
 
     public NonIsoRigidScene(double left, double right, double top, double down) {
@@ -25,5 +27,6 @@ public class NonIsoRigidScene extends BaseSceneModel implements Rigid {
             if(nonIsoRigidSceneView.getId().equals(getId()))
                 view = nonIsoRigidSceneView;
         NonIsoRigidSceneView.nonIsoRigidSceneViews.remove(view);
+        view.stage.close();
     }
 }

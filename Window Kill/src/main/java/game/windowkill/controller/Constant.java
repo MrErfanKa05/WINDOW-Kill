@@ -13,6 +13,8 @@ public class Constant {
     public static final double EPSILON_RADIUS_BEGIN = 12.5;
     public static final double EPSILON_DIAMETER_BEGIN = 25;
     public static final int CERBERUS_RADIUS = 5;
+    public static final int WYRM_MINIMUM_DISTANCE = 300;
+    public static final int BARRICADOS_OUTSIDE = 100;
     public static double EPSILON_RADIUS = EPSILON_RADIUS_BEGIN;
     public static double EPSILON_DIAMETER = EPSILON_DIAMETER_BEGIN;
     public static void changeEpsilonRadius(double per){

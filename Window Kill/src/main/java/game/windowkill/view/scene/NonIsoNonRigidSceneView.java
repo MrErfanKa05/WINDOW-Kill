@@ -1,8 +1,5 @@
 package game.windowkill.view.scene;
 
-import game.windowkill.model.sceneModel.NonIsoNonRigidScene;
-import javafx.geometry.Point2D;
-
 import java.util.ArrayList;
 
 public class NonIsoNonRigidSceneView extends SceneView{

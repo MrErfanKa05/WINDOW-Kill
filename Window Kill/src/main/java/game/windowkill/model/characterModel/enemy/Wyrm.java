@@ -11,6 +11,8 @@ import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.model.characterModel.move.Direction;
 import game.windowkill.model.characterModel.property.EnemyOverlaps;
 import game.windowkill.model.characterModel.property.EnemyProperty;
+import game.windowkill.model.sceneModel.BaseSceneModel;
+import game.windowkill.model.sceneModel.NonIsoNonRigidScene;
 import game.windowkill.view.characterView.enemy.SquareView;
 import game.windowkill.view.characterView.enemy.WyrmView;
 import javafx.geometry.Point2D;
@@ -25,7 +27,6 @@ public class Wyrm extends Entity implements CollisionSquareCircle, CollisionSqua
     public Wyrm(double x, double y) {
         super(x, y);
         wyrms.add(this);
-        new SquareView(id, position, direction);
         hp = 12;
         attackHp = 0;
         collectables = 2;
@@ -34,6 +35,21 @@ public class Wyrm extends Entity implements CollisionSquareCircle, CollisionSqua
         new WyrmView(getId(), getPosition(), getDirection());
         enemyOverlaps = EnemyOverlaps.NonHovering;
         enemyProperty = EnemyProperty.NonRigid;
+        speed/=2;
+        BaseSceneModel sceneModel = new NonIsoNonRigidScene(getX() - 4, getX() + 4 + BIG_ENEMY_OUTSIDE, getY() - 4, getY() + 4 + BIG_ENEMY_OUTSIDE);
+        setBaseSceneModel(sceneModel);
+    }
+
+    public long time = 0;
+
+    private double side = -1;
+
+    public void changeSide(){
+        side *= -1;
+    }
+
+    public double getSide() {
+        return side;
     }
 
     public void remove(){
@@ -44,6 +60,7 @@ public class Wyrm extends Entity implements CollisionSquareCircle, CollisionSqua
             if(wyrmView.getId().equals(getId()))
                 view = wyrmView;
         WyrmView.wyrmViews.remove(view);
+        baseSceneModel.remove();
     }
 
     @Override
@@ -61,6 +78,8 @@ public class Wyrm extends Entity implements CollisionSquareCircle, CollisionSqua
         vertices.add(uLeft);
         vertices.add(dRight);
         vertices.add(dLeft);
+
+        baseSceneModel.set(getX() - 4, getX() + 4 + BIG_ENEMY_OUTSIDE, getY() - 4, getY() + 4 + BIG_ENEMY_OUTSIDE);
     }
 
     @Override
@@ -97,7 +116,7 @@ public class Wyrm extends Entity implements CollisionSquareCircle, CollisionSqua
             Point2D p3 = getVertices().get(2);
             Point2D p4 = getVertices().get(3);
             return checkSquareCircle(p1, p2, p3, p4,
-                    getPosition().getX(), getPosition().getY(), epsilonModel.getRadius());
+                    epsilonModel.getPosition().getX(), epsilonModel.getPosition().getY(), epsilonModel.getRadius());
         }
         if(entity instanceof BlackOrb){
             return entity.checkIntersect(this);
@@ -151,7 +170,7 @@ public class Wyrm extends Entity implements CollisionSquareCircle, CollisionSqua
             Point2D p2 = vertices.get(1);
             Point2D p3 = vertices.get(2);
             Point2D p4 = vertices.get(3);
-            return getSquareCircle(p1, p2, p3, p4, getX(), getY(), epsilonModel.getRadius());
+            return getSquareCircle(p1, p2, p3, p4, epsilonModel.getX(), epsilonModel.getY(), epsilonModel.getRadius());
         }
         if(entity instanceof BlackOrb){
             return entity.getIntersect(this);

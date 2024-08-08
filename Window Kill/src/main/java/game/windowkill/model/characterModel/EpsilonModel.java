@@ -51,6 +51,11 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
     }
 
     @Override
+    public void remove() {
+
+    }
+
+    @Override
     public Point2D getPosition() {
         double x = getX();
         double y = getY();
@@ -268,12 +273,6 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
                 baseSceneModel.setGoRight(true);
                 baseSceneModel.setGoDown(true);
             }
-        }
-        else {
-            baseSceneModel.setGoDown(true);
-            baseSceneModel.setGoLeft(true);
-            baseSceneModel.setGoRight(true);
-            baseSceneModel.setGoTop(true);
         }
     }
 

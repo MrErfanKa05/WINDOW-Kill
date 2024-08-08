@@ -46,7 +46,15 @@ public abstract class Entity implements Collidable, Movable, Impactable {
         entities.add(this);
     }
     public void playAcceleration(Point2D point2D, double acc){
-        playAcceleration(new Direction(Utils.relativeLocation(position, point2D)), acc);
+        if (this instanceof EpsilonModel)
+            playAcceleration(new Direction(Utils.relativeLocation(position, point2D)), acc);
+        else {
+            Point2D p1 = getVertices().get(0);
+            Point2D p2 = getVertices().get(1);
+            double size = max(p2.getX() - p1.getX(), p2.getY() - p1.getY());
+            Point2D point = new Point2D(size, size);
+            playAcceleration(new Direction(Utils.relativeLocation(Utils.addVector(point, position), point2D)), acc);
+        }
     }
     public void playAcceleration(Direction direction, double acc){
         acceleration = acc;
@@ -78,7 +86,7 @@ public abstract class Entity implements Collidable, Movable, Impactable {
     @Override
     public void impact(){
         Direction movement = new Direction(Utils.multiplyVector(impactDirection.getDirectionVector(), acceleration));
-        acceleration -= 2.5;
+        acceleration -= 1.75;
         acceleration = max(acceleration, 0);
         move(movement);
     }

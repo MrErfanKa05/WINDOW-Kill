@@ -5,6 +5,7 @@ import game.windowkill.controller.DataHolder;
 import game.windowkill.controller.InputManager;
 import game.windowkill.controller.builder.EnemyBuilder;
 import game.windowkill.model.characterModel.EpsilonModel;
+import game.windowkill.model.characterModel.enemy.Archmire;
 import game.windowkill.view.CollectableItemView;
 import game.windowkill.view.bullet.EnemyBulletView;
 import game.windowkill.view.bullet.EpsilonBulletView;
@@ -16,6 +17,7 @@ import game.windowkill.view.characterView.miniBoss.BlackOrbView;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -166,10 +168,26 @@ public class MotionSceneView {
 
         addBars();
 
+        for(Point2D view : ArchmireView.areas){
+            if(view.getX() < left ||
+                    view.getX() > right ||
+                    view.getY() < top ||
+                    view.getY() > down)
+                continue;
+            Rectangle rectangle = new Rectangle();
+            rectangle.setFill(Color.LIGHTPINK);
+            rectangle.setTranslateX(view.getX() - stage.getX());
+            rectangle.setTranslateY(view.getY() - stage.getY());
+            rectangle.setHeight(BIG_ENEMY_OUTSIDE);
+            rectangle.setWidth(BIG_ENEMY_OUTSIDE);
+            pane.getChildren().add(rectangle);
+
+        }
+
         for(ArchmireView view : ArchmireView.archmireViews){
-            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+            if(view.getPosition().getX() + BIG_ENEMY_OUTSIDE < left ||
                     view.getPosition().getX() > right ||
-                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() + BIG_ENEMY_OUTSIDE < top ||
                     view.getPosition().getY() > down)
                 continue;
 
@@ -179,10 +197,13 @@ public class MotionSceneView {
         }
 
         for(NecropickView view : NecropickView.necropickViews){
-            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+            if(view.getPosition().getX() + BIG_ENEMY_OUTSIDE < left ||
                     view.getPosition().getX() > right ||
-                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() + BIG_ENEMY_OUTSIDE < top ||
                     view.getPosition().getY() > down)
+                continue;
+
+            if(!view.onGround)
                 continue;
 
             File file = new File(NECROPICK_PATH);
@@ -191,9 +212,9 @@ public class MotionSceneView {
         }
 
         for(OmenoctView view : OmenoctView.omenoctViews){
-            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+            if(view.getPosition().getX() + BIG_ENEMY_OUTSIDE < left ||
                     view.getPosition().getX() > right ||
-                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() + BIG_ENEMY_OUTSIDE < top ||
                     view.getPosition().getY() > down)
                 continue;
 
@@ -203,9 +224,9 @@ public class MotionSceneView {
         }
 
         for(WyrmView view : WyrmView.wyrmViews){
-            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+            if(view.getPosition().getX() + BIG_ENEMY_OUTSIDE < left ||
                     view.getPosition().getX() > right ||
-                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() + BIG_ENEMY_OUTSIDE < top ||
                     view.getPosition().getY() > down)
                 continue;
 
@@ -215,21 +236,21 @@ public class MotionSceneView {
         }
 
         for(BarricadosView view : BarricadosView.barricadosViews){
-            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+            if(view.getPosition().getX() + BARRICADOS_OUTSIDE < left ||
                     view.getPosition().getX() > right ||
-                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() + BARRICADOS_OUTSIDE < top ||
                     view.getPosition().getY() > down)
                 continue;
 
             File file = new File(BARRICADOS_PATH);
 
-            imagePaint(file, BIG_ENEMY_OUTSIDE, view);
+            imagePaint(file, BARRICADOS_OUTSIDE, view);
         }
 
         for(BlackOrbView view : BlackOrbView.blackOrbViews){
-            if(view.getPosition().getX() + TRIANGLE_OUTSIDE < left ||
+            if(view.getPosition().getX() + BIG_ENEMY_OUTSIDE < left ||
                     view.getPosition().getX() > right ||
-                    view.getPosition().getY() + TRIANGLE_OUTSIDE < top ||
+                    view.getPosition().getY() + BIG_ENEMY_OUTSIDE < top ||
                     view.getPosition().getY() > down)
                 continue;
 
@@ -269,7 +290,7 @@ public class MotionSceneView {
                     view.getPosition().getY() > down)
                 continue;
             Circle bull = new Circle();
-            bull.setFill(Color.GREENYELLOW);
+            bull.setFill(Color.HOTPINK);
             bull.setRadius(Constant.BULLET_RADIUS);
             bull.setTranslateX(view.getPosition().getX() - BULLET_RADIUS - stage.getX());
             bull.setTranslateY(view.getPosition().getY() - BULLET_RADIUS - stage.getY());

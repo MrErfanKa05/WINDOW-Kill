@@ -2,6 +2,7 @@ package game.windowkill.controller;
 
 import game.windowkill.controller.builder.EnemyBuilder;
 import game.windowkill.controller.loader.SceneLoader;
+import game.windowkill.model.attack.AreaOfEffect;
 import game.windowkill.model.bullets.EnemyBulletModel;
 import game.windowkill.model.bullets.EpsilonBulletModel;
 import game.windowkill.model.CollectableItemModel;
@@ -13,6 +14,7 @@ import game.windowkill.model.characterModel.enemy.*;
 import game.windowkill.model.characterModel.miniBoss.Barricados;
 import game.windowkill.model.characterModel.miniBoss.BlackOrb;
 import game.windowkill.model.characterModel.property.EnemyOverlaps;
+import game.windowkill.model.characterModel.property.EnemyProperty;
 import game.windowkill.model.sceneModel.*;
 import game.windowkill.model.characterModel.EpsilonModel;
 import game.windowkill.model.characterModel.move.Direction;
@@ -35,8 +37,8 @@ import java.util.ArrayList;
 
 import static game.windowkill.controller.Constant.*;
 import static game.windowkill.controller.DataHolder.stage;
-import static java.lang.Math.E;
-import static java.lang.Math.max;
+import static game.windowkill.controller.Utils.getDistance;
+import static java.lang.Math.*;
 
 public class Update {
     private InputManager inputManager;
@@ -109,8 +111,10 @@ public class Update {
 
         for(NecropickView necropickView : NecropickView.necropickViews){
             for(NecroPick necroPick : NecroPick.necroPicks)
-                if(necroPick.getId().equals(necropickView.getId()))
+                if(necroPick.getId().equals(necropickView.getId())) {
                     necropickView.setPosition(necroPick.getPosition());
+                    necropickView.onGround = necroPick.onGround;
+                }
         }
 
         for(WyrmView wyrmView : WyrmView.wyrmViews){
@@ -154,6 +158,9 @@ public class Update {
                 if(scene.getId().equals(view.getId()))
                     view.set(scene.getLeft(), scene.getRight(), scene.getTop(), scene.getDown());
         }
+
+        ArchmireView.areas.clear();
+        ArchmireView.areas.addAll(Archmire.areas);
 
         //todo : for motionSceneView : set right and left and... with epsilon.mainScene
 
@@ -248,50 +255,59 @@ public class Update {
         ArrayList<Entity> entities = new ArrayList<>();
         for(TriangleModel triangleModel : TriangleModel.triangleModels)
             if(triangleModel.getHp() <= 0) {
+                enemyBuilder.enemyDead();
                 entities.add(triangleModel);
                 new CollectableItemModel(triangleModel.getPosition(), 5, triangleModel);
                 new CollectableItemModel(Utils.addVector(triangleModel.getPosition(), new Point2D(5, 2)), 5, triangleModel);
             }
         for(SquareModel squareModel : SquareModel.squareModels)
             if(squareModel.getHp() <= 0) {
+                enemyBuilder.enemyDead();
                 entities.add(squareModel);
                 new CollectableItemModel(squareModel.getPosition(), 5, squareModel);
             }
+        int C = 7;
         for(Wyrm model : Wyrm.wyrms)
             if(model.getHp() <= 0){
+                enemyBuilder.enemyDead();
                 entities.add(model);
                 for(int i = 0; i < model.getCollectables(); i++)
-                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D(i/3, i%3)), 5, model);
+                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D((i/3) * C, (i%3) * C)), 3, model);
             }
         for(NecroPick model : NecroPick.necroPicks)
             if(model.getHp() <= 0){
+                enemyBuilder.enemyDead();
                 entities.add(model);
                 for(int i = 0; i < model.getCollectables(); i++)
-                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D(i/3, i%3)), 5, model);
+                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D((i/3) * C, (i%3) * C)), 3, model);
             }
         for(Omenoct model : Omenoct.omenocts)
             if(model.getHp() <= 0){
+                enemyBuilder.enemyDead();
                 entities.add(model);
                 for(int i = 0; i < model.getCollectables(); i++)
-                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D(i/3, i%3)), 5, model);
+                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D((i/3) * C, (i%3) * C)), 3, model);
             }
         for(Archmire model : Archmire.archmires)
             if(model.getHp() <= 0){
+                enemyBuilder.enemyDead();
                 entities.add(model);
                 for(int i = 0; i < model.getCollectables(); i++)
-                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D(i/3, i%3)), 5, model);
+                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D((i/3) * C, (i%3) * C)), 3, model);
             }
         for(BlackOrb model : BlackOrb.blackOrbs)
             if(model.getHp() <= 0){
+                enemyBuilder.enemyDead();
                 entities.add(model);
                 for(int i = 0; i < model.getCollectables(); i++)
-                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D(i/3, i%3)), 5, model);
+                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D((i/3) * C, (i%3) * C)), 3, model);
             }
         for(Barricados model : Barricados.barricados)
             if(model.getHp() <= 0){
+                enemyBuilder.enemyDead();
                 entities.add(model);
                 for(int i = 0; i < model.getCollectables(); i++)
-                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D(i/3, i%3)), 5, model);
+                    new CollectableItemModel(Utils.addVector(model.getPosition(), new Point2D((i/3) * C, (i%3) * C)), 3, model);
             }
 
 
@@ -304,11 +320,19 @@ public class Update {
     public void entityIntersect(){
         for(Entity entity : Entity.entities) {
             for (Entity entity1 : Entity.entities) {
-                if (entity.getId().equals(entity1.getId()))
+                if (entity.getId().equals(entity1.getId()) || getDistance(entity1.getPosition(), entity.getPosition()) >= 100)
                     continue;
                 if (entity.checkIntersect(entity1)) {
+                    if(entity instanceof NecroPick necroPick)
+                        if(!necroPick.onGround)
+                            continue;
+                    if(entity1 instanceof NecroPick necroPick)
+                        if(!necroPick.onGround)
+                            continue;
+
                     //todo : check for the globalRouting and local
-                    impact(entity.getIntersect(entity1));
+                    if(entity.enemyOverlaps!=EnemyOverlaps.Hovering && entity1.enemyOverlaps!=EnemyOverlaps.Hovering)
+                        impact(entity.getIntersect(entity1));
                     if(entity instanceof MeleeAttack meleeAttack && !(entity1 instanceof Wyrm) &&
                             !(entity instanceof Archmire) && !(entity instanceof NecroPick) && !(entity instanceof Barricados) &&
                             !(entity instanceof BlackOrb)){
@@ -319,21 +343,26 @@ public class Update {
                             !(entity1 instanceof BlackOrb)){
                         meleeAttack.meleeAttack(entity1, entity);
                     }
+
+                    if(entity instanceof EpsilonModel && entity1.enemyProperty==EnemyProperty.NonRigid && entity1.enemyOverlaps==EnemyOverlaps.NonHovering){
+                        Point2D point2D = Utils.relativeLocation(EpsilonModel.getInstance().getPosition(),
+                                entity.getIntersect(entity1));
+                        point2D = Utils.multiplyVector(point2D, 1);
+                        entity.setPosition(Utils.addVector(entity.getPosition(), point2D));
+                    }
 //                        System.out.println(entity.getIntersect(entity1));
                     //todo fix this : check for decrease hp
                     //todo : maybe incorrect circle intersect
-//                    Point2D point2D = entity1.getIntersect(entity);
-//                    System.out.println(entity1 + " " + entity + " " + point2D);
-//                    try {
-//
-//                        impact(entity1.getIntersect(entity));
-//                    }catch (Exception e){
-//                        death();
-//                    }
+                    if(!(entity1 instanceof Archmire) && entity instanceof Archmire archmire){
+                        archmire.drown(entity1);
+                    }
+
+                    if(entity instanceof Wyrm wyrm){
+                        wyrm.changeSide();
+                    }
                 }
             }
         }
-
 //        if(MotionSceneModel.getInstance().checkIntersect(EpsilonModel.getInstance())){
 //            impact(MotionSceneModel.getInstance().getIntersect(EpsilonModel.getInstance()));
 //        }
@@ -347,20 +376,44 @@ public class Update {
         for(EpsilonBulletModel epsilonBulletModel : EpsilonBulletModel.epsilonBulletModels) {
             if (MotionSceneModel.getInstance().collision(epsilonBulletModel.getPosition())) {
                 Point2D point2D = epsilonBulletModel.getPosition();
-                if (point2D.getY() - MotionSceneModel.getInstance().getTop() <= 2)
+                if (point2D.getY() - MotionSceneModel.getInstance().getTop() <= 2) {
                     MotionSceneModel.getInstance().change(0, -1);
-                else if (MotionSceneModel.getInstance().getDown() - point2D.getY() <= 2)
+
+                    for(Omenoct omenoct : Omenoct.omenocts)
+                        if(omenoct.isTouchScene)
+                            if(omenoct.isTop())
+                                omenoct.setHp(omenoct.getHp() - 1);
+                }
+                else if (MotionSceneModel.getInstance().getDown() - point2D.getY() <= 2) {
                     MotionSceneModel.getInstance().change(0, 1);
-                else if (point2D.getX() - MotionSceneModel.getInstance().getLeft() <= 2)
+                    for(Omenoct omenoct : Omenoct.omenocts)
+                        if(omenoct.isTouchScene)
+                            if(omenoct.isDown())
+                                omenoct.setHp(omenoct.getHp() - 1);
+                }
+                else if (point2D.getX() - MotionSceneModel.getInstance().getLeft() <= 2) {
                     MotionSceneModel.getInstance().change(-1, 0);
-                else if (MotionSceneModel.getInstance().getRight() - point2D.getX() <= 2)
+                    for(Omenoct omenoct : Omenoct.omenocts)
+                        if(omenoct.isTouchScene)
+                            if(omenoct.isLeft())
+                                omenoct.setHp(omenoct.getHp() - 1);
+                }
+                else if (MotionSceneModel.getInstance().getRight() - point2D.getX() <= 2){
                     MotionSceneModel.getInstance().change(1, 0);
+                    for(Omenoct omenoct : Omenoct.omenocts)
+                        if(omenoct.isTouchScene)
+                            if(omenoct.isRight())
+                                omenoct.setHp(omenoct.getHp() - 1);
+                }
                 Bullets.add(epsilonBulletModel);
                 impact(epsilonBulletModel.getPosition());
             }
             for(Entity entity : Entity.entities){
                 if(entity instanceof EpsilonModel)
                     continue;
+                if(entity instanceof NecroPick necroPick)
+                    if(!necroPick.onGround)
+                        continue;
                 if(entity.collision(epsilonBulletModel.getPosition())){
                     Bullets.add(epsilonBulletModel);
                     impact(epsilonBulletModel.getPosition());
@@ -376,15 +429,16 @@ public class Update {
 
         for(EnemyBulletModel enemyBulletModel : EnemyBulletModel.enemyBulletModels){
             if(EpsilonModel.getInstance().collision(enemyBulletModel.getPosition())){
-                if(EpsilonModel.getInstance().collision(enemyBulletModel.getPosition())){
-                    enemyBulletModels.add(enemyBulletModel);
-                    impact(enemyBulletModel.getPosition());
-                    EpsilonModel.getInstance().decreaseHearth(BULLET_DECRASE_HEALTH);
-                }
+                enemyBulletModels.add(enemyBulletModel);
+                impact(enemyBulletModel.getPosition());
+                EpsilonModel.getInstance().decreaseHearth(BULLET_DECRASE_HEALTH);
             }
+            if(enemyBulletModel.getPosition().getY() < 0 || enemyBulletModel.getPosition().getY() > SCREEN_HEIGHT
+                || enemyBulletModel.getPosition().getX() < 0 || enemyBulletModel.getPosition().getX() > SCREEN_WIDTH)
+                enemyBulletModels.add(enemyBulletModel);
         }
 
-        for(EnemyBulletModel model : EnemyBulletModel.enemyBulletModels)
+        for(EnemyBulletModel model : enemyBulletModels)
             model.remove();
     }
 
@@ -427,23 +481,82 @@ public class Update {
                     (triangleModel.getDistance(triangleModel.getPosition(), EpsilonModel.getInstance().getPosition())) > 100 ? 1.7 : 1));
             triangleModel.move(direction);
         }
-        for(NecroPick necroPick : NecroPick.necroPicks){
-            if(necroPick.onGround)
-                if(System.currentTimeMillis()-necroPick.time >= 8){
+        for(NecroPick necroPick : NecroPick.necroPicks) {
+            if (necroPick.onGround) {
+                if (System.currentTimeMillis() - necroPick.time >= 8000) {
                     necroPick.onGround = false;
                     necroPick.time = System.currentTimeMillis();
                 }
-            else{
-                    if(System.currentTimeMillis()-necroPick.time >= 4){
-                        necroPick.onGround = true;
-                        necroPick.time = System.currentTimeMillis();
-                        for(int i = 0; i < 8; i++){
-                            new EnemyBulletModel(necroPick.getPosition().getX(), necroPick.getPosition().getY(), necroPick.getRangeAttackHp());
-                        }
+            } else {
+                if (System.currentTimeMillis() - necroPick.time >= 4000) {
+                    necroPick.onGround = true;
+                    necroPick.time = System.currentTimeMillis();
+                    for (int i = 0; i < 8; i++) {
+                        EnemyBulletModel model = new EnemyBulletModel(necroPick.getPosition().getX() + BIG_ENEMY_OUTSIDE / 2,
+                                necroPick.getPosition().getY() + BIG_ENEMY_OUTSIDE / 2, necroPick.getRangeAttackHp());
+                        model.setDirection(new Direction(45 * i + 1).getDirectionVector());
+
                     }
                 }
+            }
         }
 
+        for(Omenoct omenoct : Omenoct.omenocts){
+            BaseSceneModel model = EpsilonModel.getInstance().getBaseSceneModel();
+            double d1 = getDistance(omenoct.getPosition(), new Point2D(model.getLeft(), model.getDown()/2 + model.getTop()/2));
+            double d2 = getDistance(Utils.addVector(omenoct.getPosition(), new Point2D(BIG_ENEMY_OUTSIDE, 0)), new Point2D(model.getRight(), model.getDown()/2 + model.getTop()/2));
+            double d3 = getDistance(omenoct.getPosition(), new Point2D(model.getRight()/2 + model.getLeft()/2, model.getTop()));
+            double d4 = getDistance(Utils.addVector(omenoct.getPosition(), new Point2D(0, BIG_ENEMY_OUTSIDE)), new Point2D(model.getRight()/2 + model.getLeft()/2, model.getDown()));
+            double mx = min(d1, min(d2, min(d3, d4)));
+            Point2D nextPath = null;
+            if(mx == d1){
+                nextPath = new Point2D(model.getLeft(), model.getDown()/2 + model.getTop()/2);
+                omenoct.setLeft();
+            }
+            if(mx == d2){
+                nextPath = new Point2D(model.getRight() - BIG_ENEMY_OUTSIDE, model.getDown()/2 + model.getTop()/2);
+                omenoct.setRight();
+            }
+            if(mx == d3){
+                nextPath = new Point2D(model.getRight()/2 + model.getLeft()/2, model.getTop());
+                omenoct.setTop();
+            }
+            if(mx == d4){
+                nextPath = new Point2D(model.getRight()/2 + model.getLeft()/2, model.getDown() - BIG_ENEMY_OUTSIDE);
+                omenoct.setDown();
+            }
+            if(mx <= 2){
+                omenoct.isTouchScene = true;
+                if(System.currentTimeMillis() - omenoct.time > 3000){
+                    enemyShoot(omenoct.getPosition(), omenoct.getRangeAttackHp());
+                    omenoct.time = System.currentTimeMillis();
+                }
+            }
+            else {
+                omenoct.isTouchScene = false;
+            }
+            omenoct.setDirection(new Direction(Utils.relativeLocation(nextPath, omenoct.getPosition())).getDirectionVector());
+        }
+
+        for(Archmire archmire : Archmire.archmires){
+            archmire.setDirection(new Direction(Utils.relativeLocation(EpsilonModel.getInstance().getPosition(),
+                    Utils.addVector(archmire.getPosition(), new Point2D(BIG_ENEMY_OUTSIDE/2, BIG_ENEMY_OUTSIDE/2)))).getDirectionVector());
+        }
+
+        for(Wyrm wyrm : Wyrm.wyrms){
+            if(getDistance(wyrm.getPosition(), EpsilonModel.getInstance().getPosition()) >= WYRM_MINIMUM_DISTANCE)
+                wyrm.setDirection(new Direction(Utils.relativeLocation(EpsilonModel.getInstance().getPosition(), wyrm.getPosition())).getDirectionVector());
+            else {
+                if(System.currentTimeMillis() - wyrm.time > 3000){
+                    enemyShoot(wyrm.getPosition(), wyrm.getRangeAttackHp());
+                    wyrm.time = System.currentTimeMillis();
+                }
+                Direction direction = new Direction(Utils.relativeLocation(EpsilonModel.getInstance().getPosition(), wyrm.getPosition()));
+                Point2D circlePath = direction.getAdd90();
+                Direction path = new Direction(Utils.multiplyVector(circlePath, wyrm.getSide()));
+                wyrm.setDirection(path.getDirectionVector());
+            }
+        }
 
         if(inputManager.isUp())
             EpsilonModel.getInstance().change(new Direction(270));
@@ -472,26 +585,42 @@ public class Update {
         if(EnemyBuilder.wave == 12)
             win();
         if(EnemyBuilder.wave == 10){
-            setPosition();
+//            setPosition();
+            win();
         }
         if(EnemyBuilder.wave == 4){
             updateModel.play();
             setPosition();
         }
 
-        for(EnemyBulletModel enemyBulletModel : EnemyBulletModel.enemyBulletModels)
-            enemyBulletModel.remove();
-        for(EpsilonBulletModel epsilonBulletModel : EpsilonBulletModel.epsilonBulletModels)
-            epsilonBulletModel.remove();
+        ArrayList<EnemyBulletModel> enemyBulletModels = new ArrayList<>();
 
+        for(EnemyBulletModel enemyBulletModel : EnemyBulletModel.enemyBulletModels)
+            enemyBulletModels.add(enemyBulletModel);
+
+        for(EnemyBulletModel model : enemyBulletModels)
+            model.remove();
+
+        ArrayList<EpsilonBulletModel> epsilonBulletModels = new ArrayList<>();
+
+        for(EpsilonBulletModel epsilonBulletModel : EpsilonBulletModel.epsilonBulletModels)
+            epsilonBulletModels.add(epsilonBulletModel);
+
+        for(EpsilonBulletModel model : epsilonBulletModels)
+            model.remove();
+
+        enemyBuilder.finishWave();
+        EpsilonModel.getInstance().setRadius(prevRadius);
     }
+
+    private double prevRadius = 0;
 
     public void waveFinisher(){
 
         waveChanger.setCycleCount(Animation.INDEFINITE);
         updateModel.pause();
+        prevRadius = EpsilonModel.getInstance().getRadius();
         waveChanger.play();
-
         //todo : make everything ok before and after this
     }
 
@@ -503,6 +632,8 @@ public class Update {
             triangleModel.update();
         for(EpsilonBulletModel epsilonBulletModel : EpsilonBulletModel.epsilonBulletModels)
             epsilonBulletModel.update();
+        for(EnemyBulletModel enemyBulletModel : EnemyBulletModel.enemyBulletModels)
+            enemyBulletModel.update();
         for(Archmire archmire : Archmire.archmires)
             archmire.update();
         for(NecroPick necroPick : NecroPick.necroPicks)
@@ -523,25 +654,29 @@ public class Update {
             scene.update();
         for(IsoNonRigidScene scene : IsoNonRigidScene.isoNonRigidScenes)
             scene.update();
+        AreaOfEffect.deleteArea();
 
         MotionSceneModel.getInstance().update();
 //        MotionSceneView.getInstance().paint();
     }
     private void impact(Point2D point2D, double C){
         for(Entity model : Entity.entities){
-            if(model.enemyOverlaps.equals(EnemyOverlaps.Hovering))
+            if(model instanceof EpsilonModel)
                 continue;
-            double dis = Utils.getDistance(model.getPosition(), point2D);
-            if(dis <= 25)model.playAcceleration(point2D, ACCELERATION / (C * dis));
-            else model.playAcceleration(point2D, ACCELERATION / (dis*dis * C));
+            if(model.enemyOverlaps==EnemyOverlaps.Hovering || model.enemyProperty== EnemyProperty.Rigid)
+                continue;
+            double dis = getDistance(model.getPosition(), point2D);
+            if(dis <= 25)model.playAcceleration(point2D, ACCELERATION / (C));
+            else model.playAcceleration(point2D, ACCELERATION / (dis/2 * C));
         }
         EpsilonModel model = EpsilonModel.getInstance();
+        Point2D position = model.getPosition();
         double dis = model.getDistance(model.getPosition(), point2D);
-        if(dis <= 25)model.playAcceleration(point2D, ACCELERATION / (dis * C * 1));
-        else model.playAcceleration(point2D, ACCELERATION / (dis*dis * C * 1));
+        if(dis <= 25)model.playAcceleration(point2D, ACCELERATION / (C));
+        else model.playAcceleration(point2D, ACCELERATION / (dis * C * 1));
     }
     private void impact(Point2D point2D){
-        double C = 0.003;
+        double C = 0.4;
         impact(point2D, C);
     }
     private void bigImpact(Point2D point2D){
@@ -609,14 +744,55 @@ public class Update {
         inputManager = MotionSceneView.getInstance().getInputManager();
         enemyBuilder = new EnemyBuilder();
 
-        updateModel.play();
-        updateView.play();
-
         EpsilonModel.getInstance().init();
         TriangleModel.triangleModels.clear();
         SquareModel.squareModels.clear();
         EpsilonBulletModel.epsilonBulletModels.clear();
         CollectableItemModel.collectableItemModels.clear();
+        EnemyBulletModel.enemyBulletModels.clear();
+        NecroPick.necroPicks.clear();
+        Archmire.archmires.clear();
+        Omenoct.omenocts.clear();
+        Wyrm.wyrms.clear();
+        BlackOrb.blackOrbs.clear();
+        Barricados.barricados.clear();
+        Archmire.areas.clear();
+        Archmire.drownTimes.clear();
+        Archmire.times.clear();
+        IsoNonRigidScene.isoNonRigidScenes.clear();
+        IsoRigidScene.isoRigidScenes.clear();
+        NonIsoRigidScene.nonIsoRigidScenes.clear();
+        NonIsoNonRigidScene.nonIsoNonRigidScenes.clear();
+
+        for(NonIsoRigidSceneView view : NonIsoRigidSceneView.nonIsoRigidSceneViews)
+            view.stage.close();
+        for(NonIsoNonRigidSceneView view : NonIsoNonRigidSceneView.nonIsoNonRigidSceneViews)
+            view.stage.close();
+        for(IsoRigidSceneView view : IsoRigidSceneView.isoRigidSceneViews)
+            view.stage.close();
+        for(IsoNonRigidSceneView view : IsoNonRigidSceneView.isoNonRigidSceneViews)
+            view.stage.close();
+
+        NonIsoNonRigidSceneView.nonIsoNonRigidSceneViews.clear();
+        NonIsoRigidSceneView.nonIsoRigidSceneViews.clear();
+        IsoNonRigidSceneView.isoNonRigidSceneViews.clear();
+        IsoRigidSceneView.isoRigidSceneViews.clear();
+        NecropickView.necropickViews.clear();
+        OmenoctView.omenoctViews.clear();
+        ArchmireView.areas.clear();
+        ArchmireView.archmireViews.clear();
+        WyrmView.wyrmViews.clear();
+        BarricadosView.barricadosViews.clear();
+        BlackOrbView.blackOrbViews.clear();
+        CollectableItemView.collectableItemViews.clear();
+        EnemyBulletView.enemyBulletViews.clear();
+        EpsilonBulletView.epsilonBulletViews.clear();
+        TriangleView.triangleViews.clear();
+        SquareView.squareViews.clear();
+
+
+        updateModel.play();
+        updateView.play();
     }
 
     public void shoot(Point2D point2D){
@@ -629,5 +805,9 @@ public class Update {
 //            System.out.println(point2D.getX() + " " + point2D.getY());
             delay = System.currentTimeMillis();
         }
+    }
+    public void enemyShoot(Point2D point2D, int rangeAttackHp){
+        EnemyBulletModel model = new EnemyBulletModel(point2D.getX() + BIG_ENEMY_OUTSIDE/2, point2D.getY() + BIG_ENEMY_OUTSIDE/2, rangeAttackHp);
+        model.setDirection(Utils.relativeLocation(EpsilonModel.getInstance().getPosition(), Utils.addVector(point2D, new Point2D(BIG_ENEMY_OUTSIDE/2, BIG_ENEMY_OUTSIDE/2))));
     }
 }
