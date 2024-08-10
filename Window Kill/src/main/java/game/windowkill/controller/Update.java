@@ -1,6 +1,7 @@
 package game.windowkill.controller;
 
 import game.windowkill.controller.builder.EnemyBuilder;
+import game.windowkill.controller.loader.ConfigLoader;
 import game.windowkill.controller.loader.SceneLoader;
 import game.windowkill.model.attack.AreaOfEffect;
 import game.windowkill.model.bullets.EnemyBulletModel;
@@ -330,13 +331,12 @@ public class Update {
                         if(!necroPick.onGround)
                             continue;
 
-                    //todo : check for the globalRouting and local
+                    if(entity instanceof EpsilonModel epsilonModel && !(entity1 instanceof Wyrm) && !(entity1 instanceof Archmire)
+                            && !(entity1 instanceof NecroPick) && !(entity1 instanceof Barricados)){
+                        epsilonModel.meleeAttack(entity1, entity);
+                    }
                     if(entity.enemyOverlaps!=EnemyOverlaps.Hovering && entity1.enemyOverlaps!=EnemyOverlaps.Hovering)
                         impact(entity.getIntersect(entity1));
-                    if(entity instanceof EpsilonModel epsilonModel && !(entity1 instanceof Wyrm) && !(entity1 instanceof Archmire)
-                        && !(entity1 instanceof NecroPick) && !(entity1 instanceof Barricados)){
-                        epsilonModel.meleeAttack(entity, entity1);
-                    }
                     if(entity instanceof EpsilonModel model && entity1.enemyProperty==EnemyProperty.NonRigid && entity1.enemyOverlaps==EnemyOverlaps.NonHovering){
                         Point2D point2D = Utils.relativeLocation(EpsilonModel.getInstance().getPosition(),
                                 entity.getIntersect(entity1));
@@ -724,6 +724,8 @@ public class Update {
         stage.setY(SCREEN_HEIGHT/2 - MAX_HEIGHT/2);
         stage.setWidth(MAX_WIDTH);
         stage.setHeight(MAX_HEIGHT);
+
+        ConfigLoader.getInstance().saveRound(EpsilonModel.getInstance().getXP() - EpsilonModel.getInstance().getLastXP(), enemyBuilder.totalTime);
 
     }
 

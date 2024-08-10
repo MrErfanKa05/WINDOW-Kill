@@ -56,6 +56,7 @@ public class Constant {
     public static final String WYRM_PATH = "src/main/resources/game/windowkill/resources/wyrm.png";
     public static final String BARRICADOS_PATH = "src/main/resources/game/windowkill/resources/barricados.png";
     public static final String BLACKORB_PATH = "src/main/resources/game/windowkill/resources/blackorb.png";
+    public static final String SAVE = "src/main/resources/game/windowkill/saves/save.txt";
 
     public static final int BULLET_DECRASE_HEALTH = 5;
     public static final double CHANGE_FRAME = 0.6;
@@ -65,7 +66,7 @@ public class Constant {
     public static final int ARCHMIRE_OUTSIDE = 40 * 40;
     public static final int AOE = 2;
     public static final int DROWN = 10;
-    public static final int MELEE_DISTANCE = 10;
+    public static final int MELEE_DISTANCE = 3;
     public static final int BIG_ENEMY_OUTSIDE = 40;
     public static final int BLACKORB_RADIUS = 30;
     public static final int SKILL_TREE_XP = 100;

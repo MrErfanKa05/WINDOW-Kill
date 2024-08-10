@@ -19,7 +19,7 @@ public class GameOverController extends Controller implements Initializable {
     Button menu;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        xp.setText("XP : " + EpsilonModel.getInstance().getXP());
+        xp.setText("XP : " + (EpsilonModel.getInstance().getXP() - EpsilonModel.getInstance().getLastXP()));
         time.setText("Time : " + MotionSceneView.getInstance().getElapsedTimeInt());
         menu.setOnAction(actionEvent -> Menu());
     }

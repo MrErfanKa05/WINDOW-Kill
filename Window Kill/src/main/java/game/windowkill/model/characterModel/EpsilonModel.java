@@ -1,6 +1,7 @@
 package game.windowkill.model.characterModel;
 
 import game.windowkill.controller.Utils;
+import game.windowkill.controller.loader.ConfigLoader;
 import game.windowkill.model.attack.MeleeAttack;
 import game.windowkill.model.characterModel.enemy.*;
 import game.windowkill.model.characterModel.miniBoss.Barricados;
@@ -27,6 +28,15 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
 
     private double radius;
     private int XP = 0;
+    private int lastXP = 0;
+
+    public int getLastXP() {
+        return lastXP;
+    }
+
+    public void setLastXP(int lastXP) {
+        this.lastXP = lastXP;
+    }
 
     public void setRadius(double radius) {
         this.radius = radius;
@@ -73,6 +83,8 @@ public class EpsilonModel extends Entity implements CollisionSquareCircle, Colli
         position = new Point2D(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
         impactDirection = new Direction(0, 0);
         baseSceneModel = MotionSceneModel.getInstance();
+        lastXP = XP;
+        XP = ConfigLoader.getInstance().getXp();
         update();
     }
 

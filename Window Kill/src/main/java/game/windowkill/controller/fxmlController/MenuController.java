@@ -2,6 +2,7 @@ package game.windowkill.controller.fxmlController;
 
 import game.windowkill.controller.DataHolder;
 import game.windowkill.controller.Update;
+import game.windowkill.controller.net.Manager;
 import game.windowkill.view.scene.MotionSceneView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,6 +22,8 @@ public class MenuController extends Controller implements Initializable {
     Button tutorial;
     @FXML
     Button skillTree;
+    @FXML
+    Button online;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -29,7 +32,11 @@ public class MenuController extends Controller implements Initializable {
         skillTree.setOnAction(actionEvent -> SkillTree());
         tutorial.setOnAction(actionEvent -> Tutorial());
         start.setOnAction(actionEvent -> Start());
+        online.setOnAction(actionEvent -> Online());
 
+    }
+    public void Online(){
+        Manager.getInstance().connect();
     }
     public void SkillTree(){
         setSkillTree();

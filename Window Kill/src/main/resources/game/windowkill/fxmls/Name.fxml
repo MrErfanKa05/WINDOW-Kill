@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<AnchorPane prefHeight="700.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game.windowkill.controller.fxmlController.NameController">
+   <children>
+       <ImageView fitHeight="700.0" fitWidth="700.0">
+           <image>
+               <Image url="@../resources/tutorial.jpg" />
+           </image>
+       </ImageView>
+      <TextField fx:id="text" layoutX="189.0" layoutY="82.0" prefHeight="57.0" prefWidth="270.0" />
+      <Button fx:id="enter" layoutX="271.0" layoutY="257.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="106.0" style="-fx-background-color: #f11231; -fx-background-radius: 15;" text="Enter">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Button>
+      <Label fx:id="error" layoutX="222.0" layoutY="170.0" prefHeight="57.0" prefWidth="204.0" />
+   </children>
+
+</AnchorPane>

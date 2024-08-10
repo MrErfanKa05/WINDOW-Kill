@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="700.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game.windowkill.controller.fxmlController.HomeController">
+   <children>
+      <ImageView fitHeight="700.0" fitWidth="700.0">
+         <image>
+            <Image url="@../resources/skillTree.png" />
+         </image>
+      </ImageView>
+      <ScrollPane fx:id="scrollPaneL" layoutX="500.0" layoutY="250.0" prefHeight="200.0" prefWidth="200.0">
+        <content>
+          <AnchorPane fx:id="anchorPaneL" minHeight="0.0" minWidth="0.0" prefHeight="199.0" prefWidth="198.0">
+               <children>
+                  <VBox fx:id="vBoxL" layoutX="10.0" layoutY="6.0" prefHeight="200.0" prefWidth="172.0" />
+               </children>
+            </AnchorPane>
+        </content>
+      </ScrollPane>
+      <ScrollPane fx:id="scrollPaneS" layoutY="-2.0" prefHeight="700.0" prefWidth="257.0">
+        <content>
+          <AnchorPane fx:id="anchorPaneS" minHeight="0.0" minWidth="0.0" prefHeight="698.0" prefWidth="254.0">
+               <children>
+                  <VBox fx:id="vBoxS" prefHeight="700.0" prefWidth="251.0" />
+               </children>
+            </AnchorPane>
+        </content>
+      </ScrollPane>
+      <Button fx:id="create" layoutX="314.0" layoutY="126.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="148.0" style="-fx-background-color: #f11231; -fx-background-radius: 15;" text="Create squad">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="squad" layoutX="314.0" layoutY="187.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="148.0" style="-fx-background-color: #f11231; -fx-background-radius: 15;" text="My squad">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Button>
+      <Label alignment="CENTER" layoutX="526.0" layoutY="114.0" prefHeight="66.0" prefWidth="148.0" text="0" fx:id="xp">
+         <font>
+            <Font size="29.0" />
+         </font>
+      </Label>
+      <Label fx:id="request" alignment="CENTER" layoutX="314.0" layoutY="325.0" prefHeight="66.0" prefWidth="148.0">
+         <font>
+            <Font size="29.0" />
+         </font>
+      </Label>
+      <TextField fx:id="text" layoutX="295.0" layoutY="66.0" />
+      <Button fx:id="logout" layoutX="518.0" layoutY="61.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="148.0" style="-fx-background-color: #f11231; -fx-background-radius: 15;" text="log out">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>
